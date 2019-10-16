@@ -13,8 +13,7 @@ namespace Smart.Data.Models
         public int CourseId { get; set; }
         [MaxLength(128)]
         public string Name { get; set; }
-        public int Number { get; set; }
 
-        public virtual ICollection<CourseTerm> CourseTerms { get; set; }
+        public virtual ICollection<Class> Classes { get; set; }
     }
 }

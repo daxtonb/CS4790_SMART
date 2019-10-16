@@ -14,7 +14,7 @@ namespace Smart.Data.Models
         [Column(TypeName = "time(0)")]
         public TimeSpan EndTime { get; set; }
 
-        public virtual ICollection<CourseTermSchedule> CourseTermSchedules { get; set; }
-        public virtual ICollection<PublicSchoolCourseSchedule> PublicSchoolCourseSchedules { get; set; }
+        public virtual ICollection<ClassSchedule> ClassSchedules { get; set; }
+        public virtual ICollection<PublicSchoolClassSchedule> PublicSchoolClassSchedules { get; set; }
     }
 }

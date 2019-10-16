@@ -10,7 +10,7 @@ using Smart.Data;
 namespace Smart.data.migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191007000219_Init")]
+    [Migration("20191016195609_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,36 +20,6 @@ namespace Smart.data.migrations
                 .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken();
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRole<int>");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
@@ -112,11 +82,14 @@ namespace Smart.data.migrations
 
                     b.Property<int>("RoleId");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
+
                     b.HasKey("UserId", "RoleId");
 
-                    b.HasIndex("RoleId");
-
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<int>");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -139,6 +112,10 @@ namespace Smart.data.migrations
                     b.Property<int>("ApplicantRatingId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Comments");
+
+                    b.Property<DateTime>("DateTime");
 
                     b.Property<int?>("RatingCirteriumId");
 
@@ -171,7 +148,7 @@ namespace Smart.data.migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CourseTermId");
+                    b.Property<int>("ClassId");
 
                     b.Property<string>("Description");
 
@@ -183,7 +160,7 @@ namespace Smart.data.migrations
 
                     b.HasKey("AssessmentId");
 
-                    b.HasIndex("CourseTermId");
+                    b.HasIndex("ClassId");
 
                     b.ToTable("Assessment");
                 });
@@ -192,20 +169,86 @@ namespace Smart.data.migrations
                 {
                     b.Property<int>("StudentId");
 
-                    b.Property<int>("CourseTermId");
+                    b.Property<int>("ClassId");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("date");
 
+                    b.Property<int>("AttendanceStatusId");
+
+                    b.Property<TimeSpan?>("TimeIn")
+                        .HasColumnType("time(0)");
+
+                    b.Property<TimeSpan?>("TimeOut")
+                        .HasColumnType("time(0)");
+
+                    b.HasKey("StudentId", "ClassId", "Date");
+
+                    b.HasIndex("AttendanceStatusId");
+
+                    b.HasIndex("ClassId");
+
+                    b.ToTable("Attendance");
+                });
+
+            modelBuilder.Entity("Smart.Data.Models.AttendanceStatus", b =>
+                {
+                    b.Property<int>("AttendanceStatusId");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(32);
+
+                    b.HasKey("AttendanceStatusId");
+
+                    b.ToTable("AttendanceStatus");
+                });
+
+            modelBuilder.Entity("Smart.Data.Models.Class", b =>
+                {
+                    b.Property<int>("ClassId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<byte>("Capacity");
+
+                    b.Property<int>("CourseId");
+
+                    b.Property<int>("TermId");
+
+                    b.HasKey("ClassId");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("TermId");
+
+                    b.ToTable("Class");
+                });
+
+            modelBuilder.Entity("Smart.Data.Models.ClassInstructor", b =>
+                {
+                    b.Property<int>("ClassId");
+
                     b.Property<int>("UserId");
 
-                    b.HasKey("StudentId", "CourseTermId", "Date");
-
-                    b.HasIndex("CourseTermId");
+                    b.HasKey("ClassId", "UserId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Attendance");
+                    b.ToTable("ClassInstructor");
+                });
+
+            modelBuilder.Entity("Smart.Data.Models.ClassSchedule", b =>
+                {
+                    b.Property<int>("ClassId");
+
+                    b.Property<int>("ScheduleId");
+
+                    b.HasKey("ClassId", "ScheduleId");
+
+                    b.HasIndex("ScheduleId");
+
+                    b.ToTable("ClassSchedule");
                 });
 
             modelBuilder.Entity("Smart.Data.Models.Course", b =>
@@ -217,58 +260,9 @@ namespace Smart.data.migrations
                     b.Property<string>("Name")
                         .HasMaxLength(128);
 
-                    b.Property<int>("Number");
-
                     b.HasKey("CourseId");
 
                     b.ToTable("Course");
-                });
-
-            modelBuilder.Entity("Smart.Data.Models.CourseTerm", b =>
-                {
-                    b.Property<int>("CourseTermId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<byte>("Capacity");
-
-                    b.Property<int>("CourseId");
-
-                    b.Property<int>("TermId");
-
-                    b.HasKey("CourseTermId");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("TermId");
-
-                    b.ToTable("CourseTerm");
-                });
-
-            modelBuilder.Entity("Smart.Data.Models.CourseTermInstructor", b =>
-                {
-                    b.Property<int>("CourseTermId");
-
-                    b.Property<int>("UserId");
-
-                    b.HasKey("CourseTermId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CourseTermInstructor");
-                });
-
-            modelBuilder.Entity("Smart.Data.Models.CourseTermSchedule", b =>
-                {
-                    b.Property<int>("CourseTermId");
-
-                    b.Property<int>("ScheduleId");
-
-                    b.HasKey("CourseTermId", "ScheduleId");
-
-                    b.HasIndex("ScheduleId");
-
-                    b.ToTable("CourseTermSchedule");
                 });
 
             modelBuilder.Entity("Smart.Data.Models.Error", b =>
@@ -370,23 +364,23 @@ namespace Smart.data.migrations
                     b.ToTable("Note");
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.PublicSchoolCourseSchedule", b =>
+            modelBuilder.Entity("Smart.Data.Models.PublicSchoolClassSchedule", b =>
                 {
-                    b.Property<int>("PublicSchoolCourseScheduleId")
+                    b.Property<int>("PublicSchoolClassScheduleId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("ScheduleId");
 
-                    b.Property<int>("StudentPublicSchoolCourseId");
+                    b.Property<int>("StudentPublicSchoolClassId");
 
-                    b.HasKey("PublicSchoolCourseScheduleId");
+                    b.HasKey("PublicSchoolClassScheduleId");
 
                     b.HasIndex("ScheduleId");
 
-                    b.HasIndex("StudentPublicSchoolCourseId");
+                    b.HasIndex("StudentPublicSchoolClassId");
 
-                    b.ToTable("PublicSchoolCourseSchedule");
+                    b.ToTable("PublicSchoolClassSchedule");
                 });
 
             modelBuilder.Entity("Smart.Data.Models.RatingCirterium", b =>
@@ -404,6 +398,31 @@ namespace Smart.data.migrations
                     b.HasKey("RatingCirteriumId");
 
                     b.ToTable("RatingCirterium");
+                });
+
+            modelBuilder.Entity("Smart.Data.Models.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken();
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles");
                 });
 
             modelBuilder.Entity("Smart.Data.Models.Schedule", b =>
@@ -434,7 +453,7 @@ namespace Smart.data.migrations
                     b.Property<string>("Address")
                         .HasMaxLength(128);
 
-                    b.Property<int?>("CourseTermId");
+                    b.Property<int?>("ClassId");
 
                     b.Property<DateTime?>("DateOfBirth");
 
@@ -444,12 +463,6 @@ namespace Smart.data.migrations
 
                     b.Property<string>("GuardianName")
                         .HasMaxLength(64);
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<bool>("IsEnrolled");
-
-                    b.Property<bool>("IsWaitlisted");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -467,12 +480,16 @@ namespace Smart.data.migrations
 
                     b.Property<byte>("PublicSchoolLevel");
 
+                    b.Property<int>("StudentStatusId");
+
                     b.Property<string>("Village")
                         .HasMaxLength(64);
 
                     b.HasKey("StudentId");
 
-                    b.HasIndex("CourseTermId");
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("StudentStatusId");
 
                     b.ToTable("Student");
                 });
@@ -494,22 +511,22 @@ namespace Smart.data.migrations
                     b.ToTable("StudentAssessment");
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.StudentCourseTerm", b =>
+            modelBuilder.Entity("Smart.Data.Models.StudentClass", b =>
                 {
-                    b.Property<int>("CourseTermId");
+                    b.Property<int>("ClassId");
 
                     b.Property<int>("StudentId");
 
-                    b.HasKey("CourseTermId", "StudentId");
+                    b.HasKey("ClassId", "StudentId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentCourseTerm");
+                    b.ToTable("StudentClass");
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.StudentPublicSchoolCourse", b =>
+            modelBuilder.Entity("Smart.Data.Models.StudentPublicSchoolClass", b =>
                 {
-                    b.Property<int>("StudentPublicSchoolCourseId")
+                    b.Property<int>("StudentPublicSchoolClassId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -521,11 +538,24 @@ namespace Smart.data.migrations
 
                     b.Property<byte>("TimeOfYear");
 
-                    b.HasKey("StudentPublicSchoolCourseId");
+                    b.HasKey("StudentPublicSchoolClassId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentPublicSchoolCourse");
+                    b.ToTable("StudentPublicSchoolClass");
+                });
+
+            modelBuilder.Entity("Smart.Data.Models.StudentStatus", b =>
+                {
+                    b.Property<int>("StudentStatusId");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(32);
+
+                    b.HasKey("StudentStatusId");
+
+                    b.ToTable("StudentStatus");
                 });
 
             modelBuilder.Entity("Smart.Data.Models.Term", b =>
@@ -614,27 +644,16 @@ namespace Smart.data.migrations
 
             modelBuilder.Entity("Smart.Data.Models.UserRole", b =>
                 {
-                    b.Property<int>("UserId");
-
-                    b.Property<int>("RoleId");
-
-                    b.HasKey("UserId", "RoleId");
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<int>");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles");
-                });
-
-            modelBuilder.Entity("Smart.Data.Models.Role", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole<int>");
-
-                    b.HasDiscriminator().HasValue("Role");
+                    b.HasDiscriminator().HasValue("UserRole");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>")
+                    b.HasOne("Smart.Data.Models.Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -650,19 +669,6 @@ namespace Smart.data.migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("Smart.Data.Models.User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Smart.Data.Models.User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -701,65 +707,65 @@ namespace Smart.data.migrations
 
             modelBuilder.Entity("Smart.Data.Models.Assessment", b =>
                 {
-                    b.HasOne("Smart.Data.Models.CourseTerm", "CourseTerm")
+                    b.HasOne("Smart.Data.Models.Class", "Class")
                         .WithMany()
-                        .HasForeignKey("CourseTermId")
+                        .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Smart.Data.Models.Attendance", b =>
                 {
-                    b.HasOne("Smart.Data.Models.CourseTerm", "CourseTerm")
+                    b.HasOne("Smart.Data.Models.AttendanceStatus", "AttendanceStatus")
                         .WithMany("Attendances")
-                        .HasForeignKey("CourseTermId")
+                        .HasForeignKey("AttendanceStatusId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Smart.Data.Models.Class", "Class")
+                        .WithMany("Attendances")
+                        .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Smart.Data.Models.Student", "Student")
                         .WithMany("Attendances")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Smart.Data.Models.User", "User")
-                        .WithMany("Attendances")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.CourseTerm", b =>
+            modelBuilder.Entity("Smart.Data.Models.Class", b =>
                 {
                     b.HasOne("Smart.Data.Models.Course", "Course")
-                        .WithMany("CourseTerms")
+                        .WithMany("Classes")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Smart.Data.Models.Term", "Term")
-                        .WithMany("CourseTerms")
+                        .WithMany("Classes")
                         .HasForeignKey("TermId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.CourseTermInstructor", b =>
+            modelBuilder.Entity("Smart.Data.Models.ClassInstructor", b =>
                 {
-                    b.HasOne("Smart.Data.Models.CourseTerm", "CourseTerm")
-                        .WithMany("CourseTermInstructors")
-                        .HasForeignKey("CourseTermId")
+                    b.HasOne("Smart.Data.Models.Class", "Class")
+                        .WithMany("ClassInstructors")
+                        .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Smart.Data.Models.User", "User")
-                        .WithMany("CourseTermInstructors")
+                        .WithMany("ClassInstructors")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.CourseTermSchedule", b =>
+            modelBuilder.Entity("Smart.Data.Models.ClassSchedule", b =>
                 {
-                    b.HasOne("Smart.Data.Models.CourseTerm", "CourseTerm")
-                        .WithMany("CourseTermSchedules")
-                        .HasForeignKey("CourseTermId")
+                    b.HasOne("Smart.Data.Models.Class", "Class")
+                        .WithMany("ClassSchedules")
+                        .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Smart.Data.Models.Schedule", "Schedule")
-                        .WithMany("CourseTermSchedules")
+                        .WithMany("ClassSchedules")
                         .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -805,24 +811,29 @@ namespace Smart.data.migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.PublicSchoolCourseSchedule", b =>
+            modelBuilder.Entity("Smart.Data.Models.PublicSchoolClassSchedule", b =>
                 {
                     b.HasOne("Smart.Data.Models.Schedule", "Schedule")
-                        .WithMany("PublicSchoolCourseSchedules")
+                        .WithMany("PublicSchoolClassSchedules")
                         .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Smart.Data.Models.StudentPublicSchoolCourse", "StudentPublicSchoolCourse")
-                        .WithMany("PublicSchoolCourseSchedules")
-                        .HasForeignKey("StudentPublicSchoolCourseId")
+                    b.HasOne("Smart.Data.Models.StudentPublicSchoolClass", "StudentPublicSchoolClass")
+                        .WithMany("PublicSchoolClassSchedules")
+                        .HasForeignKey("StudentPublicSchoolClassId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Smart.Data.Models.Student", b =>
                 {
-                    b.HasOne("Smart.Data.Models.CourseTerm")
+                    b.HasOne("Smart.Data.Models.Class")
                         .WithMany("Students")
-                        .HasForeignKey("CourseTermId");
+                        .HasForeignKey("ClassId");
+
+                    b.HasOne("Smart.Data.Models.StudentStatus", "StudentStatus")
+                        .WithMany("Students")
+                        .HasForeignKey("StudentStatusId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Smart.Data.Models.StudentAssessment", b =>
@@ -838,23 +849,23 @@ namespace Smart.data.migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.StudentCourseTerm", b =>
+            modelBuilder.Entity("Smart.Data.Models.StudentClass", b =>
                 {
-                    b.HasOne("Smart.Data.Models.CourseTerm", "CourseTerm")
+                    b.HasOne("Smart.Data.Models.Class", "Class")
                         .WithMany()
-                        .HasForeignKey("CourseTermId")
+                        .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Smart.Data.Models.Student", "Student")
-                        .WithMany("StudentCourseTerms")
+                        .WithMany("StudentClasses")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.StudentPublicSchoolCourse", b =>
+            modelBuilder.Entity("Smart.Data.Models.StudentPublicSchoolClass", b =>
                 {
                     b.HasOne("Smart.Data.Models.Student", "Student")
-                        .WithMany("StudentPublicSchoolCourses")
+                        .WithMany("StudentPublicSchoolClasss")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

@@ -45,7 +45,9 @@ namespace Smart
             services.AddIdentity<User, Role>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = false;   // Don't enforce email confirmation
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            }).AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddUserManager<UserManager<User>>()
+            .AddRoleManager<RoleManager<Role>>();
             
             // Automatically apply migrations
             using (var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().UseSqlServer(Configuration.GetConnectionString("DefaultConnection")).Options))

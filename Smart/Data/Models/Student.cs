@@ -32,13 +32,14 @@ namespace Smart.Data.Models
         public string Phone { get; set; }
         [MaxLength(256)]
         public string Photo { get; set; }
-        public bool IsEnrolled { get; set; }
-        public bool IsWaitlisted { get; set; }
-        public bool IsActive { get; set; }
+        public StudentStatusEnum StudentStatusId { get; set; }
+
+
+        public virtual StudentStatus StudentStatus { get; set; }
 
         public virtual ICollection<ApplicantRating> ApplicantRatings { get; set; }
-        public virtual ICollection<StudentCourseTerm> StudentCourseTerms { get; set; }
-        public virtual ICollection<StudentPublicSchoolCourse> StudentPublicSchoolCourses { get; set; }
+        public virtual ICollection<StudentClass> StudentClasses { get; set; }
+        public virtual ICollection<StudentPublicSchoolClass> StudentPublicSchoolClasss { get; set; }
         public virtual ICollection<Attendance> Attendances { get; set; }
         public virtual ICollection<Note> Notes { get; set; }
         public virtual ICollection<StudentAssessment> StudentAssessments { get; set; }

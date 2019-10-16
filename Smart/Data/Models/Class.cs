@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Smart.Data.Models
 {
-    [Table(nameof(CourseTerm))]
-    public class CourseTerm
+    [Table(nameof(Class))]
+    public class Class
     {
-        public int CourseTermId { get; set; }
+        public int ClassId { get; set; }
         public int CourseId { get; set; }
         public int TermId { get; set; }
         public byte Capacity { get; set; }
@@ -18,8 +18,8 @@ namespace Smart.Data.Models
         public virtual Course Course { get; set; }
         public virtual Term Term { get; set; }
         public virtual ICollection<Student> Students { get; set; }
-        public virtual ICollection<CourseTermSchedule> CourseTermSchedules { get; set; }
-        public virtual ICollection<CourseTermInstructor> CourseTermInstructors { get; set; }
+        public virtual ICollection<ClassSchedule> ClassSchedules { get; set; }
+        public virtual ICollection<ClassInstructor> ClassInstructors { get; set; }
         public virtual ICollection<Attendance> Attendances { get; set; }
 
     }

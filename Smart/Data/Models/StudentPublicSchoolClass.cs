@@ -5,17 +5,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Smart.Data.Models
 {
-    [Table(nameof(StudentPublicSchoolCourse))]
-    public class StudentPublicSchoolCourse
+    [Table(nameof(StudentPublicSchoolClass))]
+    public class StudentPublicSchoolClass
     {
-        public int StudentPublicSchoolCourseId { get; set; }
+        public int StudentPublicSchoolClassId { get; set; }
         public int StudentId { get; set; }
         [Required]
         [MaxLength(128)]
         public string CourseName { get; set; }
         public TimeOfYear TimeOfYear { get; set; }
 
-        public virtual ICollection<PublicSchoolCourseSchedule> PublicSchoolCourseSchedules { get; set; }
+        public virtual ICollection<PublicSchoolClassSchedule> PublicSchoolClassSchedules { get; set; }
         public virtual Student Student { get; set; }
     }
 }

@@ -20,6 +20,6 @@ namespace Smart.Data.Models
         public DateTime EndDate { get; set; }
         public TimeOfYear TimeOfYear { get; set; }
 
-        public virtual ICollection<CourseTerm> CourseTerms { get; set; }
+        public virtual ICollection<Class> Classes { get; set; }
     }
 }

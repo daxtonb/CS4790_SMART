@@ -16,8 +16,7 @@ namespace Smart.data.migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
-                    Discriminator = table.Column<string>(nullable: false)
+                    ConcurrencyStamp = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -53,13 +52,24 @@ namespace Smart.data.migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AttendanceStatus",
+                columns: table => new
+                {
+                    AttendanceStatusId = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(maxLength: 32, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AttendanceStatus", x => x.AttendanceStatusId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Course",
                 columns: table => new
                 {
                     CourseId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(maxLength: 128, nullable: true),
-                    Number = table.Column<int>(nullable: false)
+                    Name = table.Column<string>(maxLength: 128, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -106,6 +116,18 @@ namespace Smart.data.migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Schedule", x => x.ScheduleId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudentStatus",
+                columns: table => new
+                {
+                    StudentStatusId = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(maxLength: 32, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentStatus", x => x.StudentStatusId);
                 });
 
             migrationBuilder.CreateTable(
@@ -191,7 +213,8 @@ namespace Smart.data.migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false),
-                    RoleId = table.Column<int>(nullable: false)
+                    RoleId = table.Column<int>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -274,34 +297,10 @@ namespace Smart.data.migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserRoles",
+                name: "Class",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(nullable: false),
-                    RoleId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_UserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserRoles_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CourseTerm",
-                columns: table => new
-                {
-                    CourseTermId = table.Column<int>(nullable: false)
+                    ClassId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CourseId = table.Column<int>(nullable: false),
                     TermId = table.Column<int>(nullable: false),
@@ -309,15 +308,15 @@ namespace Smart.data.migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseTerm", x => x.CourseTermId);
+                    table.PrimaryKey("PK_Class", x => x.ClassId);
                     table.ForeignKey(
-                        name: "FK_CourseTerm_Course_CourseId",
+                        name: "FK_Class_Course_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Course",
                         principalColumn: "CourseId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CourseTerm_Term_TermId",
+                        name: "FK_Class_Term_TermId",
                         column: x => x.TermId,
                         principalTable: "Term",
                         principalColumn: "TermId",
@@ -330,7 +329,7 @@ namespace Smart.data.migrations
                 {
                     AssessmentId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CourseTermId = table.Column<int>(nullable: false),
+                    ClassId = table.Column<int>(nullable: false),
                     Title = table.Column<string>(maxLength: 128, nullable: false),
                     Description = table.Column<string>(nullable: true),
                     PointsPossible = table.Column<int>(nullable: false)
@@ -339,31 +338,31 @@ namespace Smart.data.migrations
                 {
                     table.PrimaryKey("PK_Assessment", x => x.AssessmentId);
                     table.ForeignKey(
-                        name: "FK_Assessment_CourseTerm_CourseTermId",
-                        column: x => x.CourseTermId,
-                        principalTable: "CourseTerm",
-                        principalColumn: "CourseTermId",
+                        name: "FK_Assessment_Class_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Class",
+                        principalColumn: "ClassId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "CourseTermInstructor",
+                name: "ClassInstructor",
                 columns: table => new
                 {
-                    CourseTermId = table.Column<int>(nullable: false),
+                    ClassId = table.Column<int>(nullable: false),
                     UserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseTermInstructor", x => new { x.CourseTermId, x.UserId });
+                    table.PrimaryKey("PK_ClassInstructor", x => new { x.ClassId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_CourseTermInstructor_CourseTerm_CourseTermId",
-                        column: x => x.CourseTermId,
-                        principalTable: "CourseTerm",
-                        principalColumn: "CourseTermId",
+                        name: "FK_ClassInstructor_Class_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Class",
+                        principalColumn: "ClassId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CourseTermInstructor_AspNetUsers_UserId",
+                        name: "FK_ClassInstructor_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -371,23 +370,23 @@ namespace Smart.data.migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CourseTermSchedule",
+                name: "ClassSchedule",
                 columns: table => new
                 {
-                    CourseTermId = table.Column<int>(nullable: false),
+                    ClassId = table.Column<int>(nullable: false),
                     ScheduleId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseTermSchedule", x => new { x.CourseTermId, x.ScheduleId });
+                    table.PrimaryKey("PK_ClassSchedule", x => new { x.ClassId, x.ScheduleId });
                     table.ForeignKey(
-                        name: "FK_CourseTermSchedule_CourseTerm_CourseTermId",
-                        column: x => x.CourseTermId,
-                        principalTable: "CourseTerm",
-                        principalColumn: "CourseTermId",
+                        name: "FK_ClassSchedule_Class_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Class",
+                        principalColumn: "ClassId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CourseTermSchedule_Schedule_ScheduleId",
+                        name: "FK_ClassSchedule_Schedule_ScheduleId",
                         column: x => x.ScheduleId,
                         principalTable: "Schedule",
                         principalColumn: "ScheduleId",
@@ -411,20 +410,24 @@ namespace Smart.data.migrations
                     GuardianName = table.Column<string>(maxLength: 64, nullable: true),
                     Phone = table.Column<string>(maxLength: 16, nullable: true),
                     Photo = table.Column<string>(maxLength: 256, nullable: true),
-                    IsEnrolled = table.Column<bool>(nullable: false),
-                    IsWaitlisted = table.Column<bool>(nullable: false),
-                    IsActive = table.Column<bool>(nullable: false),
-                    CourseTermId = table.Column<int>(nullable: true)
+                    StudentStatusId = table.Column<int>(nullable: false),
+                    ClassId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Student", x => x.StudentId);
                     table.ForeignKey(
-                        name: "FK_Student_CourseTerm_CourseTermId",
-                        column: x => x.CourseTermId,
-                        principalTable: "CourseTerm",
-                        principalColumn: "CourseTermId",
+                        name: "FK_Student_Class_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Class",
+                        principalColumn: "ClassId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Student_StudentStatus_StudentStatusId",
+                        column: x => x.StudentStatusId,
+                        principalTable: "StudentStatus",
+                        principalColumn: "StudentStatusId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -438,6 +441,8 @@ namespace Smart.data.migrations
                     RatingCiteriumId = table.Column<int>(nullable: false),
                     TermId = table.Column<int>(nullable: false),
                     ScoreAssigned = table.Column<int>(nullable: false),
+                    DateTime = table.Column<DateTime>(nullable: false),
+                    Comments = table.Column<string>(nullable: true),
                     RatingCirteriumId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -474,30 +479,32 @@ namespace Smart.data.migrations
                 columns: table => new
                 {
                     StudentId = table.Column<int>(nullable: false),
-                    CourseTermId = table.Column<int>(nullable: false),
+                    ClassId = table.Column<int>(nullable: false),
                     Date = table.Column<DateTime>(type: "date", nullable: false),
-                    UserId = table.Column<int>(nullable: false)
+                    TimeIn = table.Column<TimeSpan>(type: "time(0)", nullable: true),
+                    TimeOut = table.Column<TimeSpan>(type: "time(0)", nullable: true),
+                    AttendanceStatusId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Attendance", x => new { x.StudentId, x.CourseTermId, x.Date });
+                    table.PrimaryKey("PK_Attendance", x => new { x.StudentId, x.ClassId, x.Date });
                     table.ForeignKey(
-                        name: "FK_Attendance_CourseTerm_CourseTermId",
-                        column: x => x.CourseTermId,
-                        principalTable: "CourseTerm",
-                        principalColumn: "CourseTermId",
+                        name: "FK_Attendance_AttendanceStatus_AttendanceStatusId",
+                        column: x => x.AttendanceStatusId,
+                        principalTable: "AttendanceStatus",
+                        principalColumn: "AttendanceStatusId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Attendance_Class_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Class",
+                        principalColumn: "ClassId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Attendance_Student_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Student",
                         principalColumn: "StudentId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Attendance_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -582,23 +589,23 @@ namespace Smart.data.migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StudentCourseTerm",
+                name: "StudentClass",
                 columns: table => new
                 {
                     StudentId = table.Column<int>(nullable: false),
-                    CourseTermId = table.Column<int>(nullable: false)
+                    ClassId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StudentCourseTerm", x => new { x.CourseTermId, x.StudentId });
+                    table.PrimaryKey("PK_StudentClass", x => new { x.ClassId, x.StudentId });
                     table.ForeignKey(
-                        name: "FK_StudentCourseTerm_CourseTerm_CourseTermId",
-                        column: x => x.CourseTermId,
-                        principalTable: "CourseTerm",
-                        principalColumn: "CourseTermId",
+                        name: "FK_StudentClass_Class_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Class",
+                        principalColumn: "ClassId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_StudentCourseTerm_Student_StudentId",
+                        name: "FK_StudentClass_Student_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Student",
                         principalColumn: "StudentId",
@@ -606,10 +613,10 @@ namespace Smart.data.migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StudentPublicSchoolCourse",
+                name: "StudentPublicSchoolClass",
                 columns: table => new
                 {
-                    StudentPublicSchoolCourseId = table.Column<int>(nullable: false)
+                    StudentPublicSchoolClassId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     StudentId = table.Column<int>(nullable: false),
                     CourseName = table.Column<string>(maxLength: 128, nullable: false),
@@ -617,9 +624,9 @@ namespace Smart.data.migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StudentPublicSchoolCourse", x => x.StudentPublicSchoolCourseId);
+                    table.PrimaryKey("PK_StudentPublicSchoolClass", x => x.StudentPublicSchoolClassId);
                     table.ForeignKey(
-                        name: "FK_StudentPublicSchoolCourse_Student_StudentId",
+                        name: "FK_StudentPublicSchoolClass_Student_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Student",
                         principalColumn: "StudentId",
@@ -627,28 +634,28 @@ namespace Smart.data.migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PublicSchoolCourseSchedule",
+                name: "PublicSchoolClassSchedule",
                 columns: table => new
                 {
-                    PublicSchoolCourseScheduleId = table.Column<int>(nullable: false)
+                    PublicSchoolClassScheduleId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    StudentPublicSchoolCourseId = table.Column<int>(nullable: false),
+                    StudentPublicSchoolClassId = table.Column<int>(nullable: false),
                     ScheduleId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PublicSchoolCourseSchedule", x => x.PublicSchoolCourseScheduleId);
+                    table.PrimaryKey("PK_PublicSchoolClassSchedule", x => x.PublicSchoolClassScheduleId);
                     table.ForeignKey(
-                        name: "FK_PublicSchoolCourseSchedule_Schedule_ScheduleId",
+                        name: "FK_PublicSchoolClassSchedule_Schedule_ScheduleId",
                         column: x => x.ScheduleId,
                         principalTable: "Schedule",
                         principalColumn: "ScheduleId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PublicSchoolCourseSchedule_StudentPublicSchoolCourse_StudentPublicSchoolCourseId",
-                        column: x => x.StudentPublicSchoolCourseId,
-                        principalTable: "StudentPublicSchoolCourse",
-                        principalColumn: "StudentPublicSchoolCourseId",
+                        name: "FK_PublicSchoolClassSchedule_StudentPublicSchoolClass_StudentPublicSchoolClassId",
+                        column: x => x.StudentPublicSchoolClassId,
+                        principalTable: "StudentPublicSchoolClass",
+                        principalColumn: "StudentPublicSchoolClassId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -712,38 +719,38 @@ namespace Smart.data.migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Assessment_CourseTermId",
+                name: "IX_Assessment_ClassId",
                 table: "Assessment",
-                column: "CourseTermId");
+                column: "ClassId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Attendance_CourseTermId",
+                name: "IX_Attendance_AttendanceStatusId",
                 table: "Attendance",
-                column: "CourseTermId");
+                column: "AttendanceStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Attendance_UserId",
+                name: "IX_Attendance_ClassId",
                 table: "Attendance",
-                column: "UserId");
+                column: "ClassId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseTerm_CourseId",
-                table: "CourseTerm",
+                name: "IX_Class_CourseId",
+                table: "Class",
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseTerm_TermId",
-                table: "CourseTerm",
+                name: "IX_Class_TermId",
+                table: "Class",
                 column: "TermId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseTermInstructor_UserId",
-                table: "CourseTermInstructor",
+                name: "IX_ClassInstructor_UserId",
+                table: "ClassInstructor",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseTermSchedule_ScheduleId",
-                table: "CourseTermSchedule",
+                name: "IX_ClassSchedule_ScheduleId",
+                table: "ClassSchedule",
                 column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
@@ -777,19 +784,24 @@ namespace Smart.data.migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PublicSchoolCourseSchedule_ScheduleId",
-                table: "PublicSchoolCourseSchedule",
+                name: "IX_PublicSchoolClassSchedule_ScheduleId",
+                table: "PublicSchoolClassSchedule",
                 column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PublicSchoolCourseSchedule_StudentPublicSchoolCourseId",
-                table: "PublicSchoolCourseSchedule",
-                column: "StudentPublicSchoolCourseId");
+                name: "IX_PublicSchoolClassSchedule_StudentPublicSchoolClassId",
+                table: "PublicSchoolClassSchedule",
+                column: "StudentPublicSchoolClassId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Student_CourseTermId",
+                name: "IX_Student_ClassId",
                 table: "Student",
-                column: "CourseTermId");
+                column: "ClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Student_StudentStatusId",
+                table: "Student",
+                column: "StudentStatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StudentAssessment_StudentId",
@@ -797,19 +809,14 @@ namespace Smart.data.migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentCourseTerm_StudentId",
-                table: "StudentCourseTerm",
+                name: "IX_StudentClass_StudentId",
+                table: "StudentClass",
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentPublicSchoolCourse_StudentId",
-                table: "StudentPublicSchoolCourse",
+                name: "IX_StudentPublicSchoolClass_StudentId",
+                table: "StudentPublicSchoolClass",
                 column: "StudentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserRoles_RoleId",
-                table: "UserRoles",
-                column: "RoleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -836,10 +843,10 @@ namespace Smart.data.migrations
                 name: "Attendance");
 
             migrationBuilder.DropTable(
-                name: "CourseTermInstructor");
+                name: "ClassInstructor");
 
             migrationBuilder.DropTable(
-                name: "CourseTermSchedule");
+                name: "ClassSchedule");
 
             migrationBuilder.DropTable(
                 name: "Error");
@@ -854,43 +861,46 @@ namespace Smart.data.migrations
                 name: "Note");
 
             migrationBuilder.DropTable(
-                name: "PublicSchoolCourseSchedule");
+                name: "PublicSchoolClassSchedule");
 
             migrationBuilder.DropTable(
                 name: "StudentAssessment");
 
             migrationBuilder.DropTable(
-                name: "StudentCourseTerm");
-
-            migrationBuilder.DropTable(
-                name: "UserRoles");
+                name: "StudentClass");
 
             migrationBuilder.DropTable(
                 name: "RatingCirterium");
 
             migrationBuilder.DropTable(
-                name: "FileType");
-
-            migrationBuilder.DropTable(
-                name: "Schedule");
-
-            migrationBuilder.DropTable(
-                name: "StudentPublicSchoolCourse");
-
-            migrationBuilder.DropTable(
-                name: "Assessment");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "AttendanceStatus");
+
+            migrationBuilder.DropTable(
+                name: "FileType");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "Schedule");
+
+            migrationBuilder.DropTable(
+                name: "StudentPublicSchoolClass");
+
+            migrationBuilder.DropTable(
+                name: "Assessment");
+
+            migrationBuilder.DropTable(
                 name: "Student");
 
             migrationBuilder.DropTable(
-                name: "CourseTerm");
+                name: "Class");
+
+            migrationBuilder.DropTable(
+                name: "StudentStatus");
 
             migrationBuilder.DropTable(
                 name: "Course");

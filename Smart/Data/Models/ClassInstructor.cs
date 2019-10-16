@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Smart.Data.Models
 {
-    [Table(nameof(CourseTermInstructor))]
-    public class CourseTermInstructor
+    [Table(nameof(ClassInstructor))]
+    public class ClassInstructor
     {
-        public int CourseTermId { get; set; }
+        public int ClassId { get; set; }
         public int UserId { get; set; }
 
-        public virtual CourseTerm CourseTerm { get; set; }
+        public virtual Class Class { get; set; }
         public virtual User User { get; set; }
     }
 }

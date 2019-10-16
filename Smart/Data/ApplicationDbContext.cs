@@ -14,7 +14,7 @@ using Smart.Data.Models;
 
 namespace Smart.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>
+    public class ApplicationDbContext : IdentityDbContext<User, Role, int>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -27,43 +27,57 @@ namespace Smart.Data
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public new DbSet<User> Users { get; set; }
-        public new DbSet<UserRole> UserRoles { get; set; }
-        public new DbSet<Role> Roles { get; set; }
         public  DbSet<Student> Students { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Term> Terms { get; set; }
-        public DbSet<CourseTerm> CourseTerms { get; set; }
-        public DbSet<CourseTermSchedule> CourseTermSchedules { get; set; }
-        public DbSet<CourseTermInstructor> CourseTermInstructors { get; set; }
-        public DbSet<StudentCourseTerm> StudentCourseTerms { get; set; }
+        public DbSet<Class> Classes { get; set; }
+        public DbSet<ClassSchedule> Classeschedules { get; set; }
+        public DbSet<ClassInstructor> ClassInstructors { get; set; }
+        public DbSet<StudentClass> StudentClasses { get; set; }
         public DbSet<ApplicantRating> ApplicantRatings { get; set; }
         public DbSet<RatingCirterium> RatingCirteria { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Error> Errors { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
-        public DbSet<PublicSchoolCourseSchedule> PublicSchoolCourseSchedules { get; set; }
-        public DbSet<StudentPublicSchoolCourse> StudentPublicSchoolCourses { get; set; }
+        public DbSet<PublicSchoolClassSchedule> PublicSchoolClassSchedules { get; set; }
+        public DbSet<StudentPublicSchoolClass> StudentPublicSchoolClasss { get; set; }
         public DbSet<Note> Notes { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
-
-
+        public DbSet<AttendanceStatus> AttendanceStatuses { get; set; }
+        public DbSet<StudentStatus> StudentStatuses { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             // Set up composite keys
-            builder.Entity<CourseTermInstructor>().HasKey(c => new { c.CourseTermId, c.UserId });
-            builder.Entity<StudentCourseTerm>().HasKey(s => new { s.CourseTermId, s.StudentId });
-            builder.Entity<Attendance>().HasKey(a => new { a.StudentId, a.CourseTermId, a.Date }); // A student can only have attendance in a course once a day
-            builder.Entity<CourseTermSchedule>().HasKey(c => new { c.CourseTermId, c.ScheduleId });
+            builder.Entity<ClassInstructor>().HasKey(c => new { c.ClassId, c.UserId });
+            builder.Entity<StudentClass>().HasKey(s => new { s.ClassId, s.StudentId });
+            builder.Entity<Attendance>().HasKey(a => new { a.StudentId, a.ClassId, a.Date }); // A student can only have attendance in a course once a day
+            builder.Entity<ClassSchedule>().HasKey(c => new { c.ClassId, c.ScheduleId });
             builder.Entity<StudentAssessment>().HasKey(s => new { s.AssessmentId, s.StudentId }); // A student can only be assessed once for an assessment
-            builder.Entity<UserRole>().HasKey(u => new { u.UserId, u.RoleId });
 
-            // Set-up Enum conversions to byte (C#)/TinyInt (SQL Server)
+            // Set-up Enum conversions
             builder.Entity<Schedule>().Property(c => c.DayOfWeek).HasConversion(new EnumToNumberConverter<DayOfWeek, byte>());
             builder.Entity<Term>().Property(t => t.TimeOfYear).HasConversion(new EnumToNumberConverter<TimeOfYear, byte>());
-            builder.Entity<StudentPublicSchoolCourse>().Property(s => s.TimeOfYear).HasConversion(new EnumToNumberConverter<TimeOfYear, byte>());
+            builder.Entity<StudentPublicSchoolClass>().Property(s => s.TimeOfYear).HasConversion(new EnumToNumberConverter<TimeOfYear, byte>());
+            builder.Entity<Student>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());
+            builder.Entity<StudentStatus>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());
+            builder.Entity<Attendance>().Property(s => s.AttendanceStatusId).HasConversion(new EnumToNumberConverter<AttendanceStatusEnum, int>());
+            builder.Entity<AttendanceStatus>().Property(s => s.AttendanceStatusId).HasConversion(new EnumToNumberConverter<AttendanceStatusEnum, int>());
+
+            builder.Entity<UserRole>(userRole =>
+            {
+                userRole.HasOne(ur => ur.Role)
+                    .WithMany(r => r.UserRoles)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+
+                userRole.HasOne(ur => ur.User)
+                    .WithMany(r => r.UserRoles)
+                    .HasForeignKey(ur => ur.UserId)
+                    .IsRequired();
+            });
         }
 
         public override int SaveChanges()

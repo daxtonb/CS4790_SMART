@@ -15,6 +15,8 @@ namespace Smart.Data.Models
         public int RatingCiteriumId { get; set; }
         public int TermId { get; set; }
         public int ScoreAssigned { get; set; }
+        public DateTime DateTime { get; set; }
+        public string Comments { get; set; }
 
         public virtual Student Student { get; set; }
         public virtual User User { get; set; }

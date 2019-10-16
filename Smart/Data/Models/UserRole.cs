@@ -1,11 +1,14 @@
-﻿namespace Smart.Data.Models
-{
-    public class UserRole
-    {
-        public int UserId { get; set; }
-        public int RoleId { get; set; }
+﻿using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-        public virtual User User { get; set; }
-        public virtual Role Role { get; set; }
+namespace Smart.Data.Models
+{
+    public class UserRole : IdentityUserRole<int>
+    {
+        public User User { get; set; }
+        public Role Role { get; set; }
     }
 }

@@ -11,13 +11,17 @@ namespace Smart.Data.Models
     public class Attendance
     {
         public int StudentId { get; set; }
-        public int CourseTermId { get; set; }
+        public int ClassId { get; set; }
         [Column(TypeName = "date")]
         public DateTime Date { get; set; }
-        public int UserId { get; set; }
+        [Column(TypeName = "time(0)")]
+        public TimeSpan? TimeIn { get; set; }
+        [Column(TypeName = "time(0)")]
+        public TimeSpan? TimeOut { get; set; }
+        public AttendanceStatusEnum AttendanceStatusId { get; set; }
 
         public virtual Student Student { get; set; }
-        public virtual CourseTerm CourseTerm { get; set; }
-        public virtual User User { get; set; }
+        public virtual Class Class { get; set; }
+        public AttendanceStatus AttendanceStatus { get; set; }
     }
 }

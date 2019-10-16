@@ -11,14 +11,14 @@ namespace Smart.Data.Models
     public class Assessment
     {
         public int AssessmentId { get; set; }
-        public int CourseTermId { get; set; }
+        public int ClassId { get; set; }
         [Required]
         [MaxLength(128)]
         public string Title { get; set; }
         public string Description { get; set; }
         public int PointsPossible { get; set; }
 
-        public virtual CourseTerm CourseTerm { get; set; }
+        public virtual Class Class { get; set; }
         public virtual ICollection<StudentAssessment> StudentAssessments { get; set; }
     }
 }

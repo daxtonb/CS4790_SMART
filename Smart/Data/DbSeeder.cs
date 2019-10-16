@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Smart.Data.Models;
+using Smart.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,28 +12,112 @@ namespace Smart.Data
     {
         private readonly RoleManager<Role> _roleManager;
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public DbSeeder(RoleManager<Role> roleManager, ApplicationDbContext context)
+        public DbSeeder(RoleManager<Role> roleManager, UserManager<User> userManager, ApplicationDbContext context)
         {
             _roleManager = roleManager;
             _context = context;
+            _userManager = userManager;
         }
 
         public void SeedDatabase()
         {
+            // User roles
             if (!_context.Roles.Any())
             {
                 var roles = new Role[]
                 {
-                    new Role { Name = Role.Roles.admin },
-                    new Role { Name = Role.Roles.instructor },
-                    new Role { Name = Role.Roles.socialWorker }
+                    new Role { Name = RoleEnum.Admin.GetDisplayName() },
+                    new Role { Name = RoleEnum.Instructor.GetDisplayName() },
+                    new Role { Name = RoleEnum.SocialWorker.GetDisplayName() },
+                    new Role { Name = RoleEnum.Sponsor.GetDisplayName() },
                 };
 
                 foreach (var role in roles)
                 {
                     _ = _roleManager.CreateAsync(role).Result;
                 }
+            }
+
+            // Student statuses
+            if (!_context.StudentStatuses.Any())
+            {
+                var studentStatuses = new StudentStatus[]
+                {
+                    new StudentStatus { StudentStatusId = StudentStatusEnum.Applicant, Description =   StudentStatusEnum.Applicant.GetDisplayName() },
+                    new StudentStatus { StudentStatusId = StudentStatusEnum.Waitlisted, Description =  StudentStatusEnum.Waitlisted.GetDisplayName() },
+                    new StudentStatus { StudentStatusId = StudentStatusEnum.Active, Description =      StudentStatusEnum.Active.GetDisplayName() },
+                    new StudentStatus { StudentStatusId = StudentStatusEnum.Graduated, Description =   StudentStatusEnum.Graduated.GetDisplayName() },
+                    new StudentStatus { StudentStatusId = StudentStatusEnum.Dropped, Description =     StudentStatusEnum.Dropped.GetDisplayName() }
+                };
+
+                _context.AddRange(studentStatuses);
+                _context.SaveChanges();
+            }
+
+            // Attendance Statuses
+            if (!_context.AttendanceStatuses.Any())
+            {
+                var attendanceStatuses = new AttendanceStatus[]
+                {
+                    new AttendanceStatus { AttendanceStatusId = AttendanceStatusEnum.OnTime, Description = AttendanceStatusEnum.OnTime.GetDisplayName() },
+                    new AttendanceStatus { AttendanceStatusId = AttendanceStatusEnum.Late, Description =   AttendanceStatusEnum.Late.GetDisplayName() },
+                    new AttendanceStatus { AttendanceStatusId = AttendanceStatusEnum.Absent, Description = AttendanceStatusEnum.Absent.GetDisplayName() },
+                };
+
+                _context.AttendanceStatuses.AddRange(attendanceStatuses);
+                _context.SaveChanges();
+            }
+
+            // Schedule
+            if (!_context.Schedules.Any())
+            {
+                // Loop over each day of the week
+                foreach (DayOfWeek dayOfWeek in Enum.GetValues(typeof(DayOfWeek)))
+                {
+                    // Loop over each hour of the day
+                    for (int i = 0; i < 24; i++)
+                    {
+                        // Each schedule item is a one-hour block
+                        _context.Schedules.Add(new Schedule() { DayOfWeek = dayOfWeek, StartTime = new TimeSpan(i, 0, 0), EndTime =  new TimeSpan(i == 23 ? 0 : i, 0, 0) });
+                        _context.SaveChanges(); // Save synchronously to preserver order
+                    }
+                }
+            }
+
+            // Courses
+            if (!_context.Courses.Any())
+            {
+                var courses = new Course[]
+                {
+                    new Course { Name = "English Level 1" },
+                    new Course { Name = "English Level 2" },
+                    new Course { Name = "IT Level 1" }
+                };
+
+                _context.Courses.AddRange(courses);
+                _context.SaveChanges();
+            }
+
+            // Terms
+            if (!_context.Terms.Any())
+            {
+                for (int year = 2020; year <= 2025; year++)
+                {
+                    _context.Terms.Add(new Term() { TimeOfYear = TimeOfYear.Spring, Description = $"Spring {year}", StartDate = new DateTime(year, 1, 1), EndDate = new DateTime(year, 4, 15) });
+                    _context.Terms.Add(new Term() { TimeOfYear = TimeOfYear.Summer, Description = $"Summer {year}", StartDate = new DateTime(year, 5, 1), EndDate = new DateTime(year, 8, 15) });
+                    _context.Terms.Add(new Term() { TimeOfYear = TimeOfYear.Fall, Description = $"Fall {year}", StartDate = new DateTime(year, 9, 1), EndDate = new DateTime(year, 12, 15) });
+                    _context.SaveChanges(); // Save synchronously to preserver order
+                }
+            }
+
+            // Add super user
+            if (!_context.Users.Any())
+            {
+                var user = new User() { FirstName = "Admin", LastName = "", Email = "Admin", UserName = "Admin" };
+                var x = _userManager.CreateAsync(user, "Secret123$").Result;
+                var y = _userManager.AddToRoleAsync(user, RoleEnum.Admin.GetDisplayName()).Result;
             }
         }
     }
