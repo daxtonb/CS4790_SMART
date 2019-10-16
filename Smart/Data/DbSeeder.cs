@@ -80,7 +80,7 @@ namespace Smart.Data
                     for (int i = 0; i < 24; i++)
                     {
                         // Each schedule item is a one-hour block
-                        _context.Schedules.Add(new Schedule() { DayOfWeek = dayOfWeek, StartTime = new TimeSpan(i, 0, 0), EndTime =  new TimeSpan(i == 23 ? 0 : i, 0, 0) });
+                        _context.Schedules.Add(new Schedule() { DayOfWeek = dayOfWeek, StartTime = new TimeSpan(i, 0, 0), EndTime =  new TimeSpan(i == 23 ? 0 : i + 1, 0, 0) });
                         _context.SaveChanges(); // Save synchronously to preserver order
                     }
                 }
