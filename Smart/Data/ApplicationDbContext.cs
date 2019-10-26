@@ -42,6 +42,7 @@ namespace Smart.Data
         public DbSet<PublicSchoolClassSchedule> PublicSchoolClassSchedules { get; set; }
         public DbSet<StudentPublicSchoolClass> StudentPublicSchoolClasss { get; set; }
         public DbSet<Note> Notes { get; set; }
+        public DbSet<NoteType> NoteTypes { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<AttendanceStatus> AttendanceStatuses { get; set; }
         public DbSet<StudentStatus> StudentStatuses { get; set; }

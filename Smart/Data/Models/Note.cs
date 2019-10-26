@@ -12,9 +12,11 @@ namespace Smart.Data.Models
         public int NoteId { get; set; }
         public int Studentid { get; set; }
         public int UserId { get; set; }
+        public int NoteTypeId { get; set; }
         public string Text { get; set; }
 
         public virtual Student Student { get; set; }
         public virtual User User { get; set; }
+        public virtual NoteType NoteType { get; set; }
     }
 }
