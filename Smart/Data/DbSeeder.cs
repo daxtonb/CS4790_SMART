@@ -119,6 +119,26 @@ namespace Smart.Data
                 var x = _userManager.CreateAsync(user, "Secret123$").Result;
                 var y = _userManager.AddToRoleAsync(user, RoleEnum.Admin.GetDisplayName()).Result;
             }
+
+            // Add sample student
+            if (!_context.Students.Any())
+            {
+                _context.Students.Add(new Student()
+                {
+                    Address = "123 N Street",
+                    LocationLattitude = -18.423459,
+                    LocationLongitude = 35.631460,
+                    DateOfBirth = DateTime.Today.AddYears(-15),
+                    FirstName = "Sample",
+                    LastName = "Student",
+                    GuardianName = "Mom Sample",
+                    Phone = "5551234567",
+                    PublicSchoolLevel = 9,
+                    Village = "Village",
+                    StudentStatusId = StudentStatusEnum.Active,
+                });
+                _context.SaveChanges();
+            }
         }
     }
 }
