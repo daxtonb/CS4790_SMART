@@ -23,7 +23,7 @@ namespace Smart.Data.Models
         public override string Email { get; set; }
 
         public virtual ICollection<ApplicantRating> ApplicantRatings { get; set; }
-        public virtual ICollection<ClassInstructor> ClassInstructors { get; set; }
+        public virtual ICollection<Class> Classes { get; set; }
         public virtual ICollection<Note> Notes { get; set; }
         public virtual ICollection<Event> Events { get; set; }
         public virtual ICollection<Error> Errors { get; set; }

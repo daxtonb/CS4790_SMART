@@ -32,7 +32,6 @@ namespace Smart.Data
         public DbSet<Term> Terms { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<ClassSchedule> Classeschedules { get; set; }
-        public DbSet<ClassInstructor> ClassInstructors { get; set; }
         public DbSet<StudentClass> StudentClasses { get; set; }
         public DbSet<ApplicantRating> ApplicantRatings { get; set; }
         public DbSet<RatingCirterium> RatingCirteria { get; set; }
@@ -52,7 +51,6 @@ namespace Smart.Data
             base.OnModelCreating(builder);
 
             // Set up composite keys
-            builder.Entity<ClassInstructor>().HasKey(c => new { c.ClassId, c.UserId });
             builder.Entity<StudentClass>().HasKey(s => new { s.ClassId, s.StudentId });
             builder.Entity<Attendance>().HasKey(a => new { a.StudentId, a.ClassId, a.Date }); // A student can only have attendance in a course once a day
             builder.Entity<ClassSchedule>().HasKey(c => new { c.ClassId, c.ScheduleId });

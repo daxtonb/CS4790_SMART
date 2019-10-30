@@ -16,8 +16,6 @@ namespace Smart.Data.Models
         public DateTime Date { get; set; }
         [Column(TypeName = "time(0)")]
         public TimeSpan? TimeIn { get; set; }
-        [Column(TypeName = "time(0)")]
-        public TimeSpan? TimeOut { get; set; }
         public AttendanceStatusEnum AttendanceStatusId { get; set; }
 
         public virtual Student Student { get; set; }
