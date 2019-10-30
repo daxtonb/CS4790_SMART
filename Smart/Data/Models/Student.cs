@@ -23,8 +23,8 @@ namespace Smart.Data.Models
         public string Address { get; set; }
         [MaxLength(64)]
         public string Village { get; set; }
-        public decimal LocationLattitude { get; set; }
-        public decimal LocationLongitude { get; set; }
+        public double LocationLattitude { get; set; }
+        public double LocationLongitude { get; set; }
         public byte PublicSchoolLevel { get; set; }
         [MaxLength(64)]
         public string GuardianName { get; set; }
