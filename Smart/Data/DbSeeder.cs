@@ -116,8 +116,8 @@ namespace Smart.Data
             if (!_context.Users.Any())
             {
                 var user = new User() { FirstName = "Admin", LastName = "", Email = "Admin", UserName = "Admin" };
-                var x = _userManager.CreateAsync(user, "Secret123$").Result;
-                var y = _userManager.AddToRoleAsync(user, RoleEnum.Admin.GetDisplayName()).Result;
+                _userManager.CreateAsync(user, "Secret123$").Wait();
+                _userManager.AddToRoleAsync(user, RoleEnum.Admin.GetDisplayName()).Wait();
             }
 
             // Add sample student

@@ -338,3 +338,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+#wwwroot dreictory
+/LearningManagementSystem/wwwroot/files

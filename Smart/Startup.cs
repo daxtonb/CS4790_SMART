@@ -14,6 +14,7 @@ using Smart.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Smart.Data.Models;
+using Smart.Services;
 
 namespace Smart
 {
@@ -56,6 +57,7 @@ namespace Smart
             }
 
             services.AddTransient<DbSeeder>();
+            services.AddTransient<IFileManager, WwwRootFileManager>();
             services.AddHttpContextAccessor();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
