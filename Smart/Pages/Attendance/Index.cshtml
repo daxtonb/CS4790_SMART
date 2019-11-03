@@ -1,0 +1,51 @@
+﻿@page
+@model Smart.Pages.Attendance.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="row">
+    <h1>Attendance </h1>
+</div>
+<div class="row">
+    <table class="table table-striped border">
+        <thead>
+            <tr class="table-secondary">
+
+                <th>
+                    <h4>Student Id</h4>
+                </th>
+                <th>
+                    <h4>Class Id</h4>
+                </th>
+                <th>
+                    <h4>Date</h4>
+                </th>
+                <th>
+                    <h4>TimeIn</h4>
+                </th>
+
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="width:150px">
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-success text-white">
+                            <i>Status</i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<a asp-page="Import" class="btn btn-info"><i class="fas fa-file-import"></i> &nbsp;  Import Attendance File </a>
+
+
+
