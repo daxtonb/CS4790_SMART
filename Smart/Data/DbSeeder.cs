@@ -70,6 +70,17 @@ namespace Smart.Data
                 _context.SaveChanges();
             }
 
+            //Test Rating Criteria
+            if(!_context.RatingCirteria.Any())
+            {
+                var ratingCriteria = new RatingCirterium[]
+                {
+                    new RatingCirterium { RatingCirteriumId = 1, Description = "Poverty Score", MaxScore = 10 },
+                    new RatingCirterium { RatingCirteriumId = 2, Description = "Academic Performance Score", MaxScore = 10 },
+                    new RatingCirterium { RatingCirteriumId = 3, Description = "Test Score", MaxScore = 10 },
+                };
+            }
+
             // Schedule
             if (!_context.Schedules.Any())
             {

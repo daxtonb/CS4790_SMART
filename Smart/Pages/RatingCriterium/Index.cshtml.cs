@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Application
+namespace Smart.Pages.RatingCriterium
 {
     public class IndexModel : PageModel
     {
@@ -19,11 +19,11 @@ namespace Smart.Pages.Application
             _context = context;
         }
 
-        public IList<Student> Student { get;set; }
+        public IList<RatingCirterium> RatingCirterium { get;set; }
 
         public async Task OnGetAsync()
         {
-            Student = await _context.Students.Include(s => s.StudentStatus).ToListAsync();  //change to where status != active or graduated
+            RatingCirterium = await _context.RatingCirteria.ToListAsync();
         }
     }
 }

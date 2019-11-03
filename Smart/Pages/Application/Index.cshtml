@@ -7,14 +7,15 @@
 
 @*
     TO DO
-        - Only show applicants!
+        - Only show applicants! (non students)
         - Add search table search functionality
         - create view model to show application rating and status (?)
+        - Rated checkbox
 *@ 
 
-<h1>Applicants</h1>
+<h2>Applicants</h2><br/>
 
-<table class="table table-striped border col-md-12">
+<table class="table table-striped border col-md-12" id="applicantTable">
     <thead>
         <tr>
             <th>
@@ -24,34 +25,13 @@
                 @Html.DisplayNameFor(model => model.Student[0].LastName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Student[0].DateOfBirth)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Student[0].Address)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Student[0].Village)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Student[0].LocationLattitude)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Student[0].LocationLongitude)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Student[0].PublicSchoolLevel)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Student[0].GuardianName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Student[0].Phone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Student[0].Photo)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Student[0].StudentStatus)
+            </th>
+            <th>
+                Rated
             </th>
             <th></th>
         </tr>
@@ -67,38 +47,22 @@
                 @Html.DisplayFor(modelItem => item.LastName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DateOfBirth)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Village)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LocationLattitude)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LocationLongitude)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.PublicSchoolLevel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GuardianName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Photo)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StudentStatus.Description)
             </td>
+            <td>
+                <input type="checkbox" name="isRated" value="idk" onclick="return false">  @*needs to be tied to something, the user can't check them*@
+            </td>
+
+            @*Button Group*@
             <td style="width:150px">
                 <div class="btn-group" role="group">
-                    <a class="btn btn-primary text-white" asp-page="./Edit"asp-route-id="@item.StudentId">
+                    <a class="btn btn-warning text-white" asp-page="Rating" asp-route-Id="@item.StudentId">
+                        <i class="fas fa-star"></i>
+                    </a>
+                    <a class="btn btn-primary text-white" asp-page="Edit" asp-route-id="@item.StudentId">
                         <i class="fas fa-edit"></i>
                     </a>
                     <a class="btn btn-success text-white" asp-page="Details" asp-route-Id="@item.StudentId">
@@ -120,4 +84,4 @@
     </tbody>
 </table>
 
-<a asp-page="Create" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Create New Student </a>
+<a asp-page="Create" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Create New Applicant </a>

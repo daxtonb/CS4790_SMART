@@ -8,25 +8,24 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Application
+namespace Smart.Pages.RatingCriterium
 {
     public class CreateModel : PageModel
     {
-        private readonly ApplicationDbContext _context;
+        private readonly Smart.Data.ApplicationDbContext _context;
 
-        public CreateModel(ApplicationDbContext context)
+        public CreateModel(Smart.Data.ApplicationDbContext context)
         {
             _context = context;
         }
 
         public IActionResult OnGet()
         {
-        ViewData["StudentStatusId"] = new SelectList(_context.StudentStatuses, "StudentStatusId", "Description");
             return Page();
         }
 
         [BindProperty]
-        public Student Student { get; set; }
+        public RatingCirterium RatingCirterium { get; set; }
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -35,8 +34,9 @@ namespace Smart.Pages.Application
                 return Page();
             }
 
-            _context.Students.Add(Student);
+            _context.RatingCirteria.Add(RatingCirterium);
             await _context.SaveChangesAsync();
+
             return RedirectToPage("./Index");
         }
     }

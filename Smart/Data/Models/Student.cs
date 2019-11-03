@@ -47,6 +47,7 @@ namespace Smart.Data.Models
 
         public StudentStatusEnum StudentStatusId { get; set; }
 
+        [Display(Name = "Status")]
         public virtual StudentStatus StudentStatus { get; set; }
 
         public virtual ICollection<ApplicantRating> ApplicantRatings { get; set; }

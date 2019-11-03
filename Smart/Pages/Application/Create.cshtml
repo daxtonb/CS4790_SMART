@@ -5,9 +5,8 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h2>Create Student</h2>
 
-<h4>Student</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -72,9 +71,10 @@
                 <label asp-for="Student.StudentStatusId" class="control-label"></label>
                 <select asp-for="Student.StudentStatusId" class="form-control" asp-items="ViewBag.StudentStatusId"></select>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-success" />
-                <a asp-page="Index" class="btn btn-info"></i> &nbsp; Back to List </a>
+            <div class="form-group row ">
+                <div class="col-12">
+                    <partial name="_CreateButtons" />
+                </div>
             </div>
         </form>
     </div>
