@@ -23,12 +23,28 @@
             </dd>
         </dl>
 
-        <div class="form-group">
+        @*<div class="form-group">
             <label asp-for="ApplicantRating.ScoreAssigned" class="control-label"></label>
             <input asp-for="ApplicantRating.ScoreAssigned" class="control-label" />
             <span asp-validation-for="ApplicantRating.RatingCirterium.Description" class="text-danger"></span>
-        </div>
+        </div>*@
 
+        @foreach (var item in Model.RatingCirterium)
+        {
+            <div>
+                @item.Description
+                @*<input asp-for="ApplicantRating.ScoreAssigned" class="control-label" />*@
+                / @item.MaxScore
+            </div>
+        }
+            
+        <form method="post">
+            <div class="form-group row ">
+                <div class="col-2">
+                    <partial name="_EditButtons" />
+                </div>
+            </div>
+        </form>
 
         @*<div class="form-group">
             <label asp-for="ApplicantRating.RatingCirterium.Description" class="control-label"></label>

@@ -8,6 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
 
+//Okay, so each applicant has multiple ratings. Each user only rates once per student. 
+// 1. ApplicantRating.StudentId obviously matches Student.StudentId
+// 2. ApplicantRatingId is a unique PK for each rating
+// 3. UserId connects to the AspNetUser.Id (is the identity of the reviewer)
+// 4. RatingCriteriumId ???
+// 5. TermId ?? (does it change every term somehow)?
+
 namespace Smart.Pages.Application
 {
     public class RatingModel : PageModel
@@ -20,20 +27,11 @@ namespace Smart.Pages.Application
         }
 
         public ApplicantRating ApplicantRating { get; set; }
-
+        public IList<RatingCirterium> RatingCirterium { get; set; }
         public Student Student { get; set; }
 
-        //I don't know if ratings needs a onGet because it the ratings don't exist yet in the database and what not...
-        //public async Task<IActionResult> OnGetAsync(int? id)
-        //{
-        //    if (id == null) return NotFound();
-
-        //    //ApplicantRating = await _context.ApplicantRatings.FirstOrDefaultAsync(a => ApplicantRating.ApplicantRatingId == id);
-
-        //    //if (ApplicantRating == null) return NotFound();
-
-        //    return Page();
-        //}
+        public int studentScore;
+        public int possibleScore;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -43,6 +41,8 @@ namespace Smart.Pages.Application
 
             if (Student == null) return NotFound();
 
+            RatingCirterium = await _context.RatingCirteria.ToListAsync();
+
             return Page();
         }
 
@@ -50,10 +50,19 @@ namespace Smart.Pages.Application
         {
             if (id == null) return NotFound();
 
-            ApplicantRating newApplicationRating = new ApplicantRating
+            ApplicantRating newApplicationRating = new ApplicantRating  //do i need to do this?
             {
                 ApplicantRatingId = (int)id //convert from int? to int
             };
+
+            RatingCirterium = await _context.RatingCirteria.ToListAsync();
+
+            foreach (var item in RatingCirterium)
+            {
+                possibleScore += item.MaxScore;
+            }
+
+            //newApplicationRating.Score = studentScore / possibleScore ? (given in a percentage?)
 
             _context.ApplicantRatings.Add(newApplicationRating);
             await _context.SaveChangesAsync();
