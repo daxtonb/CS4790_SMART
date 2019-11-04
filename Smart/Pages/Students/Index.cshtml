@@ -59,6 +59,8 @@
     <tbody>
         @foreach (var item in Model.Student)
         {
+            @if ((string)item.StudentStatus.Description != "Applicant")
+            {
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.FirstName)
@@ -116,6 +118,7 @@
                         <a asp-page="./Delete" asp-route-id="@item.StudentId">Delete</a>
                     </td>*@
             </tr>
+            }
         }
     </tbody>
 </table>

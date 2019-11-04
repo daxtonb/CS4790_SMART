@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Student
+namespace Smart.Pages.Students
 {
     public class CreateModel : PageModel
     {
