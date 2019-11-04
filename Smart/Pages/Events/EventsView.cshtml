@@ -1,0 +1,36 @@
+﻿@page
+@model MyApp.Namespace.EventsViewModel
+@{
+}
+
+<div class="row">
+    <div class="col-4">
+        <h2>Events</h2>
+    </div>    
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <table class="table table-striped border">
+            <thead>
+                <tr>
+                    <th>Event ID</th>
+                    <th>Event</th>
+                    <th>User Logged In</th>
+                    <th>Date Of Event</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var myEvent in Model.MyEvents)
+                {
+                    <tr>
+                        <td>@myEvent.EventId</td>
+                        <td>@myEvent.Description</td>
+                        <td>@myEvent.User</td>
+                        <td>@myEvent.DateTime</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

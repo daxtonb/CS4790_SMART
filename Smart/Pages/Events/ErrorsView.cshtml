@@ -1,0 +1,39 @@
+﻿@page
+@model MyApp.Namespace.ErrorsViewModel
+@{
+}
+
+
+<div class="row">
+    <div class="col-4">
+        <h2>Errors</h2>
+    </div>    
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <table class="table table-striped border">
+            <thead>
+                <tr>
+                    <th>Error ID</th>
+                    <th>Message</th>
+                    <th>Stack Trace</th>
+                    <th>User Logged In</th>
+                    <th>Date Of Error</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var error in Model.MyErrors)
+                {
+                    <tr>
+                        <td>@error.ErrorId</td>
+                        <td>@error.Message</td>
+                        <td>@error.StackTrace</td>
+                        <td>User Logged In</td>
+                        <td>@error.DateTime</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
