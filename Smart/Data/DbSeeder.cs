@@ -82,7 +82,7 @@ namespace Smart.Data
             }
 
             // Schedule
-            if (!_context.Schedules.Any())
+            if (!_context.ScheduleAvailabilities.Any())
             {
                 // Loop over each day of the week
                 foreach (DayOfWeek dayOfWeek in Enum.GetValues(typeof(DayOfWeek)))
@@ -91,7 +91,7 @@ namespace Smart.Data
                     for (int i = 0; i < 24; i++)
                     {
                         // Each schedule item is a one-hour block
-                        _context.Schedules.Add(new Schedule() { DayOfWeek = dayOfWeek, StartTime = new TimeSpan(i, 0, 0), EndTime =  new TimeSpan(i == 23 ? 0 : i + 1, 0, 0) });
+                        _context.ScheduleAvailabilities.Add(new ScheduleAvailability() { DayOfWeek = dayOfWeek, StartTime = new TimeSpan(i, 0, 0), EndTime =  new TimeSpan(i == 23 ? 0 : i + 1, 0, 0) });
                         _context.SaveChanges(); // Save synchronously to preserver order
                     }
                 }

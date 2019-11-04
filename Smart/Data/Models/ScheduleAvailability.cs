@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Smart.Data.Models
 {
-    [Table(nameof(Schedule))]
-    public class Schedule
+    [Table(nameof(ScheduleAvailability))]
+    public class ScheduleAvailability
     {
-        public int ScheduleId { get; set; }
+        public int ScheduleAvailabilityId { get; set; }
         public DayOfWeek DayOfWeek { get; set; }
         [Column(TypeName = "time(0)")]
         public TimeSpan StartTime { get; set; }

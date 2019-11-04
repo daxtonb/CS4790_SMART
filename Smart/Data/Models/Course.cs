@@ -11,6 +11,7 @@ namespace Smart.Data.Models
     public class Course
     {
         public int CourseId { get; set; }
+        [Required]
         [MaxLength(128)]
         public string Name { get; set; }
 

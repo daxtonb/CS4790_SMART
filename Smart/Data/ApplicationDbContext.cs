@@ -37,7 +37,7 @@ namespace Smart.Data
         public DbSet<RatingCirterium> RatingCirteria { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Error> Errors { get; set; }
-        public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<ScheduleAvailability> ScheduleAvailabilities { get; set; }
         public DbSet<PublicSchoolClassSchedule> PublicSchoolClassSchedules { get; set; }
         public DbSet<StudentPublicSchoolClass> StudentPublicSchoolClasss { get; set; }
         public DbSet<Note> Notes { get; set; }
@@ -53,11 +53,11 @@ namespace Smart.Data
             // Set up composite keys
             builder.Entity<StudentClass>().HasKey(s => new { s.ClassId, s.StudentId });
             builder.Entity<Attendance>().HasKey(a => new { a.StudentId, a.ClassId, a.Date }); // A student can only have attendance in a course once a day
-            builder.Entity<ClassSchedule>().HasKey(c => new { c.ClassId, c.ScheduleId });
+            builder.Entity<ClassSchedule>().HasKey(c => new { c.ClassId, c.ScheduleAvailabilityId });
             builder.Entity<StudentAssessment>().HasKey(s => new { s.AssessmentId, s.StudentId }); // A student can only be assessed once for an assessment
 
             // Set-up Enum conversions
-            builder.Entity<Schedule>().Property(c => c.DayOfWeek).HasConversion(new EnumToNumberConverter<DayOfWeek, byte>());
+            builder.Entity<ScheduleAvailability>().Property(c => c.DayOfWeek).HasConversion(new EnumToNumberConverter<DayOfWeek, byte>());
             builder.Entity<Term>().Property(t => t.TimeOfYear).HasConversion(new EnumToNumberConverter<TimeOfYear, byte>());
             builder.Entity<StudentPublicSchoolClass>().Property(s => s.TimeOfYear).HasConversion(new EnumToNumberConverter<TimeOfYear, byte>());
             builder.Entity<Student>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());

@@ -11,9 +11,9 @@ namespace Smart.Data.Models
     {
         public int PublicSchoolClassScheduleId { get; set; }
         public int StudentPublicSchoolClassId { get; set; }
-        public int ScheduleId { get; set; }
+        public int ScheduleAvailabilityId { get; set; }
 
         public virtual StudentPublicSchoolClass StudentPublicSchoolClass { get; set; }
-        public virtual Schedule Schedule { get; set; }
+        public virtual ScheduleAvailability ScheduleAvailabilityd { get; set; }
     }
 }

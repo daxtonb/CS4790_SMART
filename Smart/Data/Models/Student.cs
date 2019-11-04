@@ -36,6 +36,12 @@ namespace Smart.Data.Models
         [Required, Display(Name = "Public School Level")]
         public byte PublicSchoolLevel { get; set; }
 
+        [Required, Display(Name = "English Level")]
+        public byte EnglishLevel { get; set; }
+
+        [Required, Display(Name = "IT Level")]
+        public byte ItLevel { get; set; }
+
         [Required, MaxLength(64), Display(Name = "Guardian Name")]
         public string GuardianName { get; set; }
 

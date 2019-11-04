@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Smart.Data;
 
 namespace Smart.data.migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191104152501_ScheduleAvailability")]
+    partial class ScheduleAvailability
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -228,9 +230,11 @@ namespace Smart.data.migrations
                 {
                     b.Property<int>("ClassId");
 
-                    b.Property<int>("ScheduleAvailabilityId");
+                    b.Property<int>("ScheduleId");
 
-                    b.HasKey("ClassId", "ScheduleAvailabilityId");
+                    b.Property<int?>("ScheduleAvailabilityId");
+
+                    b.HasKey("ClassId", "ScheduleId");
 
                     b.HasIndex("ScheduleAvailabilityId");
 
@@ -374,13 +378,15 @@ namespace Smart.data.migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ScheduleAvailabilityId");
+                    b.Property<int?>("ScheduleAvailabilitydScheduleAvailabilityId");
+
+                    b.Property<int>("ScheduleId");
 
                     b.Property<int>("StudentPublicSchoolClassId");
 
                     b.HasKey("PublicSchoolClassScheduleId");
 
-                    b.HasIndex("ScheduleAvailabilityId");
+                    b.HasIndex("ScheduleAvailabilitydScheduleAvailabilityId");
 
                     b.HasIndex("StudentPublicSchoolClassId");
 
@@ -768,8 +774,7 @@ namespace Smart.data.migrations
 
                     b.HasOne("Smart.Data.Models.ScheduleAvailability", "ScheduleAvailability")
                         .WithMany("ClassSchedules")
-                        .HasForeignKey("ScheduleAvailabilityId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ScheduleAvailabilityId");
                 });
 
             modelBuilder.Entity("Smart.Data.Models.Error", b =>
@@ -822,8 +827,7 @@ namespace Smart.data.migrations
                 {
                     b.HasOne("Smart.Data.Models.ScheduleAvailability", "ScheduleAvailabilityd")
                         .WithMany("PublicSchoolClassSchedules")
-                        .HasForeignKey("ScheduleAvailabilityId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ScheduleAvailabilitydScheduleAvailabilityId");
 
                     b.HasOne("Smart.Data.Models.StudentPublicSchoolClass", "StudentPublicSchoolClass")
                         .WithMany("PublicSchoolClassSchedules")
