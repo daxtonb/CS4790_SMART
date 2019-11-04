@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Student
+namespace Smart.Pages.Students
 {
     public class IndexModel : PageModel
     {

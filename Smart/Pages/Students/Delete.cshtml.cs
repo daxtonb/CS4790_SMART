@@ -8,17 +8,18 @@ using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Student
+namespace Smart.Pages.Students
 {
-    public class DetailsModel : PageModel
+    public class DeleteModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
 
-        public DetailsModel(Smart.Data.ApplicationDbContext context)
+        public DeleteModel(Smart.Data.ApplicationDbContext context)
         {
             _context = context;
         }
 
+        [BindProperty]
         public Student Student { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
@@ -36,6 +37,24 @@ namespace Smart.Pages.Student
                 return NotFound();
             }
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Student = await _context.Students.FindAsync(id);
+
+            if (Student != null)
+            {
+                _context.Students.Remove(Student);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToPage("./Index");
         }
     }
 }
