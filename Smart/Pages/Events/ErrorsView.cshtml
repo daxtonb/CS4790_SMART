@@ -1,7 +1,8 @@
 ﻿@page
-@model MyApp.Namespace.ErrorsModel
+@model MyApp.Namespace.ErrorsViewModel
 @{
 }
+
 
 <div class="row">
     <div class="col-4">
@@ -28,6 +29,8 @@
                         <td>@error.ErrorId</td>
                         <td>@error.Message</td>
                         <td>@error.StackTrace</td>
+                        <td>User Logged In</td>
+                        <td>@error.DateTime</td>
                     </tr>
                 }
             </tbody>

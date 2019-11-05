@@ -6,18 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Smart.Data;
-using Smart.Data.Models;
 
 namespace MyApp.Namespace
 {
-    public class ErrorsModel : PageModel
+    public class ErrorsViewModel : PageModel
     {
-        ApplicationDbContext _db;
-        public List<Error> MyErrors {get; set;}
-
-        public ErrorsModel(ApplicationDbContext db)
+        private readonly ApplicationDbContext _db;
+        public List<Smart.Data.Models.Error> MyErrors {get; set;}
+        public ErrorsViewModel(ApplicationDbContext dbContext)
         {
-            this._db = db;
+            _db = dbContext;
         }
 
         public async Task OnGetAsync()
