@@ -23,33 +23,27 @@
             </dd>
         </dl>
 
-        @*<div class="form-group">
-            <label asp-for="ApplicantRating.ScoreAssigned" class="control-label"></label>
-            <input asp-for="ApplicantRating.ScoreAssigned" class="control-label" />
-            <span asp-validation-for="ApplicantRating.RatingCirterium.Description" class="text-danger"></span>
-        </div>*@
-
-        @foreach (var item in Model.RatingCirterium)
-        {
-            <div>
-                @item.Description
-                @*<input asp-for="ApplicantRating.ScoreAssigned" class="control-label" />*@
-                / @item.MaxScore
-            </div>
-        }
-            
         <form method="post">
+        
+            @foreach (var item in Model.RatingCirterium)
+            {
+                <div>
+                    @item.Description
+                    <input type="text" name="inputValues" class="control-label" />
+                    / @item.MaxScore
+                </div>
+            }
+                
+            <div>
+                Comments:
+                <input type="text" name="comment" class="control-label" />
+            </div>
+            
             <div class="form-group row ">
                 <div class="col-2">
-                    <partial name="_EditButtons" />
+                    <partial name="_EditButtons"></partial>
                 </div>
             </div>
         </form>
-
-        @*<div class="form-group">
-            <label asp-for="ApplicantRating.RatingCirterium.Description" class="control-label"></label>
-            <input asp-for="ApplicantRating.RatingCirterium.Description" class="form-control" />
-            <span asp-validation-for="ApplicantRating.RatingCirterium.Description" class="text-danger"></span>
-        </div>*@
 
     </div>
