@@ -47,7 +47,7 @@ namespace Smart.Pages.Classes
                             CourseId = c.CourseId,
                             Capacity = l.Capacity,
                             EnrolledStudentCount = l.Students.Count,
-                            Schedule = CourseClassViewModel.GetScheduleString(l.ClassSchedules.OrderBy(l => l.ScheduleAvailability.DayOfWeek)),
+                            Schedule = CourseClassViewModel.GetScheduleString(l.ClassSchedules.OrderBy(s => s.ScheduleAvailability.DayOfWeek)),
                             InstructorName = l.InstructorUser != null ? l.InstructorUser.LastName + ", " + l.InstructorUser.FirstName : "",
                             TermDescription = l.Term.Description
                         })
@@ -228,9 +228,9 @@ namespace Smart.Pages.Classes
 
         private static string GetDayOfWeekAbbreviation(DayOfWeek dayOfWeek)
         {
-            if (dayOfWeek == DayOfWeek.Thursday)
+            if (dayOfWeek == DayOfWeek.Tuesday || dayOfWeek == DayOfWeek.Thursday)
             {
-                return "Th";
+                return dayOfWeek.ToString().Substring(0, 2);
             }
 
             return dayOfWeek.ToString().Substring(0, 1);
