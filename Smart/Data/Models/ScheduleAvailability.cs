@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Smart.Data.Models
@@ -9,8 +10,10 @@ namespace Smart.Data.Models
     {
         public int ScheduleAvailabilityId { get; set; }
         public DayOfWeek DayOfWeek { get; set; }
+        [DataType(DataType.Time)]
         [Column(TypeName = "time(0)")]
         public TimeSpan StartTime { get; set; }
+        [DataType(DataType.Time)]
         [Column(TypeName = "time(0)")]
         public TimeSpan EndTime { get; set; }
 

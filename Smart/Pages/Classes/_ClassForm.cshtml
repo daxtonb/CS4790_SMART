@@ -1,0 +1,58 @@
+﻿@model Class
+@{
+    var instructors = (IEnumerable<SelectListItem>)ViewData["instructors"];
+    var terms = (IEnumerable<SelectListItem>)ViewData["terms"];
+}
+    <div class="container">
+        <input type="hidden" asp-for="ClassId" />
+        <input type="hidden" asp-for="CourseId" />
+        <div class="form-group">
+            <label asp-for="TermId"></label>
+            <select asp-for="TermId" class="form-control" asp-items="@(new SelectList(terms, "Value", "Text"))"></select>
+            <span asp-validation-for="TermId" class="text-warning"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="InstructorUserId"></label>
+            <select asp-for="InstructorUserId" class="form-control" asp-items="instructors"></select>
+            <span asp-validation-for="InstructorUserId" class="text-warning"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Capacity"></label>
+            <input asp-for="Capacity" class="form-control" />
+            <span asp-validation-for="Capacity" class="text-warning"></span>
+        </div>
+
+        <h4>Schedule</h4>
+        @if (Model.ClassSchedules != null && Model.ClassSchedules.Any())
+        {
+            <partial name="_ClassSchedule" , model="Model.ClassSchedules.Select(c => c.ScheduleAvailability).ToList()" />
+        }
+        else
+        {
+            <partial name="_ClassSchedule" , model="new List<ScheduleAvailability>() { new ScheduleAvailability() }" />
+        }
+        <a class="btn btn-primary text-white m-3" onclick="addSchedule()"><i class="fa fa-plus"></i> Day</a>
+
+    </div>
+<script>
+    function addSchedule() {
+        const scheduleWrapper = document.getElementById('schedule-wrapper');    // Get wrapper
+        const scheduleElement = scheduleWrapper.lastElementChild;               // Take the last schedule element
+        const newScheduleElement = scheduleElement.cloneNode(true);             // Clone the schedule element
+        const inputs = newScheduleElement.getElementsByTagName('INPUT');        // Grab the inputs in the new schedule element
+        const regex = /\[([0-9]+)\]/;                                           // Finds the index value (format: ScheduleAvailabilities[<index>].<PropertyName>)
+
+        // Loop over inputs and update the index value in their name attributes
+        for (const input of inputs) {
+            const num = Number.parseInt(input.name.match(regex)[1]);
+            input.name = input.name.replace(regex, `[${num + 1}]`);
+        }
+
+        // Add element to wrapper
+        scheduleWrapper.appendChild(newScheduleElement);
+
+        // Referesh form validator
+        $.validator.unobtrusive.parse('form');
+    }
+</script>

@@ -13,16 +13,9 @@
 <div class="row">
     <div class="col-6">
         <h2>Schedule</h2>
-    </div>
-    <div class="col-6 text-right">
         <h2>Student Name</h2>
     </div>
 </div>
-<div class="row">
-    
-</div>
-
-
 @for(int i = 0; i < 5; i++)
 {
     @if(currentDayOfWeek > 4)
@@ -31,18 +24,19 @@
     }
 
     <div class="row" style="padding-top: 10px;">
+        <input type="hidden" value="@currentDayOfWeek" id="MyDayOfWeek" />
         <div class="col-12">
             <div class="card">
                     <div class="card-header bg-secondary">
                         <div class="row">
-<div class="col-4">
+                <div class="col-4">
                             <h3>@Model.DaysOfTheWeek[currentDayOfWeek]</h3>
                         </div>
                         <div class="col-4 text-danger" style="vertical-align: text-bottom; text-align: center; margin-top: 10px;">
                             Missing Classes
                         </div>
                         <div class="col-4 text-right">
-                            <a class="btn btn-primary text-white">
+                            <a class="btn btn-primary text-white" asp-page="Create" asp-route-id="">
                                 <i class="fas fa-edit"></i>
                             </a>
                         </div>
@@ -52,6 +46,7 @@
                         <table class="table table-striped border col-md-12">
                             <thead>
                                 <tr>
+                                    <th>Class Id</th>
                                     <th>Time</th>
                                     <th>Class</th>
                                     <th></th>
@@ -59,6 +54,7 @@
                             </thead>
                             <tbody>
                                 <tr>
+                                    <td>Class Id</td>
                                     <td>7:00 - 8:30</td>
                                     <td>English 1</td>
                                     <td class="float-right">
@@ -66,7 +62,7 @@
                                             <a class="btn btn-success text-white">
                                                 <i class="fas fa-list-alt"></i>
                                             </a>
-                                            <a class="btn btn-danger text-white">
+                                            <a class="btn btn-danger text-white" data-toggle="modal" data-target="#DeleteModal">
                                                 <i class="fas fa-trash-alt"></i>
                                             </a>
                                         </div>
@@ -85,155 +81,26 @@
     currentDayOfWeek++;
 }
 
+<!-- Delete Modal -->
+<div class="modal fade" id="DeleteModal" tabIndex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Class</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you'd like to remove the student from
+                    this class? <br>This action can't be undone.
+                </p>
+                <form class="form-group" asp-page="Index" method="post">
+                    <input type="hidden" id="SelectedClass" />
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </form> 
+                
+            </div>
+            
+        </div>
+    </div>
 
-<div class="row">
-    <table class="table table-striped border">
-        <tr class="table-secondary">
-            <th>
-                <h3>Monday</h3>
-            </th>
-            <th class="text-danger">
-                Missing Time Slots
-            </th>
-            <th>
-                <a class="btn btn-primary text-white">
-                        <i class="fas fa-edit"></i>
-                    </a>
-            </th>
-        </tr>
-        <tr>
-            <th></th>
-            <th>Time</th>
-            <th>Class</th>
-        </tr>
-        <tr>
-            <td></td>
-            <td>7:00 - 8:30</td>
-            <td>English 1</td>
-            <td>
-                <div class="btn-group" role="group">
-                    <a class="btn btn-success text-white">
-                        <i class="fas fa-list-alt"></i>
-                    </a>
-                    <a class="btn btn-danger text-white">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>
-                </div>
-            </td>
-        </tr>
-        <tr class="table-secondary">
-            <th>
-                <h3>Tuesday</h3>
-            </th>
-            <th class="text-danger">
-                Missing Time Slots
-            </th>
-            <th>
-                <a class="btn btn-primary text-white">
-                        <i class="fas fa-edit"></i>
-                    </a>
-            </th>
-        </tr>
-        <tr>
-            <th></th>
-            <th>Time</th>
-            <th>Class</th>
-            <th class="float-right">
-                <div class="btn-group" role="group">
-                    <a class="btn btn-success text-white">
-                        <i class="fas fa-list-alt"></i>
-                    </a>
-                    <a class="btn btn-danger text-white">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>
-                </div>
-            </th>
-        </tr>
-        <tr class="table-secondary">
-            <th>
-                Wednesday
-            </th>
-            <th class="text-danger">
-                Missing Time Slots
-            </th>
-            <th>
-                <a class="btn btn-primary text-white">
-                        <i class="fas fa-edit"></i>
-                    </a>
-            </th>
-        </tr>
-        <tr>
-            <th></th>
-            <th>Time</th>
-            <th>Class</th>
-            <th>
-                <div class="btn-group" role="group">
-                    <a class="btn btn-success text-white">
-                        <i class="fas fa-list-alt"></i>
-                    </a>
-                    <a class="btn btn-danger text-white">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>
-                </div>
-            </th>
-        </tr>
-        <tr class="table-secondary">
-            <th>
-                Thursday
-            </th>
-            <th class="text-danger">
-                Missing Time Slots
-            </th>
-            <th>
-                <a class="btn btn-primary text-white">
-                        <i class="fas fa-edit"></i>
-                    </a>
-            </th>
-        </tr>
-        <tr>
-            <th></th>
-            <th>Time</th>
-            <th>Class</th>
-            <th>
-                <div class="btn-group" role="group">
-                    <a class="btn btn-success text-white">
-                        <i class="fas fa-list-alt"></i>
-                    </a>
-                    <a class="btn btn-danger text-white">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>
-                </div>
-            </th>
-        </tr>
-        <tr class="table-secondary">
-            <th>
-                Friday
-            </th>
-            <th class="text-danger">
-                Missing Time Slots
-            </th>
-            <th>
-                <a class="btn btn-primary text-white">
-                        <i class="fas fa-edit"></i>
-                    </a>
-            </th>
-        </tr>
-        <tr>
-            <th></th>
-            <th>Time</th>
-            <th>Class</th>
-            <th>
-                <div class="btn-group" role="group">
-                    <a class="btn btn-success text-white">
-                        <i class="fas fa-list-alt"></i>
-                    </a>
-                    <a class="btn btn-danger text-white">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>
-                </div>
-            </th>
-        </tr>
-
-    </table>
 </div>
-

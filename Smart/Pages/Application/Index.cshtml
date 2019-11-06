@@ -9,8 +9,11 @@
     TO DO
         - Only show applicants! (non students)
         - Add search table search functionality
-        - create view model to show application rating and status (?)
+        - show scores
         - Rated checkbox
+        - FIX UserId & TermId for ApplicantRating!!!!
+        - Add new fields to student.
+        - Rename Criterium variables and everything & add migration (Tell everyone to update)
 *@ 
 
 <h2>Applicants</h2><br/>
@@ -31,7 +34,10 @@
                 @Html.DisplayNameFor(model => model.Student[0].StudentStatus)
             </th>
             <th>
-                Rated
+                Rated?
+            </th>
+            <th>
+                Composite Score
             </th>
             <th></th>
         </tr>
@@ -54,6 +60,9 @@
             </td>
             <td>
                 <input type="checkbox" name="isRated" value="idk" onclick="return false">  @*needs to be tied to something, the user can't check them*@
+            </td>
+            <td>
+                
             </td>
 
             @*Button Group*@

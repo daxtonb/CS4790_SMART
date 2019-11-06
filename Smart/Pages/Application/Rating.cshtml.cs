@@ -8,13 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
 
-//Okay, so each applicant has multiple ratings. Each user only rates once per student. 
-// 1. ApplicantRating.StudentId obviously matches Student.StudentId
-// 2. ApplicantRatingId is a unique PK for each rating
-// 3. UserId connects to the AspNetUser.Id (is the identity of the reviewer)
-// 4. RatingCriteriumId ???
-// 5. TermId ?? (does it change every term somehow)?
-
 namespace Smart.Pages.Application
 {
     public class RatingModel : PageModel
@@ -29,9 +22,12 @@ namespace Smart.Pages.Application
         public ApplicantRating ApplicantRating { get; set; }
         public IList<RatingCirterium> RatingCirterium { get; set; }
         public Student Student { get; set; }
+        
+        [BindProperty]
+        public List<int> InputValues { get; set; }
 
-        public int studentScore;
-        public int possibleScore;
+        [BindProperty]
+        public string Comment { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -41,7 +37,7 @@ namespace Smart.Pages.Application
 
             if (Student == null) return NotFound();
 
-            RatingCirterium = await _context.RatingCirteria.ToListAsync();
+            RatingCirterium = await _context.RatingCirteria.ToListAsync();    //grabbed here to be used in .cshtml
 
             return Page();
         }
@@ -49,23 +45,26 @@ namespace Smart.Pages.Application
         public async Task<IActionResult> OnPostAsync(int? id)
         {
             if (id == null) return NotFound();
-
-            ApplicantRating newApplicationRating = new ApplicantRating  //do i need to do this?
-            {
-                ApplicantRatingId = (int)id //convert from int? to int
-            };
-
+            
             RatingCirterium = await _context.RatingCirteria.ToListAsync();
 
-            foreach (var item in RatingCirterium)
+            for (var i = 0; i < RatingCirterium.Count; i++)
             {
-                possibleScore += item.MaxScore;
+                var applicantRating = new ApplicantRating
+                {
+                    StudentId = (int) id,
+                    UserId = 1,                                                     //THIS IS A TEMP VALUE
+                    RatingCiteriumId = RatingCirterium[i].RatingCirteriumId,        //THIS IS A TEMP VALUE
+                    TermId = 1,                                                     //THIS IS A TEMP VALUE
+                    ScoreAssigned = InputValues[i],                                 //THIS IS A TEMP VALUE
+                    DateTime = DateTime.Now,
+                    Comments = Comment                                        //THIS IS A TEMP VALUE   
+                };
+
+                _context.ApplicantRatings.Add(applicantRating);
+                await _context.SaveChangesAsync();
             }
 
-            //newApplicationRating.Score = studentScore / possibleScore ? (given in a percentage?)
-
-            _context.ApplicantRatings.Add(newApplicationRating);
-            await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
     }

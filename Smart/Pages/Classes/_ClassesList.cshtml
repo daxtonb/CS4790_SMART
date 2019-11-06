@@ -1,0 +1,35 @@
+﻿@model IEnumerable<CourseClassViewModel>
+<table class="table table-sm table-striped">
+    <thead>
+        <tr>
+            <th scope="col">CRN</th>
+            <th scope="col">Term</th>
+            <th scope="col">Schedule</th>
+            <th scope="col">Instructor</th>
+            <th scope="col">Students</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th scope="col">@item.ClassId</th>
+                <td>@item.TermDescription</td>
+                <td>@item.Schedule</td>
+                <td>@item.InstructorName</td>
+                <td>@item.EnrolledStudentCount/@item.Capacity</td>
+                <td>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <a class="btn btn-primary text-white" data-toggle="modal" data-target="#modal" onclick="getClassForm(@item.CourseId, @item.ClassId)">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a class="btn btn-danger text-white" data-toggle="modal" data-target="#modal" onclick="getClassForm(@item.CourseId, @item.ClassId)">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

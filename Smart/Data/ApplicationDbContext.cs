@@ -14,7 +14,7 @@ using Smart.Data.Models;
 
 namespace Smart.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<User, Role, int>
+    public class ApplicationDbContext : IdentityDbContext<User, Role, int, IdentityUserClaim<int>, UserRole, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -67,6 +67,8 @@ namespace Smart.Data
 
             builder.Entity<UserRole>(userRole =>
             {
+                userRole.HasKey(ur => new { ur.UserId, ur.RoleId }); 
+                
                 userRole.HasOne(ur => ur.Role)
                     .WithMany(r => r.UserRoles)
                     .HasForeignKey(ur => ur.RoleId)

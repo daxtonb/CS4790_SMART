@@ -1,0 +1,41 @@
+﻿@model List<ScheduleAvailability>
+<div id="schedule-wrapper" class="p-1">
+
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <div class="row border border-primary pl-1 pr-1 class-schedule">
+            <div class="col-6">
+                <div class="form-group">
+                    <label>Day of Week</label>
+                    @foreach (var day in Enum.GetValues(typeof(DayOfWeek)))
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" @(Model[i].DayOfWeek == (DayOfWeek)day ? "checked" : "") type="radio" name="ScheduleAvailabilities[@i].DayOfWeek" value="@((int)day)">
+                            <label class="form-check-label" for="exampleRadios1">
+                                @(((DayOfWeek)day).ToString())
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label asp-for="@Model[i].StartTime"></label>
+                            <input asp-for="@Model[i].StartTime" name="ScheduleAvailabilities[@i].StartTime" class="form-control" required />
+                            <span asp-validation-for="@Model[i].StartTime" class="text-warning"></span>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label asp-for="@Model[i].EndTime"></label>
+                            <input asp-for="@Model[i].EndTime" name="ScheduleAvailabilities[@i].EndTime" class="form-control" required />
+                            <span asp-validation-for="@Model[i].EndTime" class="text-warning"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

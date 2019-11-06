@@ -19,7 +19,9 @@ namespace Smart.Pages.Application
             _context = context;
         }
 
-        public IList<Student> Student { get;set; }
+        public List<Student> Student { get; set; }
+        public List<RatingCirterium> RatingCirterium { get; set; }
+        
 
         public async Task OnGetAsync()
         {

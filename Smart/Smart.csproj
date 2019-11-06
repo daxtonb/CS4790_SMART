@@ -11,6 +11,13 @@
     <WarningLevel>1</WarningLevel>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Pages\Student\**" />
+    <Content Remove="Pages\Student\**" />
+    <EmbeddedResource Remove="Pages\Student\**" />
+    <None Remove="Pages\Student\**" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
@@ -18,12 +25,15 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.3.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.3.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
+    <PackageReference Include="Microsoft.jQuery.Unobtrusive.Ajax" Version="3.2.6" />
+    <PackageReference Include="Microsoft.jQuery.Unobtrusive.Validation" Version="3.2.11" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
   </ItemGroup>
 
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
+    <Folder Include="Helpers\" />
     <Folder Include="wwwroot\files\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>

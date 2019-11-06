@@ -1,0 +1,115 @@
+﻿@page "{courseId:int?}"
+@model Smart.Pages.Classes.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getCourseForm()"><i class="fa fa-plus"></i> Course</button>
+
+@if (Model.Courses != null && Model.Courses.Any())
+{
+    <div class="accordion" id="accordionExample">
+        @foreach (var course in Model.Courses)
+        {
+            string collapseId = $"collapse-course-{course.Course.CourseId}";
+            bool isSelectedCourse = Model.SelectedCourseId.HasValue && Model.SelectedCourseId.Value == course.Course.CourseId;
+
+            <div class="card">
+                <div class="card-header" data-toggle="collapse" data-target="#@collapseId" aria-expanded="@(isSelectedCourse ? "true": "false")" aria-controls="@collapseId" style="cursor:pointer">
+                    <h4 class="mb-0" style="display:inline-block">
+                        @course.Course.Name&nbsp;(@course.ClassCount)
+                    </h4>
+                    <div class="btn-group btn-group-sm float-right" role="group">
+                        <a class="btn btn-primary text-white" data-toggle="modal" data-target="#modal" onclick="getCourseForm(@course.Course.CourseId)">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a class="btn btn-danger text-white" data-toggle="modal" data-target="#modal" onclick="getCourseForm(@course.Course.CourseId)">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="@collapseId" class="collapse @(isSelectedCourse? "show" : "")" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId)"><i class="fa fa-plus"></i> Class</button>
+                        <div id="course-@course.Course.CourseId-classes">
+                            @if (course.Classes != null && course.Classes.Any())
+                            {
+                                <partial name="_ClassesList" model="course.Classes" />
+                            }
+                            else
+                            {
+                                <div class="alert alert-primary">No Classes have been created yet.</div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-primary">No courses have been created yet.</div>
+}
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="modal-form" method="post">
+                <div class="modal-body" id="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="modal-save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        function getCourseForm(courseId) {
+            const getHandler = 'CourseForm' + (courseId ? '&courseId=' + courseId : '');
+            const postHandler = 'SaveCourse'
+            const modalTitle = `${courseId ? 'Edit' : 'Create'} Course`;
+            getForm(modalTitle, getHandler, postHandler);
+        }
+
+        function getClassForm(courseId, classId) {
+            const getHandler = 'ClassForm&courseId=' + courseId + (classId ? '&classId=' + classId : '');
+            const postHandler = 'SaveClass';
+            const modalTitle = `${classId ? 'Edit' : 'Create'} Class`;
+            console.log(postHandler);
+            getForm(modalTitle, getHandler, postHandler);
+        }
+
+        function getForm(modalTitle, getHandler, postHandler) {
+            const baseUrl = '/Classes?handler=';
+
+            // Add form action
+            $('#modal-form').attr('action', baseUrl + postHandler);
+
+            const modalBody = $('#modal-body');
+
+            // Clear modal body
+            $(modalBody).text('Loading...');
+
+            // Add modal title
+            $('#modal-title').text(modalTitle);
+
+            // Get form HTML and intialize client-side validation
+            $(modalBody).load(baseUrl + getHandler, null, () => { $.validator.unobtrusive.parse('form'); });
+
+        }
+    </script>
+}
