@@ -13,6 +13,8 @@ namespace Smart.Data.Models
         public int RatingCirteriumId { get; set; }
         [Required]
         [MaxLength(512)]
+        public string Title { get; set; }
+        [Required]
         public string Description { get; set; }
         public int MaxScore { get; set; }
 
