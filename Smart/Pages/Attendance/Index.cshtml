@@ -1,0 +1,67 @@
+﻿@page
+@model Smart.Pages.Attendance.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table table-striped border col-md-12">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Attendance[0].TimeIn)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Attendance[0].Student)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Attendance[0].Class)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Attendance[0].AttendanceStatus)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Attendance)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TimeIn)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Student.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Class.ClassId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AttendanceStatus.Description)
+                </td>
+                <td style="width:150px">
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-primary text-white" asp-page="./Edit" asp-route-id="@item.StudentId">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a class="btn btn-success text-white" asp-page="Details" asp-route-Id="@item.StudentId">
+                            <i class="fas fa-list-alt"></i>
+                        </a>
+                        <a class="btn btn-danger text-white" asp-page="Delete" asp-route-Id="@item.StudentId">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-page="Import" class="btn btn-info"><i class="fas fa-file-import"></i> &nbsp;  Import Attendance File </a>
+
