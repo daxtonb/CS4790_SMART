@@ -1,5 +1,5 @@
 ﻿@page
-@model Smart.Pages.Application.EditModel
+@model Smart.Pages.Students.EditModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -55,6 +55,16 @@
                 <span asp-validation-for="Student.PublicSchoolLevel" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Student.EnglishLevel" class="control-label"></label>
+                <input asp-for="Student.EnglishLevel" class="form-control" />
+                <span asp-validation-for="Student.EnglishLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Student.ItLevel" class="control-label"></label>
+                <input asp-for="Student.ItLevel" class="form-control" />
+                <span asp-validation-for="Student.ItLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Student.GuardianName" class="control-label"></label>
                 <input asp-for="Student.GuardianName" class="form-control" />
                 <span asp-validation-for="Student.GuardianName" class="text-danger"></span>
@@ -74,8 +84,10 @@
                 <select asp-for="Student.StudentStatusId" class="form-control" asp-items="ViewBag.StudentStatusId"></select>
                 <span asp-validation-for="Student.StudentStatusId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="form-group row ">
+                <div class="col-12">
+                    <partial name="_EditButtons" />
+                </div>
             </div>
         </form>
     </div>
