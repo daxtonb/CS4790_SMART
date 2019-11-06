@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,9 +16,11 @@ namespace Smart.Pages.Students
     public class EditModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public EditModel(Smart.Data.ApplicationDbContext context)
+        public EditModel(Smart.Data.ApplicationDbContext context, IHostingEnvironment hostingEnvironment)
         {
+            _hostingEnvironment = hostingEnvironment;
             _context = context;
         }
 

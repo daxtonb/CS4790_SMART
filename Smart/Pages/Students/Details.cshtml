@@ -5,6 +5,10 @@
     ViewData["Title"] = "Details";
 }
 
+@{
+    var imagePath = "";
+    imagePath = @"" + Model.Student.Photo;
+}
 <h1>Details</h1>
 
 <div>
@@ -84,7 +88,12 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Student.Phone)
         </dd>
-        
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Student.Photo)
+        </dt>
+        <dd class="col-sm-10">
+            <img src="@imagePath" height="60%" width="40%" />
+        </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Student.StudentStatus)
         </dt>
@@ -98,3 +107,4 @@
         <partial name="_DetailsButtons" />
     </div>
 </div>
+
