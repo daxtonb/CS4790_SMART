@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,8 +12,11 @@ namespace Smart.Data.Models
     {
         public int ClassId { get; set; }
         public int CourseId { get; set; }
+        [Display(Name = "Term")]
         public int TermId { get; set; }
+        [Display(Name = "Instructor")]
         public int InstructorUserId { get; set; }
+        [Range(1,255)]
         public byte Capacity { get; set; }
 
 
