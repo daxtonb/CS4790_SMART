@@ -1,0 +1,17 @@
+﻿@page
+@model Smart.Pages.Scheduling.CreateModel
+@{
+    var classes = (IEnumerable<SelectListItem>)ViewData["schedule"];
+}
+
+<h3>Add New Course</h3>
+
+<form asp-page="Create" method="post">
+    <div class="form-group col-4">
+        <label>Classes Available for @Model.Day</label>
+        <select class="form-control" asp-for="ClassId" asp-items="@(new SelectList(classes, "Value", "Text"))"></select>
+    </div>
+    <div class="form-group col-4">
+        <button type="submit" class="btn btn-success">Add</button>
+    </div>
+</form>

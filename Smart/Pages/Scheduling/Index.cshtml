@@ -1,5 +1,5 @@
 ﻿@page
-@model MyApp.Namespace.IndexModel
+@model Smart.Pages.Scheduling.IndexModel
 @{
     ViewData["Title"] = "Index";
 
@@ -13,7 +13,7 @@
 <div class="row">
     <div class="col-6">
         <h2>Schedule</h2>
-        <h2>Student Name</h2>
+        <h2>@Model.MyStudent.FirstName @Model.MyStudent.LastName</h2>
     </div>
 </div>
 @for(int i = 0; i < 5; i++)
@@ -24,7 +24,6 @@
     }
 
     <div class="row" style="padding-top: 10px;">
-        <input type="hidden" value="@currentDayOfWeek" id="MyDayOfWeek" />
         <div class="col-12">
             <div class="card">
                     <div class="card-header bg-secondary">
@@ -32,11 +31,8 @@
                 <div class="col-4">
                             <h3>@Model.DaysOfTheWeek[currentDayOfWeek]</h3>
                         </div>
-                        <div class="col-4 text-danger" style="vertical-align: text-bottom; text-align: center; margin-top: 10px;">
-                            Missing Classes
-                        </div>
-                        <div class="col-4 text-right">
-                            <a class="btn btn-primary text-white" asp-page="Create" asp-route-id="">
+                        <div class="offset-4 col-4 text-right">
+                            <a class="btn btn-primary text-white" asp-page="Create" asp-route-id="@currentDayOfWeek">
                                 <i class="fas fa-edit"></i>
                             </a>
                         </div>
@@ -53,21 +49,27 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Class Id</td>
-                                    <td>7:00 - 8:30</td>
-                                    <td>English 1</td>
-                                    <td class="float-right">
-                                        <div class="btn-group" role="group">
-                                            <a class="btn btn-success text-white">
-                                                <i class="fas fa-list-alt"></i>
-                                            </a>
-                                            <a class="btn btn-danger text-white" data-toggle="modal" data-target="#DeleteModal">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @foreach(var item in Model.MyClasses)
+                                {
+                                    if(@item.DayOfWeek == @currentDayOfWeek)
+                                    {
+                                    <tr>
+                                        <td>@item.ClassId</td>
+                                        <td>@item.StartTime - @item.EndTime</td>
+                                        <td>@item.CourseName</td>
+                                        <td class="float-right">
+                                            <div class="btn-group" role="group">
+                                                <a class="btn btn-success text-white">
+                                                    <i class="fas fa-list-alt"></i>
+                                                </a>
+                                                <a class="btn btn-danger text-white" data-toggle="modal" data-target="#DeleteModal">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    }
+                                }
                             </tbody>
                             
                             
