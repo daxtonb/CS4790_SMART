@@ -56,6 +56,11 @@ namespace Smart.Pages.Classes
                             InstructorName = l.InstructorUser != null ? l.InstructorUser.LastName + ", " + l.InstructorUser.FirstName : "",
                         })
                 }).ToListAsync();
+            
+            if (SelectedCourseId == null && Courses.Any())
+            {
+                SelectedCourseId = Courses.First().Course.CourseId;
+            }
         }
 
         public async Task<IActionResult> OnGetCourseForm(int courseId)
@@ -194,7 +199,6 @@ namespace Smart.Pages.Classes
     {
         public int ClassId { get; set; }
         public int CourseId { get; set; }
-        public string TermDescription { get; set; }
         public string Schedule { get; set; }
         public string InstructorName { get; set; }
         public int EnrolledStudentCount { get; set; }
