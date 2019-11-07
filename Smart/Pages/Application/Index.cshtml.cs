@@ -20,12 +20,19 @@ namespace Smart.Pages.Application
         }
 
         public List<Student> Student { get; set; }
-        public List<RatingCirterium> RatingCirterium { get; set; }
-        
+        public List<ApplicantRating> ApplicantRating { get; set; }
+        public int ScorePossible { get; set; }
 
         public async Task OnGetAsync()
         {
-            Student = await _context.Students.Include(s => s.StudentStatus).ToListAsync();  //change to where status != active or graduated
+            Student = await _context.Students.Where(a => a.StudentStatusId == StudentStatusEnum.Applicant || a.StudentStatusId == StudentStatusEnum.Waitlisted).ToListAsync(); //.ToListAsync();  //change to where status != active or graduated
+            ApplicantRating = await _context.ApplicantRatings.ToListAsync();
+            var rc= await _context.RatingCirteria.ToListAsync();
+            
+            foreach(var criteria in rc)
+            {
+                ScorePossible += criteria.MaxScore;
+            }
         }
     }
 }
