@@ -102,9 +102,9 @@ namespace Smart.Data
             {
                 var courses = new Course[]
                 {
-                    new Course { Name = "English Level 1" },
-                    new Course { Name = "English Level 2" },
-                    new Course { Name = "IT Level 1" }
+                    new Course { Name = "English Level 1", IsCoreRequirement = true },
+                    new Course { Name = "English Level 2", IsCoreRequirement = true },
+                    new Course { Name = "IT Level 1", IsCoreRequirement = true }
                 };
 
                 _context.Courses.AddRange(courses);
