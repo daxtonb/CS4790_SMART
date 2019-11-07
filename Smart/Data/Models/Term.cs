@@ -21,5 +21,14 @@ namespace Smart.Data.Models
         public TimeOfYear TimeOfYear { get; set; }
 
         public virtual ICollection<Class> Classes { get; set; }
+
+        public static TimeOfYear GetTimeOfYear(DateTime dateTime)
+        {
+            if (dateTime.Month >= 1 && dateTime.Month < 5)
+                return TimeOfYear.Spring;
+            if (dateTime.Month >= 5 && dateTime.Month < 9)
+                return TimeOfYear.Summer;
+            return TimeOfYear.Fall;
+        }
     }
 }
