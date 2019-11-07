@@ -33,9 +33,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Student[0].StudentStatus)
             </th>
-            <th>
-                Rated?
-            </th>
+            @*<th>
+                Rated?  //THIS WILL ONLY SHOW FOR INDIVIDUAL USER VIEW
+            </th>*@
             <th>
                 Composite Score
             </th>
@@ -58,9 +58,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.StudentStatusId)
             </td>
-            <td>
-                <input type="checkbox" name="isRated" value="idk" onclick="return false">  @*needs to be tied to something, the user can't check them*@
-            </td>
+            @*<td>*@
+                @*<input type="checkbox" name="isRated" value="idk" onclick="return false">*@  @*needs to be tied to something, the user can't check them*@
+            @*</td>*@
             <td>
                 @{ 
                     double scoreEarned = 0;
