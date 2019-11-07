@@ -26,9 +26,15 @@ namespace Smart.Pages.Classes
         [BindProperty]
         public IEnumerable<ScheduleAvailability> ScheduleAvailabilities { get; set; }
         public int? SelectedCourseId { get; set; }
-        public async Task OnGet(int? courseId)
+        public TimeOfYear TimeOfYear { get; set; }
+        public int Year { get; set; }
+
+        public async Task OnGet(TimeOfYear? timeOfYear, int? year, int? courseId)
         {
+            TimeOfYear = timeOfYear ?? Term.GetTimeOfYear(DateTime.Now);
+            Year = year ?? DateTime.Now.Year;
             SelectedCourseId = courseId;
+
             Courses = await _context.Courses
                 .Include(c => c.Classes).ThenInclude(c => c.Students)
                 .Include(c => c.Classes).ThenInclude(c => c.InstructorUser)
@@ -38,9 +44,8 @@ namespace Smart.Pages.Classes
                 .Select(c => new CourseViewModel()
                 {
                     Course = c,
-                    ClassCount = c.Classes.Count,
                     Classes = c.Classes
-                        .OrderByDescending(l => l.Term.StartDate)
+                        .Where(l => l.Term.TimeOfYear == TimeOfYear && l.Term.StartDate.Year == Year)
                         .Select(l => new CourseClassViewModel()
                         {
                             ClassId = l.ClassId,
@@ -49,7 +54,6 @@ namespace Smart.Pages.Classes
                             EnrolledStudentCount = l.Students.Count,
                             Schedule = CourseClassViewModel.GetScheduleString(l.ClassSchedules.OrderBy(s => s.ScheduleAvailability.DayOfWeek)),
                             InstructorName = l.InstructorUser != null ? l.InstructorUser.LastName + ", " + l.InstructorUser.FirstName : "",
-                            TermDescription = l.Term.Description
                         })
                 }).ToListAsync();
         }
@@ -78,7 +82,7 @@ namespace Smart.Pages.Classes
             };
         }
 
-        public async Task<IActionResult> OnGetClassForm(int classId, int courseId)
+        public async Task<IActionResult> OnGetClassForm(int classId, int courseId, TimeOfYear timeOfYear, int year)
         {
             Class @class;
 
@@ -86,6 +90,7 @@ namespace Smart.Pages.Classes
             {
                 @class = await _context.Classes
                     .Include(c => c.ClassSchedules).ThenInclude(c => c.ScheduleAvailability)
+                    .Include(c => c.Term)
                     .FirstOrDefaultAsync(c => c.ClassId == classId);
 
                 if (@class == null)
@@ -96,16 +101,8 @@ namespace Smart.Pages.Classes
             else
             {
                 @class = new Class() { CourseId = courseId };
+                @class.Term = new Term() { TimeOfYear = timeOfYear, StartDate = Term.GetStartDate(timeOfYear, year), EndDate = Term.GetEndDate(timeOfYear, year) }; ;
             }
-
-            // Terms
-            ViewData["terms"] = await _context.Terms
-                .OrderBy(t => t.StartDate).ThenBy(t => t.TimeOfYear)
-                .Select(t => new SelectListItem()
-                {
-                    Value = t.TermId.ToString(),
-                    Text = t.Description
-                }).ToListAsync();
 
             // Instructors
             ViewData["instructors"] = await _context.UserRoles.Include(u => u.User)
@@ -124,7 +121,7 @@ namespace Smart.Pages.Classes
             };
         }
 
-        public async Task<IActionResult> OnPostSaveCourse(Course model)
+        public async Task<IActionResult> OnPostSaveCourse(Course model, TimeOfYear timeOfYear, int year)
         {
             if (!ModelState.IsValid)
             {
@@ -145,10 +142,11 @@ namespace Smart.Pages.Classes
                 }
 
                 course.Name = model.Name;
+                course.IsCoreRequirement = model.IsCoreRequirement;
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToPage(new { courseId = model.CourseId });
+            return RedirectToPage(new { timeOfYear = (int)timeOfYear, year, courseId = model.CourseId });
         }
 
         public async Task<IActionResult> OnPostSaveClass(Class model)
@@ -160,6 +158,7 @@ namespace Smart.Pages.Classes
 
             var @class = await _context.Classes
                 .Include(c => c.ClassSchedules).ThenInclude(c => c.ScheduleAvailability)
+                .Include(c => c.Term)
                 .FirstOrDefaultAsync(c => c.ClassId == model.ClassId && c.CourseId == c.CourseId);
 
             // CONDITION: This is a new class
@@ -172,7 +171,6 @@ namespace Smart.Pages.Classes
             {
                 // Update the existing class
                 @class.InstructorUserId = model.InstructorUserId;
-                @class.TermId = model.TermId;
                 @class.Capacity = model.Capacity;
             }
 
@@ -188,7 +186,7 @@ namespace Smart.Pages.Classes
 
             @class.ClassSchedules = ScheduleAvailabilities.Select(s => new ClassSchedule { ScheduleAvailability = s }).ToList();
             await _context.SaveChangesAsync();
-            return RedirectToPage(new { courseId = model.CourseId });
+            return RedirectToPage(new { timeOfYear = (int)@class.Term.TimeOfYear, year = @class.Term.StartDate.Year, courseId = @class.CourseId });
         }
     }
 
@@ -240,7 +238,6 @@ namespace Smart.Pages.Classes
     public class CourseViewModel
     {
         public Course Course { get; set; }
-        public int ClassCount { get; set; }
         public IEnumerable<CourseClassViewModel> Classes { get; set; }
     }
 }
