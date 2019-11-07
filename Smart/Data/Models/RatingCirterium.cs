@@ -15,6 +15,7 @@ namespace Smart.Data.Models
         [MaxLength(512)]
         public string Description { get; set; }
         public int MaxScore { get; set; }
+        public string Title { get; set; }
 
         public virtual ICollection<ApplicantRating> ApplicantRatings { get; set; }
     }
