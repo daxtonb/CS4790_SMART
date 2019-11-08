@@ -132,5 +132,10 @@ namespace Smart.Data
 
             Events.AddRange(events);
         }
+
+        /// <summary>
+        /// Log the change and the responsible user
+        /// </summary>
+        public DbSet<Smart.Data.Models.File> File { get; set; }
     }
 }
