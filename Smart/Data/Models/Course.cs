@@ -14,7 +14,8 @@ namespace Smart.Data.Models
         [Required]
         [MaxLength(128)]
         public string Name { get; set; }
-
+        [Display(Name = "Is Core Requirement")]
+        public bool IsCoreRequirement { get; set; }
         public virtual ICollection<Class> Classes { get; set; }
     }
 }

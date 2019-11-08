@@ -5,5 +5,5 @@ using System.Threading.Tasks;
 
 namespace Smart.Data.Models
 {
-    public enum TimeOfYear { Fall, Spring, Summer }
+    public enum TimeOfYear { Spring = 1, Summer = 2, Fall = 3 }
 }

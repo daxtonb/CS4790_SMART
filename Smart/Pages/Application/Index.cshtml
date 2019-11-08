@@ -33,9 +33,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Student[0].StudentStatus)
             </th>
-            <th>
-                Rated?
-            </th>
+            @*<th>
+                Rated?  //THIS WILL ONLY SHOW FOR INDIVIDUAL USER VIEW
+            </th>*@
             <th>
                 Composite Score
             </th>
@@ -56,13 +56,30 @@
                 @Html.DisplayFor(modelItem => item.PublicSchoolLevel)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StudentStatus.Description)
+                @Html.DisplayFor(modelItem => item.StudentStatusId)
             </td>
+            @*<td>*@
+                @*<input type="checkbox" name="isRated" value="idk" onclick="return false">*@  @*needs to be tied to something, the user can't check them*@
+            @*</td>*@
             <td>
-                <input type="checkbox" name="isRated" value="idk" onclick="return false">  @*needs to be tied to something, the user can't check them*@
-            </td>
-            <td>
-                
+                @{ 
+                    double scoreEarned = 0;
+                    double finalScore = 0;
+
+                    foreach(var rating in Model.ApplicantRating)
+                    {
+                        if(rating.StudentId == item.StudentId)
+                        {
+                            scoreEarned += rating.ScoreAssigned;
+                        }
+                    }
+
+                    finalScore = (scoreEarned / Model.ScorePossible) * 100;
+
+                }
+
+                @Html.DisplayFor(modelItem => finalScore)%
+
             </td>
 
             @*Button Group*@

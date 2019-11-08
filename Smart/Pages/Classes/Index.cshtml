@@ -1,9 +1,27 @@
-﻿@page "{courseId:int?}"
+﻿@page "{timeOfYear:int?}/{year:int?}/{courseId:int?}"
 @model Smart.Pages.Classes.IndexModel
 @{
     ViewData["Title"] = "Index";
+    bool userCanEdit = Model.Year > DateTime.Now.Year || (Model.Year == DateTime.Now.Year && Model.TimeOfYear > Term.GetTimeOfYear(DateTime.Now));
 }
-<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getCourseForm()"><i class="fa fa-plus"></i> Course</button>
+<h4>Term</h4>
+<div class="row">
+    <div class="col-3">
+        <div class="form-group">
+            <select asp-for="TimeOfYear" asp-items="Html.GetEnumSelectList<TimeOfYear>()" class="form-control" onchange="window.location.replace('/Classes/' + this.value + '/@(Model.Year)@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="form-group">
+            <input asp-for="Year" class="form-control" onchange="window.location.replace('/Classes/@((int)Model.TimeOfYear)/' + this.value@(Model.SelectedCourseId.HasValue ? $"+'/{Model.SelectedCourseId.Value}'" : ""))" />
+        </div>
+    </div>
+</div>
+
+@if (userCanEdit)
+{
+    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getCourseForm()"><i class="fa fa-plus"></i> Course</button>
+}
 
 @if (Model.Courses != null && Model.Courses.Any())
 {
@@ -16,7 +34,7 @@
             <div class="card">
                 <div class="card-header" data-toggle="collapse" data-target="#@collapseId" aria-expanded="@(isSelectedCourse ? "true": "false")" aria-controls="@collapseId" style="cursor:pointer">
                     <h4 class="mb-0" style="display:inline-block">
-                        @course.Course.Name&nbsp;(@course.ClassCount)
+                        @course.Course.Name
                     </h4>
                     <div class="btn-group btn-group-sm float-right" role="group">
                         <a class="btn btn-primary text-white" data-toggle="modal" data-target="#modal" onclick="getCourseForm(@course.Course.CourseId)">
@@ -30,11 +48,48 @@
 
                 <div id="@collapseId" class="collapse @(isSelectedCourse? "show" : "")" aria-labelledby="headingOne" data-parent="#accordionExample">
                     <div class="card-body">
-                        <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId)"><i class="fa fa-plus"></i> Class</button>
+                        @if (userCanEdit)
+                        {
+                            <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year)"><i class="fa fa-plus"></i> Class</button>
+                        }
                         <div id="course-@course.Course.CourseId-classes">
                             @if (course.Classes != null && course.Classes.Any())
                             {
-                                <partial name="_ClassesList" model="course.Classes" />
+                                <table class="table table-sm table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">CRN</th>
+                                            <th scope="col">Schedule</th>
+                                            <th scope="col">Instructor</th>
+                                            <th scope="col">Students</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in course.Classes)
+                                        {
+                                            <tr>
+                                                <th scope="col">@item.ClassId</th>
+                                                <td>@item.Schedule</td>
+                                                <td>@item.InstructorName</td>
+                                                <td>@item.EnrolledStudentCount/@item.Capacity</td>
+                                                <td>
+                                                    @if (userCanEdit)
+                                                    {
+                                                        <div class="btn-group btn-group-sm" role="group">
+                                                            <a class="btn btn-primary text-white" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                            <a class="btn btn-danger text-white" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </a>
+                                                        </div>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
                             }
                             else
                             {
@@ -80,16 +135,16 @@ else
     <script>
         function getCourseForm(courseId) {
             const getHandler = 'CourseForm' + (courseId ? '&courseId=' + courseId : '');
-            const postHandler = 'SaveCourse'
+            const postHandler = 'SaveCourse&timeOfYear=@(Model.TimeOfYear)&year=@(Model.Year)'
             const modalTitle = `${courseId ? 'Edit' : 'Create'} Course`;
             getForm(modalTitle, getHandler, postHandler);
         }
 
-        function getClassForm(courseId, classId) {
-            const getHandler = 'ClassForm&courseId=' + courseId + (classId ? '&classId=' + classId : '');
+        function getClassForm(courseId, timeOfYear, year, classId) {
+            const getHandler = `ClassForm&courseId=${courseId}&timeOfYear=${timeOfYear}&year=${year}` + (classId ? '&classId=' + classId : '');
             const postHandler = 'SaveClass';
             const modalTitle = `${classId ? 'Edit' : 'Create'} Class`;
-            console.log(postHandler);
+            console.log(getHandler);
             getForm(modalTitle, getHandler, postHandler);
         }
 
@@ -109,7 +164,6 @@ else
 
             // Get form HTML and intialize client-side validation
             $(modalBody).load(baseUrl + getHandler, null, () => { $.validator.unobtrusive.parse('form'); });
-
         }
     </script>
 }

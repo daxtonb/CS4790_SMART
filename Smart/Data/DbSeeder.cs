@@ -102,9 +102,9 @@ namespace Smart.Data
             {
                 var courses = new Course[]
                 {
-                    new Course { Name = "English Level 1" },
-                    new Course { Name = "English Level 2" },
-                    new Course { Name = "IT Level 1" }
+                    new Course { Name = "English Level 1", IsCoreRequirement = true },
+                    new Course { Name = "English Level 2", IsCoreRequirement = true },
+                    new Course { Name = "IT Level 1", IsCoreRequirement = true }
                 };
 
                 _context.Courses.AddRange(courses);
@@ -116,9 +116,10 @@ namespace Smart.Data
             {
                 for (int year = 2020; year <= 2025; year++)
                 {
-                    _context.Terms.Add(new Term() { TimeOfYear = TimeOfYear.Spring, Description = $"Spring {year}", StartDate = new DateTime(year, 1, 1), EndDate = new DateTime(year, 4, 15) });
-                    _context.Terms.Add(new Term() { TimeOfYear = TimeOfYear.Summer, Description = $"Summer {year}", StartDate = new DateTime(year, 5, 1), EndDate = new DateTime(year, 8, 15) });
-                    _context.Terms.Add(new Term() { TimeOfYear = TimeOfYear.Fall, Description = $"Fall {year}", StartDate = new DateTime(year, 9, 1), EndDate = new DateTime(year, 12, 15) });
+                    foreach (TimeOfYear timeOfYear in Enum.GetValues(typeof(TimeOfYear)))
+                    {
+                        _context.Terms.Add(new Term() { TimeOfYear = timeOfYear, StartDate = Term.GetStartDate(timeOfYear, year), EndDate = Term.GetEndDate(timeOfYear, year) });
+                    }
                     _context.SaveChanges(); // Save synchronously to preserver order
                 }
             }
@@ -126,7 +127,7 @@ namespace Smart.Data
             // Add super user
             if (!_context.Users.Any())
             {
-                var user = new User() { FirstName = "Admin", LastName = "", Email = "Admin", UserName = "Admin" };
+                var user = new User() { FirstName = "Admin", LastName = "Admin", Email = "Admin", UserName = "Admin" };
                 _userManager.CreateAsync(user, "Secret123$").Wait();
                 _userManager.AddToRoleAsync(user, RoleEnum.Admin.GetDisplayName()).Wait();
                 _userManager.AddToRoleAsync(user, RoleEnum.Instructor.GetDisplayName()).Wait();

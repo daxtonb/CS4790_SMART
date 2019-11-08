@@ -1,15 +1,18 @@
 ﻿@model Class
 @{
     var instructors = (IEnumerable<SelectListItem>)ViewData["instructors"];
-    var terms = (IEnumerable<SelectListItem>)ViewData["terms"];
 }
     <div class="container">
         <input type="hidden" asp-for="ClassId" />
         <input type="hidden" asp-for="CourseId" />
+        <input type="hidden" asp-for="Term.TermId" />
+        <input type="hidden" asp-for="Term.TimeOfYear" />
+        <input type="hidden" asp-for="Term.StartDate" />
+        <input type="hidden" asp-for="Term.EndDate" />
+
         <div class="form-group">
-            <label asp-for="TermId"></label>
-            <select asp-for="TermId" class="form-control" asp-items="@(new SelectList(terms, "Value", "Text"))"></select>
-            <span asp-validation-for="TermId" class="text-warning"></span>
+            <label for="term">Term</label>
+            <input class="form-control" name="term" value="@(Model.Term.ToString())" readonly />
         </div>
 
         <div class="form-group">
