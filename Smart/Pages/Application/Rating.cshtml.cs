@@ -54,11 +54,11 @@ namespace Smart.Pages.Application
                 {
                     StudentId = (int) id,
                     UserId = 1,                                                     //THIS IS A TEMP VALUE
-                    RatingCiteriumId = RatingCirterium[i].RatingCirteriumId,        //THIS IS A TEMP VALUE
+                    RatingCiteriumId = RatingCirterium[i].RatingCirteriumId,        
                     TermId = 1,                                                     //THIS IS A TEMP VALUE
-                    ScoreAssigned = InputValues[i],                                 //THIS IS A TEMP VALUE
+                    ScoreAssigned = InputValues[i],                                 
                     DateTime = DateTime.Now,
-                    Comments = Comment                                        //THIS IS A TEMP VALUE   
+                    Comments = Comment                                        
                 };
 
                 _context.ApplicantRatings.Add(applicantRating);

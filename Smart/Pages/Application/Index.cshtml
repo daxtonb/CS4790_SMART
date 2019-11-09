@@ -5,40 +5,39 @@
     ViewData["Title"] = "Index";
 }
 
-@*
-    TO DO
-        - Only show applicants! (non students)
-        - Add search table search functionality
-        - show scores
-        - Rated checkbox
-        - FIX UserId & TermId for ApplicantRating!!!!
-        - Add new fields to student.
-        - Rename Criterium variables and everything & add migration (Tell everyone to update)
-*@ 
-
 <h2>Applicants</h2><br/>
 
 <table class="table table-striped border col-md-12" id="applicantTable">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Student[0].FirstName)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.FirstNameSort">
+                    @Html.DisplayNameFor(model => model.Student[0].FirstName)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Student[0].LastName)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.LastNameSort">
+                    @Html.DisplayNameFor(model => model.Student[0].LastName)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Student[0].PublicSchoolLevel)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.PublicSchoolLevelSort">
+                    @Html.DisplayNameFor(model => model.Student[0].PublicSchoolLevel)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Student[0].StudentStatus)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.StatusSort">
+                    @Html.DisplayNameFor(model => model.Student[0].StudentStatus)
+                </a>
             </th>
             @*<th>
                 Rated?  //THIS WILL ONLY SHOW FOR INDIVIDUAL USER VIEW
             </th>*@
-            <th>
+        <th>
+            <a asp-page="./Index" asp-route-sortOrder="@Model.ScoreSort">
                 Composite Score
-            </th>
+            </a>
+        </th>
             <th></th>
         </tr>
     </thead>
@@ -63,8 +62,8 @@
             @*</td>*@
             <td>
                 @{ 
-                    double scoreEarned = 0;
-                    double finalScore = 0;
+                    decimal scoreEarned = 0;
+                    decimal finalScore = 0;
 
                     foreach(var rating in Model.ApplicantRating)
                     {
@@ -74,12 +73,11 @@
                         }
                     }
 
-                    finalScore = (scoreEarned / Model.ScorePossible) * 100;
+                    finalScore = Decimal.Round((scoreEarned / Model.ScorePossible) * 100, 2);
 
                 }
 
                 @Html.DisplayFor(modelItem => finalScore)%
-
             </td>
 
             @*Button Group*@
