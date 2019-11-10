@@ -4,46 +4,46 @@
     ViewData["Title"] = "Index";
     bool termHasNotStartedYet = Model.TermHasNotStartedYet();
     var nextTermRouteData = new Dictionary<string, string>()
-    {
+{
         { "courseId", Model.SelectedCourseId.ToString() },
         { "timeOfYear", Model.TimeOfYear == TimeOfYear.Fall ? ((int)TimeOfYear.Spring).ToString() : ( (int)Model.TimeOfYear + 1).ToString() },
         { "year", Model.TimeOfYear == TimeOfYear.Fall ? ((int)Model.Year + 1).ToString() : ((int)Model.Year).ToString() }
     };
     var previousTermRouteData = new Dictionary<string, string>()
-    {
+{
         { "courseId", Model.SelectedCourseId.ToString() },
         { "timeOfYear", Model.TimeOfYear == TimeOfYear.Spring ? ((int)TimeOfYear.Fall).ToString() : ((int)Model.TimeOfYear - 1).ToString() },
         { "year", Model.TimeOfYear == TimeOfYear.Spring ? ((int)Model.Year - 1 ).ToString() : ((int)Model.Year).ToString() }
     };
 }
-<h3>Term</h3>
-<div class="row p-3">
-    <div>
-        <a asp-all-route-data="previousTermRouteData" type="button" class="btn btn-primary">
-            <i class="fa fa-chevron-left"></i>
-        </a>
-    </div>
-    <div class="col-3">
-        <div class="form-group">
-            <select asp-for="TimeOfYear" asp-items="Html.GetEnumSelectList<TimeOfYear>()" class="form-control" onchange="window.location.replace('/Classes/' + this.value + '/@(Model.Year)@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
-        </div>
-    </div>
-    <div class="col-3">
-        <div class="form-group">
-            <input asp-for="Year" class="form-control" onchange="window.location.replace('/Classes/@((int)Model.TimeOfYear)/' + this.value@(Model.SelectedCourseId.HasValue ? $"+'/{Model.SelectedCourseId.Value}'" : ""))" />
-        </div>
-    </div>
-    <div>
-        <a asp-all-route-data="nextTermRouteData" type="button" class="btn btn-primary">
-            <i class="fa fa-chevron-right"></i>
-        </a>
-    </div>
-</div>
+
 
 @if (termHasNotStartedYet)
 {
     <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getCourseForm()"><i class="fa fa-plus"></i> Course</button>
 }
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+    <div>
+        <a asp-all-route-data="previousTermRouteData" type="button" class="btn btn-secondary">
+            <i class="fa fa-chevron-left"></i>
+        </a>
+    </div>
+    <div class="col-3">
+        <div class="align-content-center">
+            <select asp-for="TimeOfYear" asp-items="Html.GetEnumSelectList<TimeOfYear>()" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/' + this.value + '/@(Model.Year)@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="align-content-center">
+            <input asp-for="Year" class="form-control" style="background:#fff" onchange="window.location.replace('/Classes/@((int)Model.TimeOfYear)/' + this.value@(Model.SelectedCourseId.HasValue ? $"+'/{Model.SelectedCourseId.Value}'" : ""))" />
+        </div>
+    </div>
+    <div>
+        <a asp-all-route-data="nextTermRouteData" type="button" class="btn btn-secondary">
+            <i class="fa fa-chevron-right"></i>
+        </a>
+    </div>
+</nav>
 
 @if (Model.Courses != null && Model.Courses.Any())
 {
