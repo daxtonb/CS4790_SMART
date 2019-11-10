@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Student>
+@{
+    var students = Model.ToArray();
+    byte seatCount = (byte)ViewData["classCapacity"];
+    int loopCount = students.Length > seatCount ? students.Length : seatCount;
+}
+    <div class="container">
+        <h4>@students.Length of @seatCount enrolled</h4>
+        <button type="button" class="btn btn-primary mt-3 mb-3"><i class="fa fa-plus"></i>&nbsp;Student</button>
+        <div class="list-group">
+            @for (int i = 0; i < loopCount; i++)
+            {
+                if (i < students.Length)
+                {
+                    var student = students[i];
+                    <a asp-page="/Students/Details" asp-route-id="@student.StudentId" class="list-group-item list-group-item-action" style="color:#7989ff">
+                        @student.LastName,&nbsp;@student.FirstName
+                    </a>
+                }
+                else
+                {
+                    <a class="list-group-item disabled" aria-disabled="true">(Empty seat)</a>
+                }
+            }
+        </div>
+    </div>

@@ -29,14 +29,14 @@ namespace Smart.Pages.Classes
         public TimeOfYear TimeOfYear { get; set; }
         public int Year { get; set; }
 
-        public async Task OnGet(TimeOfYear? timeOfYear, int? year, int? courseId)
+        public async Task OnGetAsync(TimeOfYear? timeOfYear, int? year, int? courseId)
         {
             TimeOfYear = timeOfYear ?? Term.GetTimeOfYear(DateTime.Now);
             Year = year ?? DateTime.Now.Year;
             SelectedCourseId = courseId;
 
             Courses = await _context.Courses
-                .Include(c => c.Classes).ThenInclude(c => c.Students)
+                .Include(c => c.Classes).ThenInclude(c => c.StudentClasses)
                 .Include(c => c.Classes).ThenInclude(c => c.InstructorUser)
                 .Include(c => c.Classes).ThenInclude(c => c.Term)
                 .Include(c => c.Classes).ThenInclude(c => c.ClassSchedules).ThenInclude(c => c.ScheduleAvailability)
@@ -51,7 +51,7 @@ namespace Smart.Pages.Classes
                             ClassId = l.ClassId,
                             CourseId = c.CourseId,
                             Capacity = l.Capacity,
-                            EnrolledStudentCount = l.Students.Count,
+                            EnrolledStudentCount = l.StudentClasses.Count,
                             Schedule = CourseClassViewModel.GetScheduleString(l.ClassSchedules.OrderBy(s => s.ScheduleAvailability.DayOfWeek)),
                             InstructorName = l.InstructorUser != null ? l.InstructorUser.LastName + ", " + l.InstructorUser.FirstName : "",
                         })
@@ -63,7 +63,7 @@ namespace Smart.Pages.Classes
             }
         }
 
-        public async Task<IActionResult> OnGetCourseForm(int courseId)
+        public async Task<IActionResult> OnGetCourseFormAsync(int courseId)
         {
             Course course;
 
@@ -87,7 +87,7 @@ namespace Smart.Pages.Classes
             };
         }
 
-        public async Task<IActionResult> OnGetClassForm(int classId, int courseId, TimeOfYear timeOfYear, int year)
+        public async Task<IActionResult> OnGetClassFormAsync(int classId, int courseId, TimeOfYear timeOfYear, int year)
         {
             Class @class;
 
@@ -126,7 +126,31 @@ namespace Smart.Pages.Classes
             };
         }
 
-        public async Task<IActionResult> OnPostSaveCourse(Course model, TimeOfYear timeOfYear, int year)
+        public async Task<IActionResult> OnGetStudentsListAsync(int classId)
+        {
+            var @class = await _context.Classes
+                .Include(c => c.StudentClasses).ThenInclude(c => c.Student)
+                .FirstOrDefaultAsync(c => c.ClassId == classId);
+
+            if (@class == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["classCapacity"] = @class.Capacity;
+            var students = @class.StudentClasses
+                .Select(c => c.Student)
+                .OrderBy(s => s.LastName)
+                .ThenBy(s => s.FirstName);
+
+            return new PartialViewResult()
+            {
+                ViewName = "_StudentsList",
+                ViewData = new ViewDataDictionary<IEnumerable<Student>>(ViewData, students)
+            };
+        }
+
+        public async Task<IActionResult> OnPostSaveCourseAsync(Course model, TimeOfYear timeOfYear, int year)
         {
             if (!ModelState.IsValid)
             {
@@ -154,7 +178,7 @@ namespace Smart.Pages.Classes
             return RedirectToPage(new { timeOfYear = (int)timeOfYear, year, courseId = model.CourseId });
         }
 
-        public async Task<IActionResult> OnPostSaveClass(Class model)
+        public async Task<IActionResult> OnPostSaveClassAsync(Class model)
         {
             if (!ModelState.IsValid)
             {
@@ -192,6 +216,11 @@ namespace Smart.Pages.Classes
             @class.ClassSchedules = ScheduleAvailabilities.Select(s => new ClassSchedule { ScheduleAvailability = s }).ToList();
             await _context.SaveChangesAsync();
             return RedirectToPage(new { timeOfYear = (int)@class.Term.TimeOfYear, year = @class.Term.StartDate.Year, courseId = @class.CourseId });
+        }
+
+        public bool TermHasNotStartedYet()
+        {
+            return Term.GetStartDate(TimeOfYear, Year) > DateTime.Now;
         }
     }
 
