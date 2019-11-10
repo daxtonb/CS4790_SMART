@@ -36,7 +36,7 @@ namespace Smart.Pages.Application
         public string CurrentSort { get; set; }
         #endregion
 
-        public async Task OnGetAsync(string sortOrder)
+        public async Task OnGetAsync(string sortOrder, string searchString)
         {
             //calculate the total possible score for the current criteria (referenced in the .cshtml)
             var rc = await _context.RatingCirteria.ToListAsync();
@@ -53,9 +53,16 @@ namespace Smart.Pages.Application
             StatusSort = sortOrder == "Status" ? "status_desc" : "Status";
             ScoreSort = sortOrder == "Score" ? "score_desc" : "Score";
 
+            CurrentFilter = searchString;
+
             //get student list & create instance of RatingCriteria
             IQueryable<Student> studentIQ = _context.Students.Where(a => a.StudentStatusId == StudentStatusEnum.Applicant || a.StudentStatusId == StudentStatusEnum.Waitlisted).Include(b => b.ApplicantRatings).AsQueryable();//change to where status != active or graduated
             ApplicantRating = await _context.ApplicantRatings.ToListAsync();
+
+            if(!String.IsNullOrEmpty(searchString))
+            {
+                studentIQ = studentIQ.Where(a => a.FirstName.Contains(searchString) || a.LastName.Contains(searchString));
+            }
 
             studentIQ = sortOrder switch //create sorting options
             {
