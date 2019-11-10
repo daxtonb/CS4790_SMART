@@ -23,7 +23,7 @@ namespace Smart.Data.Models
         public virtual Course Course { get; set; }
         public virtual Term Term { get; set; }
         public virtual User InstructorUser { get; set; }
-        public virtual ICollection<Student> Students { get; set; }
+        public virtual ICollection<StudentClass> StudentClasses { get; set; }
         public virtual ICollection<ClassSchedule> ClassSchedules { get; set; }
         public virtual ICollection<Attendance> Attendances { get; set; }
 
