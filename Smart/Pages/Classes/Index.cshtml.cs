@@ -52,7 +52,7 @@ namespace Smart.Pages.Classes
                             CourseId = c.CourseId,
                             Capacity = l.Capacity,
                             EnrolledStudentCount = l.StudentClasses.Count,
-                            Schedule = CourseClassViewModel.GetScheduleString(l.ClassSchedules.OrderBy(s => s.ScheduleAvailability.DayOfWeek)),
+                            Schedule = ClassSchedule.GetScheduleString(l.ClassSchedules.OrderBy(s => s.ScheduleAvailability.DayOfWeek)),
                             InstructorName = l.InstructorUser != null ? l.InstructorUser.LastName + ", " + l.InstructorUser.FirstName : "",
                         })
                 }).ToListAsync();
@@ -232,40 +232,6 @@ namespace Smart.Pages.Classes
         public string InstructorName { get; set; }
         public int EnrolledStudentCount { get; set; }
         public int Capacity { get; set; }
-
-        public static string GetScheduleString(IEnumerable<ClassSchedule> classSchedules)
-        {
-            string dayOfWeek, timeRange, workignString = string.Empty;
-            ScheduleAvailability current, next = null;
-            var arr = classSchedules.ToArray();
-
-            for (int i = 0; i < arr.Length; i++)
-            {
-                current = arr[i].ScheduleAvailability;
-                next = i < arr.Length - 1 ? arr[i + 1].ScheduleAvailability : null;
-                workignString += GetDayOfWeekAbbreviation(current.DayOfWeek);
-
-                // CONDITION: This is the last element or the next element has a different time schedule
-                if (i == arr.Length - 1 || (next != null && (next.StartTime != current.StartTime || next.EndTime != current.EndTime)))
-                {
-                    workignString += " " + current.StartTime.ToString12HourTime() + "-" + current.EndTime.ToString12HourTime() + ", ";
-                }
-            }
-
-            workignString = workignString.Trim().TrimEnd(',');
-
-            return workignString;
-        }
-
-        private static string GetDayOfWeekAbbreviation(DayOfWeek dayOfWeek)
-        {
-            if (dayOfWeek == DayOfWeek.Tuesday || dayOfWeek == DayOfWeek.Thursday)
-            {
-                return dayOfWeek.ToString().Substring(0, 2);
-            }
-
-            return dayOfWeek.ToString().Substring(0, 1);
-        }
     }
 
     public class CourseViewModel

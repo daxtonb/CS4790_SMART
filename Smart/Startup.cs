@@ -60,6 +60,14 @@ namespace Smart
             services.AddTransient<IFileManager, WwwRootFileManager>();
             services.AddHttpContextAccessor();
             services.AddMvc()
+                .AddRazorPagesOptions(options =>
+                {
+                    options.Conventions.AddPageRoute("/Classes/Students", "Classes/{classId}");
+                    options.Conventions.AddPageRoute("/Classes/Students", "Classes/{classId}/Students");
+                    options.Conventions.AddPageRoute("/Classes/Assessments", "Classes/{classId}/Assessments");
+                    options.Conventions.AddPageRoute("/Classes/Attendance", "Classes/{classId}/Attendance");
+
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

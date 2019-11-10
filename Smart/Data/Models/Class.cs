@@ -26,6 +26,7 @@ namespace Smart.Data.Models
         public virtual ICollection<StudentClass> StudentClasses { get; set; }
         public virtual ICollection<ClassSchedule> ClassSchedules { get; set; }
         public virtual ICollection<Attendance> Attendances { get; set; }
+        public virtual ICollection<Assessment> Assessments { get; set; }
 
     }
 }
