@@ -1,0 +1,43 @@
+﻿@page 
+@model Smart.Pages.Classes.StudentListModel
+@{
+    ViewData["Title"] = "StudentList";
+    Layout = "~/Pages/Classes/_Layout.cshtml";
+    ViewData["ClassTitle"] = Model.ClassVm.Title;
+    ViewData["ClassSubtitle"] = Model.ClassVm.Subtitle;
+    ViewData["ClassId"] = Model.ClassVm.ClassId;
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th role="columnheader">Name</th>
+            <th role="columnheader">Grade</th>
+            <th role="columnheader">Attendance</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model.ClassVm.Stuents)
+        {
+            <tr>
+                <td><a asp-page="/Students/Details" asp-route-id="@student.StudentId" style="color:#7989ff">@student.Name</a></td>
+                @if (Model.ClassVm.AssessmentPointsPossible.HasValue && Model.ClassVm.AssessmentPointsPossible > 0 && student.ClassAssmentPointsTotal.HasValue)
+                {
+                    <td>@((double)student.ClassAssmentPointsTotal / Model.ClassVm.AssessmentPointsPossible)</td>
+                }
+                else
+                {
+                    <td>N/A</td>
+                }
+                @if (Model.ClassVm.AttendanceDays.HasValue && Model.ClassVm.AttendanceDays > 0 && student.ClassAttendanceTotal.HasValue)
+                {
+                    <td>@((double)student.ClassAttendanceTotal / Model.ClassVm.AttendanceDays)</td>
+                }
+                else
+                {
+                    <td>N/A</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

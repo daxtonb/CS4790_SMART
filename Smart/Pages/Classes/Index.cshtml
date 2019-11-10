@@ -2,6 +2,7 @@
 @model Smart.Pages.Classes.IndexModel
 @{
     ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
     bool termHasNotStartedYet = Model.TermHasNotStartedYet();
     var nextTermRouteData = new Dictionary<string, string>()
 {
@@ -17,119 +18,133 @@
     };
 }
 
+<div id="main-section" class="container carousel-item active">
 
-@if (termHasNotStartedYet)
-{
-    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getCourseForm()"><i class="fa fa-plus"></i> Course</button>
-}
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
-    <div>
-        <a asp-all-route-data="previousTermRouteData" type="button" class="btn btn-secondary">
-            <i class="fa fa-chevron-left"></i>
-        </a>
-    </div>
-    <div class="col-3">
-        <div class="align-content-center">
-            <select asp-for="TimeOfYear" asp-items="Html.GetEnumSelectList<TimeOfYear>()" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/' + this.value + '/@(Model.Year)@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
+    @if (termHasNotStartedYet)
+    {
+        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getCourseForm()"><i class="fa fa-plus"></i> Course</button>
+    }
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+        <div>
+            <a asp-all-route-data="previousTermRouteData" type="button" class="btn btn-secondary">
+                <i class="fa fa-chevron-left"></i>
+            </a>
         </div>
-    </div>
-    <div class="col-3">
-        <div class="align-content-center">
-            <input asp-for="Year" class="form-control" style="background:#fff" onchange="window.location.replace('/Classes/@((int)Model.TimeOfYear)/' + this.value@(Model.SelectedCourseId.HasValue ? $"+'/{Model.SelectedCourseId.Value}'" : ""))" />
+        <div class="col-3">
+            <div class="align-content-center">
+                <select asp-for="TimeOfYear" asp-items="Html.GetEnumSelectList<TimeOfYear>()" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/' + this.value + '/@(Model.Year)@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
+            </div>
         </div>
-    </div>
-    <div>
-        <a asp-all-route-data="nextTermRouteData" type="button" class="btn btn-secondary">
-            <i class="fa fa-chevron-right"></i>
-        </a>
-    </div>
-</nav>
+        <div class="col-3">
+            <div class="align-content-center">
+                <input asp-for="Year" class="form-control" style="background:#fff" onchange="window.location.replace('/Classes/@((int)Model.TimeOfYear)/' + this.value@(Model.SelectedCourseId.HasValue ? $"+'/{Model.SelectedCourseId.Value}'" : ""))" />
+            </div>
+        </div>
+        <div>
+            <a asp-all-route-data="nextTermRouteData" type="button" class="btn btn-secondary">
+                <i class="fa fa-chevron-right"></i>
+            </a>
+        </div>
+    </nav>
 
-@if (Model.Courses != null && Model.Courses.Any())
-{
-    <div class="accordion" id="accordionExample">
-        @foreach (var course in Model.Courses)
-        {
-            string collapseId = $"collapse-course-{course.Course.CourseId}";
-            bool isSelectedCourse = Model.SelectedCourseId.HasValue && Model.SelectedCourseId.Value == course.Course.CourseId;
+    @if (Model.Courses != null && Model.Courses.Any())
+    {
+        <div class="accordion" id="accordionExample">
+            @foreach (var course in Model.Courses)
+            {
+                string collapseId = $"collapse-course-{course.Course.CourseId}";
+                bool isSelectedCourse = Model.SelectedCourseId.HasValue && Model.SelectedCourseId.Value == course.Course.CourseId;
 
-            <div class="card">
-                <div class="card-header parent" data-toggle="collapse" data-target="#@collapseId" aria-expanded="@(isSelectedCourse ? "true": "false")" aria-controls="@collapseId" style="cursor:pointer">
-                    <h4 class="mb-0" style="display:inline-block">
-                        @course.Course.Name
-                    </h4>
-                    <div class="btn-group btn-group-sm float-right show-on-parent-hover" role="group">
-                        <a class="btn btn-primary text-white" data-toggle="modal" data-target="#modal" onclick="getCourseForm(@course.Course.CourseId)">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a class="btn btn-danger text-white" data-toggle="modal" data-target="#modal" onclick="getCourseForm(@course.Course.CourseId)">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
+                <div class="card">
+                    <div class="card-header parent" data-toggle="collapse" data-target="#@collapseId" aria-expanded="@(isSelectedCourse ? "true": "false")" aria-controls="@collapseId" style="cursor:pointer">
+                        <h4 class="mb-0" style="display:inline-block">
+                            @course.Course.Name
+                        </h4>
+                        <div class="btn-group btn-group-sm float-right show-on-parent-hover" role="group">
+                            <a class="btn btn-primary text-white" data-toggle="modal" data-target="#modal" onclick="getCourseForm(@course.Course.CourseId)">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a class="btn btn-danger text-white" data-toggle="modal" data-target="#modal" onclick="getCourseForm(@course.Course.CourseId)">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
                     </div>
-                </div>
 
-                <div id="@collapseId" class="collapse @(isSelectedCourse? "show" : "")" aria-labelledby="headingOne" data-parent="#accordionExample">
-                    <div class="card-body">
-                        @if (termHasNotStartedYet)
-                        {
-                            <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year)"><i class="fa fa-plus"></i> Class</button>
-                        }
-                        <div id="course-@course.Course.CourseId-classes">
-                            @if (course.Classes != null && course.Classes.Any())
+                    <div id="@collapseId" class="collapse @(isSelectedCourse? "show" : "")" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body">
+                            @if (termHasNotStartedYet)
                             {
-                                <table class="table table-sm table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">CRN</th>
-                                            <th scope="col">Schedule</th>
-                                            <th scope="col">Instructor</th>
-                                            <th scope="col">Students</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var item in course.Classes)
-                                        {
-                                            <tr class="parent">
-                                                <th scope="col">@item.ClassId</th>
-                                                <td>@item.Schedule</td>
-                                                <td>@item.InstructorName</td>
-                                                <td><button type="button" class="btn btn-link btn-sm" style="color:#7989ff" data-toggle="modal" data-target="#modal" onclick="getStudentsList(@item.ClassId)">@item.EnrolledStudentCount/@item.Capacity</button></td>
-                                                <td>
-                                                    @if (termHasNotStartedYet)
-                                                    {
-                                                        <div class="btn-group btn-group-sm show-on-parent-hover" role="group">
-                                                            <a class="btn btn-primary text-white" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
-                                                                <i class="fas fa-edit"></i>
-                                                            </a>
-                                                            <a class="btn btn-danger text-white" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                            </a>
-                                                        </div>
-                                                    }
-                                                </td>
+                                <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year)"><i class="fa fa-plus"></i> Class</button>
+                            }
+                            <div id="course-@course.Course.CourseId-classes">
+                                @if (course.Classes != null && course.Classes.Any())
+                                {
+                                    <table class="table table-sm table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">CRN</th>
+                                                <th scope="col">Schedule</th>
+                                                <th scope="col">Instructor</th>
+                                                <th scope="col">Students</th>
+                                                <th></th>
                                             </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            }
-                            else
-                            {
-                                <div class="alert alert-primary">No @(course.Course.Name) classes @(termHasNotStartedYet ? "have been created yet" : $"were created") for @Model.TimeOfYear @(Model.Year).</div>
-                            }
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in course.Classes)
+                                            {
+                                                <tr class="parent">
+                                                    <th scope="col">@item.ClassId</th>
+                                                    <td>@item.Schedule</td>
+                                                    <td>@item.InstructorName</td>
+                                                    <td><button type="button" class="btn btn-link btn-sm" style="color:#7989ff" data-toggle="modal" data-target="#modal" onclick="getStudentsList(@item.ClassId)">@item.EnrolledStudentCount/@item.Capacity</button></td>
+                                                    <td>
+                                                        <div class="btn-group btn-group-sm show-on-parent-hover" role="group">
+
+                                                            @if (termHasNotStartedYet)
+                                                            {
+
+                                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                            }
+                                                            <a class="btn btn-success text-white" href="/Classes/@item.ClassId/Students">
+                                                                <i class="fas fa-list-alt"></i>
+                                                            </a>
+
+                                                            @if (termHasNotStartedYet)
+                                                            {
+
+                                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            }
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-primary">No @(course.Course.Name) classes @(termHasNotStartedYet ? "have been created yet" : $"were created") for @Model.TimeOfYear @(Model.Year).</div>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-}
-else
-{
-    <div class="alert alert-primary">No courses have been created yet.</div>
-}
-
-
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-primary">No courses have been created yet.</div>
+    }
+</div>
+<div id="class-details" class="container carousel-item">
+    <button type="button" class="btn btn-primary" onclick="window.history.back()">Back</button>
+    Class details
+</div>
 <!-- Modal -->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -174,6 +189,9 @@ else
             const modalTitle = 'Roster';
             getForm(modalTitle, getHandler);
         }
+
+
+
 
         function getForm(modalTitle, getHandler, postHandler) {
             const baseUrl = '/Classes?handler=';
