@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -48,12 +49,21 @@ namespace Smart.Pages.Application
             
             RatingCirterium = await _context.RatingCirteria.ToListAsync();
 
+            var userIdString = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            int userId = 0; //sets default in case there is an issue getting the id in string form
+
+            if (!String.IsNullOrEmpty(userIdString))
+            {
+                userId = int.Parse(userIdString);
+            }
+
             for (var i = 0; i < RatingCirterium.Count; i++)
             {
                 var applicantRating = new ApplicantRating
                 {
                     StudentId = (int) id,
-                    UserId = 1,                                                     //THIS IS A TEMP VALUE
+                    UserId = userId,                                                     //THIS IS A TEMP VALUE
                     RatingCiteriumId = RatingCirterium[i].RatingCirteriumId,        
                     TermId = 1,                                                     //THIS IS A TEMP VALUE
                     ScoreAssigned = InputValues[i],                                 

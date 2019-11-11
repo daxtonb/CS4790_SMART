@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Application
+namespace Smart.Pages.Notes
 {
-    [Authorize(Roles = "Admin")]
     public class DeleteModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
@@ -22,7 +20,7 @@ namespace Smart.Pages.Application
         }
 
         [BindProperty]
-        public Student Student { get; set; }
+        public Note Note { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -31,10 +29,12 @@ namespace Smart.Pages.Application
                 return NotFound();
             }
 
-            Student = await _context.Students
-                .Include(s => s.StudentStatus).FirstOrDefaultAsync(m => m.StudentId == id);
+            Note = await _context.Notes
+                .Include(n => n.NoteType)
+                .Include(n => n.Student)
+                .Include(n => n.User).FirstOrDefaultAsync(m => m.NoteId == id);
 
-            if (Student == null)
+            if (Note == null)
             {
                 return NotFound();
             }
@@ -48,11 +48,11 @@ namespace Smart.Pages.Application
                 return NotFound();
             }
 
-            Student = await _context.Students.FindAsync(id);
+            Note = await _context.Notes.FindAsync(id);
 
-            if (Student != null)
+            if (Note != null)
             {
-                _context.Students.Remove(Student);
+                _context.Notes.Remove(Note);
                 await _context.SaveChangesAsync();
             }
 
