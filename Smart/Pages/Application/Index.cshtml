@@ -44,37 +44,60 @@
                     @Html.DisplayNameFor(model => model.Student[0].StudentStatus)
                 </a>
             </th>
-            @*<th>
-                    Rated?  //THIS WILL ONLY SHOW FOR INDIVIDUAL USER VIEW
-                </th>*@
+
+            @*Just show for instructors that are logged in*@
+            @if (User.IsInRole("Instructor") && !User.IsInRole("Admin"))
+            {
+                <th>
+                        Rated?  
+                </th>
+            }
+
             <th>
                 <a asp-page="./Index" asp-route-sortOrder="@Model.ScoreSort">
                     Composite Score
                 </a>
             </th>
+
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.Student)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PublicSchoolLevel)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StudentStatusId)
-                </td>
-                @*<td>*@
-                @*<input type="checkbox" name="isRated" value="idk" onclick="return false">*@  @*needs to be tied to something, the user can't check them*@
-                @*</td>*@
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PublicSchoolLevel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StudentStatusId)
+            </td>
 
+            @*Just show for instructors that are logged in*@
+            @if (User.IsInRole("Instructor") && !User.IsInRole("Admin"))
+            {
+                if (Model.SetShowCheckBox(item.StudentId))
+                {
+                    <td>
+                        <input type="checkbox" name="isRated" value="idk" onclick="return false" checked>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <input type="checkbox" name="isRated" value="idk" onclick="return false">
+                    </td>
+                }
+            }
+
+            @if (User.IsInRole("Admin"))
+            {
                 @*Calculate Composite Scores*@
                 <td>
                     @{
@@ -95,27 +118,40 @@
 
                     @Html.DisplayFor(modelItem => finalScore)%
                 </td>
+            }
 
-                @*Button Group*@
-                <td style="width:150px">
-                    <div class="btn-group" role="group">
-                        <a class="btn btn-warning text-white" asp-page="Rating" asp-route-Id="@item.StudentId">
-                            <i class="fas fa-star"></i>
-                        </a>
+            @*Button Group*@
+            <td style="width:150px">
+                <div class="btn-group" role="group">
+                    <a class="btn btn-warning text-white" asp-page="Rating" asp-route-Id="@item.StudentId">
+                        <i class="fas fa-star"></i>
+                    </a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
                         <a class="btn btn-primary text-white" asp-page="Edit" asp-route-id="@item.StudentId">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <a class="btn btn-success text-white" asp-page="Details" asp-route-Id="@item.StudentId">
-                            <i class="fas fa-list-alt"></i>
-                        </a>
+                    }
+
+                    <a class="btn btn-success text-white" asp-page="Details" asp-route-Id="@item.StudentId">
+                        <i class="fas fa-list-alt"></i>
+                    </a>
+
+                    @if (User.IsInRole("Admin"))
+                    {
                         <a class="btn btn-danger text-white" asp-page="Delete" asp-route-Id="@item.StudentId">
                             <i class="fas fa-trash-alt"></i>
                         </a>
-                    </div>
-                </td>
-            </tr>
+                    }
+                </div>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
 
-<a asp-page="Create" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Create New Applicant </a>
+@if (User.IsInRole("Admin"))
+{
+    <a asp-page="Create" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Create New Applicant </a>
+}
