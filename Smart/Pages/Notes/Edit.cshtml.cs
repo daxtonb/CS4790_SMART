@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,9 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Application
+namespace Smart.Pages.Notes
 {
-    [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
@@ -23,7 +21,7 @@ namespace Smart.Pages.Application
         }
 
         [BindProperty]
-        public Student Student { get; set; }
+        public Note Note { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -32,14 +30,18 @@ namespace Smart.Pages.Application
                 return NotFound();
             }
 
-            Student = await _context.Students
-                .Include(s => s.StudentStatus).FirstOrDefaultAsync(m => m.StudentId == id);
+            Note = await _context.Notes
+                .Include(n => n.NoteType)
+                .Include(n => n.Student)
+                .Include(n => n.User).FirstOrDefaultAsync(m => m.NoteId == id);
 
-            if (Student == null)
+            if (Note == null)
             {
                 return NotFound();
             }
-           ViewData["StudentStatusId"] = new SelectList(_context.StudentStatuses, "StudentStatusId", "Description");
+           ViewData["NoteTypeId"] = new SelectList(_context.NoteTypes, "NoteTypeId", "NoteTypeId");
+           ViewData["Studentid"] = new SelectList(_context.Students, "StudentId", "FirstName");
+           ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email");
             return Page();
         }
 
@@ -50,7 +52,7 @@ namespace Smart.Pages.Application
                 return Page();
             }
 
-            _context.Attach(Student).State = EntityState.Modified;
+            _context.Attach(Note).State = EntityState.Modified;
 
             try
             {
@@ -58,7 +60,7 @@ namespace Smart.Pages.Application
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StudentExists(Student.StudentId))
+                if (!NoteExists(Note.NoteId))
                 {
                     return NotFound();
                 }
@@ -71,9 +73,9 @@ namespace Smart.Pages.Application
             return RedirectToPage("./Index");
         }
 
-        private bool StudentExists(int id)
+        private bool NoteExists(int id)
         {
-            return _context.Students.Any(e => e.StudentId == id);
+            return _context.Notes.Any(e => e.NoteId == id);
         }
     }
 }

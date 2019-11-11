@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,11 @@ namespace Smart.Pages.Students
             _context = context;
         }
 
+        [BindProperty]
         public IList<File> File { get;set; }
+
+        [BindProperty]
+        public File file { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -28,24 +33,23 @@ namespace Smart.Pages.Students
                 .Include(f => f.Student).ToListAsync();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int? id, IFormFile file1)
         {
             if (!ModelState.IsValid)
             {
-                return Page();
+               // return Page();
             }
 
-
-            var file = new File
-            {
-                StudentId = (int)9,
-                Path = "hysdd"
-            };
-
+           // file.FileId = 1;
+            file.FileTypeId = 1;
+            file.StudentId = 9;
+            var valuor = file.Path;
  
             _context.File.Add(file);
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
+
+
     }
 }

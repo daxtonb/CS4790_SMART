@@ -8,85 +8,83 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Smart.Data;
 using Smart.Data.Models;
 using System.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Smart.Pages.Scheduling
 {
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _db;
-        public List<string> DaysOfTheWeek {get; set;} = new List<string>(){"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-        public Student MyStudent {get; set;}
-        public List<ClassesViewModel> MyClasses { get; set; }
+        public Student MyStudent { get; set; }
+        public List<StudentClass> MyClasses { get; set; }
+        public List<Course> RequiredCourses { get; set; }
+        public List<Class> Classes { get; set; }
+        public List<ScheduleAvailability> ScheduleAvailabilities { get; set; }
+
 
         public IndexModel(ApplicationDbContext dbContext)
         {
             _db = dbContext;
-            MyClasses = new List<ClassesViewModel>();
+            ScheduleAvailabilities = new List<ScheduleAvailability>();
         }
 
-        public void OnGet(int? studentId)
+        public async Task OnGetAsync(int? studentId)
         {
-            if(studentId == null)
+            RequiredCourses = await _db.Courses.Where(c => c.IsCoreRequirement).ToListAsync();
+            Classes = await _db.Classes.Include(i => i.ClassSchedules).Include(i => i.InstructorUser).ToListAsync();
+            
+            foreach(Class c in Classes)
             {
-                //RedirectToPage("Students/Index");
-                //hard coded to point to test student austin wilcox
-                MyStudent = _db.Students.FirstOrDefault(i => i.StudentId == 3);
-
-                using (SqlConnection conn = new SqlConnection("Server=titan.cs.weber.edu,10433;Database=AustinsFinalProjectTestDatabase;user id=4790;password=4790$tudent"))
+                foreach(ClassSchedule cs in c.ClassSchedules)
                 {
-                    conn.Open();
-
-                    using (SqlCommand cmd = new SqlCommand("SELECT * FROM StudentClass sc INNER JOIN Class c ON c.ClassId = sc.ClassId INNER JOIN Course co ON co.CourseId = c.CourseId INNER JOIN ClassSchedule cs ON cs.ClassId = sc.ClassId AND cs.ClassId = c.ClassId INNER JOIN ScheduleAvailability sa ON sa.ScheduleAvailabilityId = cs.ScheduleAvailabilityId WHERE sc.StudentId = @StudentId", conn))
-                    {
-
-                        cmd.Parameters.Add("@StudentId", SqlDbType.Int).Value = 3;
-
-                        using (SqlDataReader rd = cmd.ExecuteReader())
-                        {
-                            while(rd.Read())
-                            {
-                                MyClasses.Add(new ClassesViewModel()
-                                {
-                                    ClassId = Convert.ToInt32(rd["ClassId"].ToString()),
-                                    DayOfWeek = Convert.ToInt32(rd["DayOfWeek"].ToString()),
-                                    CourseName = rd["Name"].ToString(),
-                                    StartTime = rd["StartTime"].ToString(),
-                                    EndTime = rd["EndTime"].ToString()
-                                });
-                            }
-                            rd.Close();
-                        }
-                    }
-
-                    conn.Close();
+                    ScheduleAvailabilities.AddRange(_db.ScheduleAvailabilities.Where(i => i.ScheduleAvailabilityId == cs.ScheduleAvailabilityId).ToList());
                 }
+            }
+
+
+            if (studentId == null)
+            {
+                MyStudent = _db.Students.Include(c => c.StudentClasses).FirstOrDefault(i => i.StudentId == 3);
+                MyClasses = await _db.StudentClasses.Include(c => c.Class).Where(c => c.StudentId == 3).ToListAsync();
             }
             else
             {
-                MyStudent = _db.Students.FirstOrDefault(i => i.StudentId == studentId);
+                MyStudent = _db.Students.Include(c => c.StudentClasses).FirstOrDefault(i => i.StudentId == studentId);
+                MyClasses = await _db.StudentClasses.Include(c => c.Class).Where(c => c.StudentId == studentId).ToListAsync();
             }
         }
-
-        public async Task OnPostAsync(int? ClassId)
+        public async Task<IActionResult> OnPostAsync(int id, int studentId)
         {
-            //StudentClass class = _db.StudentClasses.FirstOrDefault(c => c.ClassId == ClassId);
-            //Find the class
-            //Then remove the class
-            //Then return back to the index page
-            if(ClassId != null)
+            if (id != null)
             {
-                Console.WriteLine(ClassId.ToString());
+                StudentClass myClass = new StudentClass() { ClassId = id, StudentId = studentId };
+
+                _db.StudentClasses.Add(myClass);
+                await _db.SaveChangesAsync();
+
+                return RedirectToPage( );
             }
+
+            //This right now means that there is an error
+            return NotFound();
         }
 
-        public class ClassesViewModel
+        public async Task<IActionResult> OnDeleteAsync(int id, int studentId)
         {
-            public int ClassId { get; set; }
-            public int DayOfWeek { get; set; }
-            public string CourseName { get; set; }
-            public string StartTime { get; set; }
-            public string EndTime { get; set; }
+            if(ModelState.IsValid)
+            {
+                if(id != null && studentId != null)
+                {
+                    var myClass = _db.StudentClasses.Where(s => s.StudentId == studentId && s.ClassId == id).FirstOrDefault();
 
+                    _db.StudentClasses.Remove(myClass);
+                    await _db.SaveChangesAsync();
+
+                    return RedirectToPage("Index", studentId);
+                }
+            }
+
+            return NotFound();
         }
     }
 }

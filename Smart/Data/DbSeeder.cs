@@ -127,10 +127,14 @@ namespace Smart.Data
             // Add super user
             if (!_context.Users.Any())
             {
-                var user = new User() { FirstName = "Admin", LastName = "Admin", Email = "Admin", UserName = "Admin" };
+                var user = new User() { FirstName = "Admin", LastName = "Admin", Email = "admin@admin.com", UserName = "admin@admin.com" };
                 _userManager.CreateAsync(user, "Secret123$").Wait();
                 _userManager.AddToRoleAsync(user, RoleEnum.Admin.GetDisplayName()).Wait();
                 _userManager.AddToRoleAsync(user, RoleEnum.Instructor.GetDisplayName()).Wait();
+
+                var instructor = new User() { FirstName = "Test", LastName = "Instructor", Email = "instructortest@instructor.com", UserName = "instructortest@instructor.com" };
+                _userManager.CreateAsync(instructor, "Secret123$").Wait();
+                _userManager.AddToRoleAsync(instructor, RoleEnum.Instructor.GetDisplayName()).Wait();
             }
 
             // Add sample student

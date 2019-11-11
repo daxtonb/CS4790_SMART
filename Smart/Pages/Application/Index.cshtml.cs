@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -25,6 +26,7 @@ namespace Smart.Pages.Application
         public List<Student> Student { get; set; }
         public List<ApplicantRating> ApplicantRating { get; set; }
         public int ScorePossible { get; set; }
+        public int CurrentUserId { get; set; }
 
         //Sorting
         public string FirstNameSort { get; set; }
@@ -36,7 +38,7 @@ namespace Smart.Pages.Application
         public string CurrentSort { get; set; }
         #endregion
 
-        public async Task OnGetAsync(string sortOrder)
+        public async Task OnGetAsync(string sortOrder, string searchString)
         {
             //calculate the total possible score for the current criteria (referenced in the .cshtml)
             var rc = await _context.RatingCirteria.ToListAsync();
@@ -53,24 +55,63 @@ namespace Smart.Pages.Application
             StatusSort = sortOrder == "Status" ? "status_desc" : "Status";
             ScoreSort = sortOrder == "Score" ? "score_desc" : "Score";
 
+            CurrentFilter = searchString;
+
             //get student list & create instance of RatingCriteria
             IQueryable<Student> studentIQ = _context.Students.Where(a => a.StudentStatusId == StudentStatusEnum.Applicant || a.StudentStatusId == StudentStatusEnum.Waitlisted).Include(b => b.ApplicantRatings).AsQueryable();//change to where status != active or graduated
             ApplicantRating = await _context.ApplicantRatings.ToListAsync();
 
-            studentIQ = sortOrder switch //create sorting options
+            if(!String.IsNullOrEmpty(searchString))
             {
-                "last_name_desc" => studentIQ.OrderByDescending(s => s.LastName),
-                "first_name_desc" => studentIQ.OrderByDescending(s => s.FirstName),
-                "FirstName" => studentIQ.OrderBy(s => s.FirstName),
-                "public_school_level_desc" => studentIQ.OrderByDescending(s => s.PublicSchoolLevel),
-                "PublicSchoolLevel" => studentIQ.OrderBy(s => s.PublicSchoolLevel),
-                "status_desc" => studentIQ.OrderByDescending(s => s.StudentStatus),
-                "Status" => studentIQ.OrderBy(s => s.StudentStatus),
-                "score_desc" => studentIQ.OrderBy(a => a.ApplicantRatings.Sum(s => s.ScoreAssigned)),
-                "Score" => studentIQ.OrderByDescending(a => a.ApplicantRatings.Sum(s => s.ScoreAssigned)),
-                _ => studentIQ.OrderBy(s => s.LastName),
-            };
+                studentIQ = studentIQ.Where(a => a.FirstName.Contains(searchString) || a.LastName.Contains(searchString));
+            }
+
+            //studentIQ = sortOrder switch //create sorting options
+            //{
+            //    "last_name_desc" => studentIQ.OrderByDescending(s => s.LastName),
+            //    "first_name_desc" => studentIQ.OrderByDescending(s => s.FirstName),
+            //    "FirstName" => studentIQ.OrderBy(s => s.FirstName),
+            //    "public_school_level_desc" => studentIQ.OrderByDescending(s => s.PublicSchoolLevel),
+            //    "PublicSchoolLevel" => studentIQ.OrderBy(s => s.PublicSchoolLevel),
+            //    "status_desc" => studentIQ.OrderByDescending(s => s.StudentStatus),
+            //    "Status" => studentIQ.OrderBy(s => s.StudentStatus),
+            //    "score_desc" => studentIQ.OrderBy(a => a.ApplicantRatings.Sum(s => s.ScoreAssigned)),
+            //    "Score" => studentIQ.OrderByDescending(a => a.ApplicantRatings.Sum(s => s.ScoreAssigned)),
+            //    _ => studentIQ.OrderBy(s => s.LastName),
+            //};
             Student = await studentIQ.AsNoTracking().ToListAsync();
+
+            SetCurrentUserId();
+
+        }
+
+        public void SetCurrentUserId()
+        {
+            var userIdString = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int userId = 0; //sets default in case there is an issue getting the id in string form
+            if (!String.IsNullOrEmpty(userIdString))
+            {
+                userId = int.Parse(userIdString);
+            }
+
+            CurrentUserId = userId;
+        }
+
+        public bool SetShowCheckBox(int studentId)
+        {
+            var test = _context.ApplicantRatings.Where(a => a.UserId == CurrentUserId && a.StudentId == studentId).ToList();
+
+            //if the query brings any results at all
+            if((test != null) && (test.Any()))
+            {
+                //IsChecked = true;
+                return true;
+            }
+            else
+            {
+                //IsChecked = false;
+                return false;
+            }
         }
     }
 }

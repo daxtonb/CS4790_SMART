@@ -2,33 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Application
+namespace Smart.Pages.Notes
 {
-    [Authorize(Roles = "Admin")]
     public class CreateModel : PageModel
     {
-        private readonly ApplicationDbContext _context;
+        private readonly Smart.Data.ApplicationDbContext _context;
 
-        public CreateModel(ApplicationDbContext context)
+        public CreateModel(Smart.Data.ApplicationDbContext context)
         {
             _context = context;
         }
 
         public IActionResult OnGet()
         {
-        ViewData["StudentStatusId"] = new SelectList(_context.StudentStatuses, "StudentStatusId", "Description");
+        ViewData["NoteTypeId"] = new SelectList(_context.NoteTypes, "NoteTypeId", "NoteTypeId");
+        ViewData["Studentid"] = new SelectList(_context.Students, "StudentId", "FirstName");
+        ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email");
             return Page();
         }
 
         [BindProperty]
-        public Student Student { get; set; }
+        public Note Note { get; set; }
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -37,8 +37,9 @@ namespace Smart.Pages.Application
                 return Page();
             }
 
-            _context.Students.Add(Student);
+            _context.Notes.Add(Note);
             await _context.SaveChangesAsync();
+
             return RedirectToPage("./Index");
         }
     }
