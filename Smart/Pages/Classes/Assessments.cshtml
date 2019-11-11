@@ -1,0 +1,27 @@
+﻿@page
+@model Smart.Pages.Classes.AssessmentsModel
+@{
+    ViewData["Title"] = "Assessments";
+    Layout = "~/Pages/Classes/_Layout.cshtml";
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th role="columnheader">Title</th>
+            <th role="columnheader">Description</th>
+            <th role="columnheader">Submissions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Assessments)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Description</td>
+                <td>@item.StudentAssessments.Count</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

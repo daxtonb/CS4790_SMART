@@ -1,0 +1,29 @@
+﻿@page
+@model Smart.Pages.Classes.AttendanceModel
+@{
+    ViewData["Title"] = "Attendance";
+    Layout = "~/Pages/Classes/_Layout.cshtml";
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th role="columnheader">Date</th>
+            <th role="columnheader">On Time</th>
+            <th role="columnheader">Late</th>
+            <th role="columnheader">Absent</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Attendances)
+        {
+            <tr>
+                <td>@item.Date.ToString("d MMMM")</td>
+                <td>@item.OnTimeCount</td>
+                <td>@item.LateCount</td>
+                <td>@item.AbsentCount</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

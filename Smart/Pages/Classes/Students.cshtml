@@ -6,6 +6,8 @@
     ViewData["ClassTitle"] = Model.ClassVm.Title;
     ViewData["ClassSubtitle"] = Model.ClassVm.Subtitle;
     ViewData["ClassId"] = Model.ClassVm.ClassId;
+
+    Func<int, int, double> percent = (x, y) => Math.Round(((double)x / y) * 100, 2);
 }
 
 <table class="table table-striped">
@@ -23,7 +25,7 @@
                 <td><a asp-page="/Students/Details" asp-route-id="@student.StudentId" style="color:#7989ff">@student.Name</a></td>
                 @if (Model.ClassVm.AssessmentPointsPossible.HasValue && Model.ClassVm.AssessmentPointsPossible > 0 && student.ClassAssmentPointsTotal.HasValue)
                 {
-                    <td>@((double)student.ClassAssmentPointsTotal / Model.ClassVm.AssessmentPointsPossible)</td>
+                    <td>@(percent(student.ClassAssmentPointsTotal.Value, Model.ClassVm.AssessmentPointsPossible.Value))%</td>
                 }
                 else
                 {
@@ -31,7 +33,7 @@
                 }
                 @if (Model.ClassVm.AttendanceDays.HasValue && Model.ClassVm.AttendanceDays > 0 && student.ClassAttendanceTotal.HasValue)
                 {
-                    <td>@((double)student.ClassAttendanceTotal / Model.ClassVm.AttendanceDays)</td>
+            <td>@(percent(student.ClassAttendanceTotal.Value, Model.ClassVm.AttendanceDays.Value))%</td>
                 }
                 else
                 {
