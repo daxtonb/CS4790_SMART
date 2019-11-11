@@ -34,7 +34,7 @@ namespace Smart.Pages.Classes
 
             ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.TimeOfYear} {@class.Term.StartDate.Year}";
             ViewData["ClassSubtitle"] = ClassSchedule.GetScheduleString(@class.ClassSchedules.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
-            ViewData["ClassId"] = @class.ClassId;]
+            ViewData["ClassId"] = @class.ClassId;
         }
     }
 }
