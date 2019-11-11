@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Notes
+namespace Smart.Pages.Grades
 {
     public class IndexModel : PageModel
     {
@@ -19,14 +19,12 @@ namespace Smart.Pages.Notes
             _context = context;
         }
 
-        public IList<Note> Note { get;set; }
+        public IList<Assessment> Assessment { get;set; }
 
         public async Task OnGetAsync()
         {
-            Note = await _context.Notes
-                .Include(n => n.NoteType)
-                .Include(n => n.Student)
-                .Include(n => n.User).ToListAsync();
+            Assessment = await _context.Assessment
+                .Include(a => a.Class).ToListAsync();
         }
     }
 }

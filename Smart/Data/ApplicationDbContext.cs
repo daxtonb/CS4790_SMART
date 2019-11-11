@@ -137,5 +137,10 @@ namespace Smart.Data
         /// Log the change and the responsible user
         /// </summary>
         public DbSet<Smart.Data.Models.File> File { get; set; }
+
+        /// <summary>
+        /// Log the change and the responsible user
+        /// </summary>
+        public DbSet<Smart.Data.Models.Assessment> Assessment { get; set; }
     }
 }
