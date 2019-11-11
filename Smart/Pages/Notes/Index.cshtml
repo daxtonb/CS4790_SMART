@@ -40,31 +40,32 @@
             <th>
                 @Html.DisplayNameFor(model => model.Note[0].User)
             </th>
-            
+
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Note) {
+        @foreach (var item in Model.Note)
+        {
 
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Text)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Student.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Email)
-            </td>
-            
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.NoteId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.NoteId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.NoteId">Delete</a>
-            </td>
-        </tr>
-       }
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Text)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Student.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.Email)
+                </td>
+
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.NoteId">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.NoteId">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.NoteId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 <a asp-page="Create" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Create New Student </a>

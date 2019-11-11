@@ -6,7 +6,27 @@
 }
 
 <h1>Delete</h1>
-
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Student <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Grades">Grades</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="Files" asp-route-id="@Model.Student.StudentId">Files</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="~/Scheduling" asp-route-id="@Model.Student.StudentId">Schedule</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="~/Notes">Notes</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 <h3>Are you sure you want to delete this?</h3>
 <div>
     <h4>Student</h4>

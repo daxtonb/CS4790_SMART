@@ -16,13 +16,13 @@
                     <a class="nav-link" href="#">Student <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Grades</a>
+                    <a class="nav-link" href="~/Grades">Grades</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="Files">Files</a>
+                    <a class="nav-link" asp-page="Files" asp-route-id="@Model.Student.StudentId">Files</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Attendance</a>
+                    <a class="nav-link" asp-page="~/Scheduling" asp-route-id="@Model.Student.StudentId">Schedule</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="~/Notes">Notes</a>
