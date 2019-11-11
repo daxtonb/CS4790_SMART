@@ -33,12 +33,12 @@ namespace Smart.Pages.Classes
             Attendances = @class.Attendances.GroupBy(a => a.Date.Date, a => a).Select(a => new AttendanceVieModel
             {
                 Date = a.Key,
-                OnTimeCount = a.Count(a => a.AttendanceStatusId == AttendanceStatusEnum.OnTime),
-                LateCount = a.Count(a => a.AttendanceStatusId == AttendanceStatusEnum.Late),
-                AbsentCount = a.Count(a => a.AttendanceStatusId == AttendanceStatusEnum.Absent)
+                OnTimeCount = a.Count(x => x.AttendanceStatusId == AttendanceStatusEnum.OnTime),
+                LateCount = a.Count(x => x.AttendanceStatusId == AttendanceStatusEnum.Late),
+                AbsentCount = a.Count(x => x.AttendanceStatusId == AttendanceStatusEnum.Absent)
             }).OrderByDescending(a => a.Date);
 
-            ViewData["ClassTitle"] = @class.Course.Name;
+            ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.TimeOfYear} {@class.Term.StartDate.Year}";
             ViewData["ClassSubtitle"] = ClassSchedule.GetScheduleString(@class.ClassSchedules.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
             ViewData["ClassId"] = @class.ClassId;
         }
