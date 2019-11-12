@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LinqToCsv" Version="1.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.3.1" />
@@ -25,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
+    <Folder Include="Uploads\" />
     <Folder Include="wwwroot\files\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>

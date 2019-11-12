@@ -43,6 +43,12 @@ namespace Smart.Pages.Classes
             ViewData["ClassId"] = @class.ClassId;
         }
 
+        public async Task<PageResult> OnPostUploadCsvAsync()
+        {
+            var file = Request.Form.Files[0];
+            return Page();
+        }
+
         public class AttendanceVieModel
         {
             public DateTime Date { get; set; }
