@@ -17,6 +17,7 @@ namespace Smart.Data.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public int PointsPossible { get; set; }
+        public DateTime Deadline { get; set; }
 
         public virtual Class Class { get; set; }
         public virtual ICollection<StudentAssessment> StudentAssessments { get; set; }
