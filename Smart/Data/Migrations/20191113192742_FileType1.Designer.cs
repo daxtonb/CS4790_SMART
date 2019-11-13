@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Smart.Data;
 
 namespace Smart.data.migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191113192742_FileType1")]
+    partial class FileType1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -309,13 +311,13 @@ namespace Smart.data.migrations
 
             modelBuilder.Entity("Smart.Data.Models.FileType", b =>
                 {
-                    b.Property<int>("FileTypeId");
+                    b.Property<int>("Id");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(128);
 
-                    b.HasKey("FileTypeId");
+                    b.HasKey("Id");
 
                     b.ToTable("FileType");
                 });

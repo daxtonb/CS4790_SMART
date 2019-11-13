@@ -14,7 +14,7 @@ namespace Smart.Data.Models
     {
         public int FileId { get; set; }
         public int StudentId { get; set; }
-        public int FileTypeId { get; set; }
+        public FileTypeEnum FileTypeId { get; set; }
         [Required]
         public byte[] ByteData { get; set; }
         [Required]

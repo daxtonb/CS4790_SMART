@@ -156,6 +156,20 @@ namespace Smart.Data
                 });
                 _context.SaveChanges();
             }
+
+            // Add file types
+            if (!_context.FileTypes.Any())
+            {
+                foreach (FileTypeEnum item in Enum.GetValues(typeof(FileTypeEnum)))
+                {
+                    _context.FileTypes.Add(new FileType()
+                    {
+                        FileTypeId = item,
+                        Description = item.GetDisplayName()
+                    });
+                }
+                _context.SaveChanges();
+            }
         }
     }
 }

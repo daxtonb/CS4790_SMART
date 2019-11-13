@@ -47,6 +47,8 @@ namespace Smart.Data
         public DbSet<StudentStatus> StudentStatuses { get; set; }
         public DbSet<Assessment> Assessments { get; set; }
         public DbSet<StudentAssessment> StudentAssessments { get; set; }
+        public DbSet<File> Files { get; set; }
+        public DbSet<FileType> FileTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -66,6 +68,8 @@ namespace Smart.Data
             builder.Entity<StudentStatus>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());
             builder.Entity<Attendance>().Property(s => s.AttendanceStatusId).HasConversion(new EnumToNumberConverter<AttendanceStatusEnum, int>());
             builder.Entity<AttendanceStatus>().Property(s => s.AttendanceStatusId).HasConversion(new EnumToNumberConverter<AttendanceStatusEnum, int>());
+            builder.Entity<File>().Property(s => s.FileTypeId).HasConversion(new EnumToNumberConverter<FileTypeEnum, int>());
+            builder.Entity<FileType>().Property(s => s.FileTypeId).HasConversion(new EnumToNumberConverter<FileTypeEnum, int>());
 
             builder.Entity<UserRole>(userRole =>
             {
@@ -134,15 +138,5 @@ namespace Smart.Data
 
             Events.AddRange(events);
         }
-
-        /// <summary>
-        /// Log the change and the responsible user
-        /// </summary>
-        public DbSet<Smart.Data.Models.File> File { get; set; }
-
-        /// <summary>
-        /// Log the change and the responsible user
-        /// </summary>
-        public DbSet<Smart.Data.Models.Assessment> Assessment { get; set; }
     }
 }
