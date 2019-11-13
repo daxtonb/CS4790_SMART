@@ -28,7 +28,6 @@
     <Folder Include="Data\Migrations\" />
     <Folder Include="Uploads\" />
     <Folder Include="wwwroot\files\" />
-    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>
