@@ -22,7 +22,7 @@
 
     @if (termHasNotStartedYet)
     {
-        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getCourseForm()"><i class="fa fa-plus"></i> Course</button>
+        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getCourseForm()"><i class="fa fa-plus"></i> Course</button>
     }
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
         <div>
@@ -61,10 +61,10 @@
                             @course.Course.Name
                         </h4>
                         <div class="btn-group btn-group-sm float-right show-on-parent-hover" role="group">
-                            <a class="btn btn-primary text-white" data-toggle="modal" data-target="#modal" onclick="getCourseForm(@course.Course.CourseId)">
+                            <a class="btn btn-primary text-white" data-toggle="modal" data-target="#form-modal" onclick="getCourseForm(@course.Course.CourseId)">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a class="btn btn-danger text-white" data-toggle="modal" data-target="#modal" onclick="getCourseForm(@course.Course.CourseId)">
+                            <a class="btn btn-danger text-white" data-toggle="modal" data-target="#form-modal" onclick="getCourseForm(@course.Course.CourseId)">
                                 <i class="fas fa-trash-alt"></i>
                             </a>
                         </div>
@@ -74,7 +74,7 @@
                         <div class="card-body">
                             @if (termHasNotStartedYet)
                             {
-                                <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year)"><i class="fa fa-plus"></i> Class</button>
+                                <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year)"><i class="fa fa-plus"></i> Class</button>
                             }
                             <div id="course-@course.Course.CourseId-classes">
                                 @if (course.Classes != null && course.Classes.Any())
@@ -96,14 +96,14 @@
                                                     <th scope="col">@item.ClassId</th>
                                                     <td>@item.Schedule</td>
                                                     <td>@item.InstructorName</td>
-                                                    <td><button type="button" class="btn btn-link btn-sm" style="color:#7989ff" data-toggle="modal" data-target="#modal" onclick="getStudentsList(@item.ClassId)">@item.EnrolledStudentCount/@item.Capacity</button></td>
+                                                    <td><button type="button" class="btn btn-link btn-sm" style="color:#7989ff" data-toggle="modal" data-target="#form-modal" onclick="getStudentsList(@item.ClassId)">@item.EnrolledStudentCount/@item.Capacity</button></td>
                                                     <td>
                                                         <div class="btn-group btn-group-sm show-on-parent-hover" role="group">
 
                                                             @if (termHasNotStartedYet)
                                                             {
 
-                                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
+                                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
                                                                     <i class="fas fa-edit"></i>
                                                                 </button>
                                                             }
@@ -114,7 +114,7 @@
                                                             @if (termHasNotStartedYet)
                                                             {
 
-                                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
+                                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
                                                             }
@@ -141,76 +141,31 @@
         <div class="alert alert-primary">No courses have been created yet.</div>
     }
 </div>
-<div id="class-details" class="container carousel-item">
-    <button type="button" class="btn btn-primary" onclick="window.history.back()">Back</button>
-    Class details
-</div>
-<!-- Modal -->
-<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modal-title"></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="modal-form" method="post">
-                <div class="modal-body" id="modal-body">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="modal-save">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
 
 @section Scripts
 {
     <script>
+        const classBaseUrl = '/Classes?handler=';
+
         function getCourseForm(courseId) {
-            const getHandler = 'CourseForm' + (courseId ? '&courseId=' + courseId : '');
-            const postHandler = 'SaveCourse&timeOfYear=@(Model.TimeOfYear)&year=@(Model.Year)'
+            const getHandler = classBaseUrl + 'CourseForm' + (courseId ? '&courseId=' + courseId : '');
+            const postHandler = classBaseUrl + 'SaveCourse&timeOfYear=@(Model.TimeOfYear)&year=@(Model.Year)'
             const modalTitle = `${courseId ? 'Edit' : 'Create'} Course`;
             getForm(modalTitle, getHandler, postHandler);
         }
 
         function getClassForm(courseId, timeOfYear, year, classId) {
-            const getHandler = `ClassForm&courseId=${courseId}&timeOfYear=${timeOfYear}&year=${year}` + (classId ? '&classId=' + classId : '');
-            const postHandler = 'SaveClass';
+            const getHandler = classBaseUrl + `ClassForm&courseId=${courseId}&timeOfYear=${timeOfYear}&year=${year}` + (classId ? '&classId=' + classId : '');
+            const postHandler = classBaseUrl + 'SaveClass';
             const modalTitle = `${classId ? 'Edit' : 'Create'} Class`;
             getForm(modalTitle, getHandler, postHandler);
         }
 
         function getStudentsList(classId) {
-            const getHandler = `StudentsList&classId=${classId}`;
+            const getHandler = classBaseUrl + `StudentsList&classId=${classId}`;
             const modalTitle = 'Roster';
             getForm(modalTitle, getHandler);
-        }
-
-
-
-
-        function getForm(modalTitle, getHandler, postHandler) {
-            const baseUrl = '/Classes?handler=';
-
-            // Add form action
-            if (postHandler) {
-                $('#modal-form').attr('action', baseUrl + postHandler);
-            }
-
-            const modalBody = $('#modal-body');
-
-            // Clear modal body
-            $(modalBody).text('Loading...');
-
-            // Add modal title
-            $('#modal-title').text(modalTitle);
-
-            // Get form HTML and intialize client-side validation
-            $(modalBody).load(baseUrl + getHandler, null, () => { $.validator.unobtrusive.parse('form'); });
-        }
+        }     
     </script>
 }

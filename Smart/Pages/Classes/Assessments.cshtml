@@ -5,11 +5,13 @@
     Layout = "~/Pages/Classes/_Layout.cshtml";
 }
 
+<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getAssessmentForm()"><i class="fa fa-plus"></i> Assessment</button>
 <table class="table table-striped">
     <thead>
         <tr>
             <th role="columnheader">Title</th>
             <th role="columnheader">Description</th>
+            <th role="columnheader">Deadline</th>
             <th role="columnheader">Submissions</th>
         </tr>
     </thead>
@@ -19,9 +21,20 @@
             <tr>
                 <td>@item.Title</td>
                 <td>@item.Description</td>
+                <td>@item.Deadline.ToString("M/d/yyyy")</td>
                 <td>@item.StudentAssessments.Count</td>
             </tr>
         }
     </tbody>
 </table>
 
+<script>
+    const classBaseUrl = '/Classes/@ViewData["classId"]/Assessments?handler=';
+
+    function getAssessmentForm(assessmentId) {
+        const getHandler = classBaseUrl + 'AssessmentForm&classId=@ViewData["classId"]' + (assessmentId ? '&assessmentId=' + assessmentId : '');
+        const postHandler = classBaseUrl + 'SaveAssessment';
+        const modalTitle = `${assessmentId ? 'Edit' : 'Create'} Assessment`;
+        getForm(modalTitle, getHandler, postHandler);
+    }
+</script>
