@@ -137,6 +137,43 @@ namespace Smart.Pages.Classes
             };
         }
 
+        public async Task<IActionResult> OnGetStudentSubmissions(int classId, int studentId)
+        {
+            var studentAssessments = await _context.StudentAssessments
+                .Include(s => s.Student)
+                .Include(s => s.File)
+                .Include(s => s.Assessment)
+                .Where(s => s.Assessment.ClassId == classId && s.StudentId == studentId)
+                .Select(s => new AssessmentSubmissionViewModel
+                {
+                    AssessmentId = s.AssessmentId,
+                    AssessmentName = s.Assessment.Title,
+                    Comments = s.Comments,
+                    PointsAwarded = s.PointsAwarded,
+                    PointsPossible = s.Assessment.PointsPossible,
+                    StudentId = s.StudentId,
+                    FileName = s.File != null ? s.File.FileName : null,
+                    SubmissionDateTime = s.SubmissionDateTime,
+                    StudentName = s.Student.LastName + ", " + s.Student.FirstName
+                }).ToListAsync();
+
+            var otherAssessments = await _context.Assessments
+                .Where(a => a.ClassId == classId && !studentAssessments.Any(s => s.AssessmentId == a.AssessmentId))
+                .Select(a => new AssessmentSubmissionViewModel
+                {
+                    AssessmentId = a.AssessmentId,
+                    AssessmentName = a.Title,
+                    PointsPossible = a.PointsPossible,
+                    StudentId = studentId
+                }).ToListAsync();
+
+            return new PartialViewResult()
+            {
+                ViewName = "_StudentAssessmentSubmissions",
+                ViewData = new ViewDataDictionary<IEnumerable<AssessmentSubmissionViewModel>>(ViewData, studentAssessments.Concat(otherAssessments).OrderByDescending(a => a.SubmissionDateTime))
+            };
+        }
+
         public async Task<IActionResult> OnPostSubmitStudentAssessment(AssessmentSubmissionViewModel model)
         {
             var studentAssessment = await _context.StudentAssessments
@@ -192,8 +229,10 @@ namespace Smart.Pages.Classes
         {
             public int StudentId { get; set; }
             public int AssessmentId { get; set; }
+            public string AssessmentName { get; set; }
             public string StudentName { get; set; }
             public int? PointsAwarded { get; set; }
+            public int PointsPossible { get; set; }
             public string FileName { get; set; }
             public string Comments { get; set; }
             public DateTime? SubmissionDateTime { get; set; }

@@ -35,21 +35,3 @@
     </tbody>
 </table>
 
-<script>
-    const classBaseUrl = '/Classes/@ViewData["classId"]/Assessments?handler=';
-
-    function getAssessmentForm(assessmentId) {
-        const getHandler = classBaseUrl + 'AssessmentForm&classId=@ViewData["classId"]' + (assessmentId ? '&assessmentId=' + assessmentId : '');
-        const postHandler = classBaseUrl + 'SaveAssessment';
-        const modalTitle = `${assessmentId ? 'Edit' : 'Create'} Assessment`;
-        getForm(modalTitle, getHandler, postHandler);
-    }
-
-    function getSubmissions(assessmentId) {
-        const getHandler = classBaseUrl + 'Submissions&classId=@ViewData["classId"]&assessmentId=' + assessmentId;
-        //const postHandler = classBaseUrl + 'submitAssessment&assessmentId=' + assessmentId;
-        const modalTitle = `Student Submissions`;
-        const modalSize = 'xl';
-        getDetails(modalTitle, getHandler, modalSize);
-    }
-</script>

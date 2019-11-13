@@ -1,9 +1,11 @@
 ﻿@model IEnumerable<Smart.Pages.Classes.AssessmentsModel.AssessmentSubmissionViewModel>
 
+<h2>@Model.FirstOrDefault()?.StudentName</h2>
+
 <table class="table table-sm table-responsive-sm">
     <thead>
         <tr>
-            <th role="columnheader">Student</th>
+            <th role="columnheader">Assessment</th>
             <th role="columnheader">Submitted</th>
             <th role="columnheader">Score</th>
             <th role="columnheader">Comments</th>
@@ -15,7 +17,7 @@
         @foreach (var item in Model)
         {
         <tr class="parent">
-            <td>@item.StudentName</td>
+            <td>@item.AssessmentName</td>
             <td>
                 <span>
                     @if (item.SubmissionDateTime.HasValue)
@@ -33,7 +35,7 @@
                 <span>
                     @if (item.PointsAwarded.HasValue)
                     {
-                        <text>@item.PointsAwarded</text>
+                        <text>@item.PointsAwarded/@item.PointsPossible</text>
                     }
                     else
                     {
@@ -72,7 +74,7 @@
             <td>
                 <button type="button" class="btn btn-success btn-sm show-on-parent-hover" onclick="toggleEdit(this.parentElement.parentElement)"><i class="fa fa-edit"></i></button>
                 <div class="btn-group btn-group-sm d-none">
-                    <button type="button" class="btn btn-primary" onclick="save(this.parentElement.parentElement.parentElement, @item.StudentId, @ViewData["AssessmentId"])"><i class="fa fa-save"></i></button>
+                    <button type="button" class="btn btn-primary" onclick="save(this.parentElement.parentElement.parentElement, @item.StudentId, @item.AssessmentId)"><i class="fa fa-save"></i></button>
                     <button type="button" class="btn btn-warning" onclick="toggleEdit(this.parentElement.parentElement.parentElement)"><i class="fa fa-times"></i></button>
                 </div>
             </td>
@@ -82,7 +84,7 @@
 </table>
 
 <!-- Hidden form for updating submissions -->
-<form id="submission-form" asp-page-handler="SubmitStudentAssessment" enctype="multipart/form-data" name="submission-form"  data-ajax="true" data-ajax-success="reload(@ViewData["AssessmentId"])">
+<form id="submission-form" asp-page-handler="SubmitStudentAssessment" enctype="multipart/form-data" name="submission-form"  data-ajax="true" data-ajax-success="reload()">
     <input type="hidden" name="AssessmentId" />
     <input type="hidden" name="StudentId" />
     <input type="hidden" name="SubmissionDateTime" />
@@ -91,3 +93,4 @@
     <input type="file" class="d-none" name="File" />
     <input type="submit" name="Submit" style="display:none" />
 </form>
+

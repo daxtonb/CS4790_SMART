@@ -19,8 +19,26 @@
         {
             <tr>
                 <td><a asp-page="/Students/Details" asp-route-id="@student.StudentId" style="color:#7989ff">@student.Name</a></td>
-                <td>@(student.GradeAverage.HasValue ? student.GradeAverage.Value.ToString() + "%" : "N/A")</td>
-                <td>@(student.AttendanceAverage.HasValue ? student.AttendanceAverage.Value.ToString() + "%" : "N/A")</td>
+                <td>
+                    @if (student.GradeAverage.HasValue)
+                    {
+                        <a href="#" data-toggle="modal" data-target="#details-modal" onclick="getStudentSubmissions(@student.StudentId)" style="color:#7989ff">@student.GradeAverage.Value%</a>
+                    }
+                    else
+                    {
+                        <text>N/A</text>
+                    }
+                </td>
+                <td>
+                    @if (student.AttendanceAverage.HasValue)
+                    {
+                        <a>@student.AttendanceAverage.Value%</a>
+                    }
+                    else
+                    {
+                        <text>N/A</text>
+                    }
+                </td>
             </tr>
         }
     </tbody>
