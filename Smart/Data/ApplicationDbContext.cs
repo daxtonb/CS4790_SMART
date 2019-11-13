@@ -45,7 +45,9 @@ namespace Smart.Data
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<AttendanceStatus> AttendanceStatuses { get; set; }
         public DbSet<StudentStatus> StudentStatuses { get; set; }
-        
+        public DbSet<Assessment> Assessments { get; set; }
+        public DbSet<StudentAssessment> StudentAssessments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
