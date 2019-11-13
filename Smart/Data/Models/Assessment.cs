@@ -17,6 +17,8 @@ namespace Smart.Data.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public int PointsPossible { get; set; }
+        [Column(TypeName = "date")]
+        [DataType(DataType.Date)]
         public DateTime Deadline { get; set; }
 
         public virtual Class Class { get; set; }
