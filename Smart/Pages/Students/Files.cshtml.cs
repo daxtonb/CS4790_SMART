@@ -43,7 +43,7 @@ namespace Smart.Pages.Students
            // file.FileId = 1;
             file.FileTypeId = 1;
             file.StudentId = 9;
-            var valuor = file.Path;
+            //var valuor = file.Path;
  
             _context.File.Add(file);
             await _context.SaveChangesAsync();

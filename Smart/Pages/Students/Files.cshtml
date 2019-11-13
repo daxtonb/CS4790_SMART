@@ -14,7 +14,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.File[0].Path)
+                @*@Html.DisplayNameFor(model => model.File[0].Path)*@
             </th>
             <th></th>
         </tr>
@@ -24,7 +24,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Path)
+                    @*@Html.DisplayFor(modelItem => item.Path)*@
                 </td>
                 <td>
                     <a asp-page="./Edit" asp-route-id="@item.FileId">Edit</a> |
@@ -38,7 +38,7 @@
     </tbody>
 </table>
 <form method="post" enctype="multipart/form-data">
-    <input asp-for="file.Path" type="file" name="file">
+    @*<input asp-for="file.Path" type="file" name="file">*@
     <br />
     <input type="submit" value="Upload" />
 </form>
