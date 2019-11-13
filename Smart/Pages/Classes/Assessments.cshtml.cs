@@ -32,6 +32,7 @@ namespace Smart.Pages.Classes
 
             Assessments = @class.Assessments;
 
+            // For layout
             ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.TimeOfYear} {@class.Term.StartDate.Year}";
             ViewData["ClassSubtitle"] = ClassSchedule.GetScheduleString(@class.ClassSchedules.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
             ViewData["ClassId"] = @class.ClassId;
