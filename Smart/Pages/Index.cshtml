@@ -6,107 +6,130 @@
 
 
 <br />
-
-<div class="col-12">
-    <div class="text-center">
-        <h1>SMART SCHOOL </h1>
+<div class="container-fluid">
+    <div class="jumbotron text-center">
+        <h1>SMART SCHOOL</h1>
+        <h6>Live as if you were to die tomorrow. Learn as if you were to live forever</h6>
     </div>
     <br />
-
-    <div id="smart" class="carousel slide" data-ride="carousel">
-
-        <!-- Indicators -->
-        <ul class="carousel-indicators">
-            <li data-target="#demo" data-slide-to="0" class="active"></li>
-            <li data-target="#demo" data-slide-to="1"></li>
-            <li data-target="#demo" data-slide-to="2"></li>
-        </ul>
-
-        <!-- The slideshow -->
-
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="~/images/student1.png" alt="student" width="1000" height="500">
-            </div>
-            <div class="carousel-item">
-                <img src="~/images/cs1.jpg" alt="computer class" width="1000" height="500">
-            </div>
-            <div class="carousel-item">
-                <img src="~/images/english1.jpeg" alt="English class" width="1000" height="500">
-            </div>
-        </div>
-
-        <!-- Left and right controls -->
-        <a class="carousel-control-prev" href="#demo" data-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-        </a>
-        <a class="carousel-control-next" href="#demo" data-slide="next">
-            <span class="carousel-control-next-icon"></span>
-        </a>
-    </div>
-</div>
-
-<br />
-<br />
-
-<div class="container-fluid">
     <div class="row">
 
-        <div class="col-sm-4">
-            <div class="container">
-                <div class="text-center">
-                    <h4>Bootstrap Theme</h4>
-                    <div class="card img-fluid" style="width:300px">
-                        <img class="card-img-top" src="~/images/events.gif" alt="Card image" style="width:100%">
-                        <div class="card-img-overlay">
-                            @*<h4 class="card-title">Bootstrap Theme</h4>*@
-                            <h5 class="card-text">
-                                This page contains the example page that demonstrates
-                                what each item looks like with the bootstrap theme.
-                            </h5>
-                            <a asp-page="BootstrapThemeExamples" class="btn btn-secondary btn-block primary content-center">Bootstrap Theme</a>
-                        </div>
+        @*<div class="col-2">
+            <h2>Vertical Nav</h2>
+            <p>Use the .flex-column class to create a vertical nav:</p>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">Disabled</a>
+                </li>
+            </ul>
+        </div>*@
+
+
+
+        <div class="col-12">
+            <div id="smart" class="carousel slide" data-ride="carousel">
+
+                <!-- Indicators -->
+                <ul class="carousel-indicators">
+                    <li data-target="#smart" data-slide-to="0" class="active"></li>
+                    <li data-target="#smart" data-slide-to="1"></li>
+                    <li data-target="#smart" data-slide-to="2"></li>
+                </ul>
+
+                <!-- The slideshow -->
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="~/images/student1.png" alt="student" width="1100" height="500">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="~/images/cs1.jpg" alt="computer class" width="1100" height="500">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="~/images/english1.jpeg" alt="English class" width="1100" height="500">
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-sm-4">
-            <div class="container">
-                <div class="text-center">
-                    <h4>Event</h4>
-                    <div class="card img-fluid" style="width:300px">
-                        <img class="card-img-top" src="~/images/events.gif" alt="Card image" style="width:100%">
-                        <div class="card-img-overlay">
-                            @*<h4 class="card-title">Events</h4>*@
-                            <h5 class="card-text">
-                                This page will show all the events and actions that are taking place,
-                                and which user made the changes.
-                            </h5>
-                            <a asp-page="Events/EventsView" class="btn btn-secondary btn-block primary content-center">Events</a>
-                        </div>
-                    </div>
-                </div>
+                <!-- Left and right controls -->
+                <a class="carousel-control-prev" href="#smart" data-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </a>
+                <a class="carousel-control-next" href="#smart" data-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </a>
             </div>
-        </div>
 
-        <div class="col-sm-4">
-            <div class="container">
-                <div class="text-center">
-                    <h4>Errors</h4>
-                    <div class="card img-fluid" style="width:300px">
-                        <img class="card-img-top" src="~/images/events.gif" alt="Card image" style="width:100%">
-                        <div class="card-img-overlay">
-                            @*<h4 class="card-title">Errors</h4>*@
-                            <h5 class="card-text">
-                                Shows the list of errors that occured, and the stack trace to follow the errors.
-                            </h5>
-                            <a asp-page="Events/ErrorsView" class="btn btn-secondary btn-block primary content-center">Errors</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-
+        </div>
     </div>
-</div>
+    <br />
+    <br />
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-sm-4">
+                <div class="container">
+                    <div class="text-center">
+                        <h4>Bootstrap Theme</h4>
+                        <div class="card img-fluid" style="width:300px">
+                            <img class="card-img-top" src="~/images/events.gif" alt="Card image" style="width:100%">
+                            <div class="card-img-overlay">
+                                @*<h4 class="card-title">Bootstrap Theme</h4>*@
+                                <h5 class="card-text">
+                                    This page contains the example page that demonstrates
+                                    what each item looks like with the bootstrap theme.
+                                </h5>
+                                <a asp-page="BootstrapThemeExamples" class="btn btn-secondary btn-block primary content-center">Bootstrap Theme</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="container">
+                    <div class="text-center">
+                        <h4>Event</h4>
+                        <div class="card img-fluid" style="width:300px">
+                            <img class="card-img-top" src="~/images/events.gif" alt="Card image" style="width:100%">
+                            <div class="card-img-overlay">
+                                @*<h4 class="card-title">Events</h4>*@
+                                <h5 class="card-text">
+                                    This page will show all the events and actions that are taking place,
+                                    and which user made the changes.
+                                </h5>
+                                <a asp-page="Events/EventsView" class="btn btn-secondary btn-block primary content-center">Events</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="container">
+                    <div class="text-center">
+                        <h4>Errors</h4>
+                        <div class="card img-fluid" style="width:300px">
+                            <img class="card-img-top" src="~/images/events.gif" alt="Card image" style="width:100%">
+                            <div class="card-img-overlay">
+                                @*<h4 class="card-title">Errors</h4>*@
+                                <h5 class="card-text">
+                                    Shows the list of errors that occured, and the stack trace to follow the errors.
+                                </h5>
+                                <a asp-page="Events/ErrorsView" class="btn btn-secondary btn-block primary content-center">Errors</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
