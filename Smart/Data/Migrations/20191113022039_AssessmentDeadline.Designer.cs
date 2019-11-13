@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Smart.Data;
 
 namespace Smart.data.migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191113022039_AssessmentDeadline")]
+    partial class AssessmentDeadline
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -132,8 +134,7 @@ namespace Smart.data.migrations
 
                     b.Property<int>("ClassId");
 
-                    b.Property<DateTime>("Deadline")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("Deadline");
 
                     b.Property<string>("Description");
 
@@ -500,15 +501,9 @@ namespace Smart.data.migrations
 
                     b.Property<string>("Comments");
 
-                    b.Property<int?>("FileId");
-
                     b.Property<int>("PointsAwarded");
 
-                    b.Property<DateTime>("SubmissionDateTime");
-
                     b.HasKey("AssessmentId", "StudentId");
-
-                    b.HasIndex("FileId");
 
                     b.HasIndex("StudentId");
 
@@ -839,10 +834,6 @@ namespace Smart.data.migrations
                         .WithMany("StudentAssessments")
                         .HasForeignKey("AssessmentId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Smart.Data.Models.File", "File")
-                        .WithMany()
-                        .HasForeignKey("FileId");
 
                     b.HasOne("Smart.Data.Models.Student", "Student")
                         .WithMany("StudentAssessments")
