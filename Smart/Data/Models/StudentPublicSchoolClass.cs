@@ -13,7 +13,6 @@ namespace Smart.Data.Models
         [Required]
         [MaxLength(128)]
         public string CourseName { get; set; }
-        public TimeOfYear TimeOfYear { get; set; }
         public int TermId { get; set; }
 
         public virtual ICollection<PublicSchoolClassSchedule> PublicSchoolClassSchedules { get; set; }

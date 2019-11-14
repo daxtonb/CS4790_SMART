@@ -63,7 +63,6 @@ namespace Smart.Data
             // Set-up Enum conversions
             builder.Entity<ScheduleAvailability>().Property(c => c.DayOfWeek).HasConversion(new EnumToNumberConverter<DayOfWeek, byte>());
             builder.Entity<Term>().Property(t => t.TimeOfYear).HasConversion(new EnumToNumberConverter<TimeOfYear, byte>());
-            builder.Entity<StudentPublicSchoolClass>().Property(s => s.TimeOfYear).HasConversion(new EnumToNumberConverter<TimeOfYear, byte>());
             builder.Entity<Student>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());
             builder.Entity<StudentStatus>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());
             builder.Entity<Attendance>().Property(s => s.AttendanceStatusId).HasConversion(new EnumToNumberConverter<AttendanceStatusEnum, int>());
