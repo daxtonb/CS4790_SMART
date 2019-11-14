@@ -44,8 +44,6 @@ namespace Smart.Pages.Application
             _context.Students.Add(Student);
             await _context.SaveChangesAsync();  //we have to save here so that we can access the db's student Id below
 
-            var studentFromDb = await _context.Students.FindAsync(Student.StudentId);
-
             if (files.Count > 0)
             {
                 var uploads = Path.Combine(webRootPath, "images");
@@ -55,7 +53,7 @@ namespace Smart.Pages.Application
                     files[0].CopyTo(fileStream);
                 }
 
-                studentFromDb.Photo = @"\images\" + Student.StudentId + extension;
+                Student.Photo = @"\images\" + Student.StudentId + extension;
             }
 
             await _context.SaveChangesAsync();  //save here to update file path
