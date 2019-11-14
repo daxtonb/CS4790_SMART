@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
@@ -30,6 +31,9 @@ namespace Smart.Pages.Application
         [BindProperty]
         public string Comment { get; set; }
 
+        [BindProperty]
+        public int TermId { get; set; }
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null) return NotFound();
@@ -40,6 +44,17 @@ namespace Smart.Pages.Application
 
             RatingCirterium = await _context.RatingCirteria.ToListAsync();    //grabbed here to be used in .cshtml
 
+            List<SelectListItem> terms = new List<SelectListItem>();
+
+            var termList = await _context.Terms.ToListAsync();
+
+            foreach(var item in termList)
+            {
+                terms.Add(new SelectListItem { Text = Term.GetTimeOfYear(item.StartDate.Date) + " (" + item.StartDate.Date.ToShortDateString() + " - " + item.EndDate.ToShortDateString() + ")", Value = item.TermId.ToString()});
+            }
+
+            ViewData["terms"] = terms;
+
             return Page();
         }
 
@@ -47,8 +62,6 @@ namespace Smart.Pages.Application
         {
             if (id == null) return NotFound();
             
-            RatingCirterium = await _context.RatingCirteria.ToListAsync();
-
             var userIdString = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             int userId = 0; //sets default in case there is an issue getting the id in string form
@@ -58,14 +71,16 @@ namespace Smart.Pages.Application
                 userId = int.Parse(userIdString);
             }
 
+            RatingCirterium = await _context.RatingCirteria.ToListAsync();
+
             for (var i = 0; i < RatingCirterium.Count; i++)
             {
                 var applicantRating = new ApplicantRating
                 {
                     StudentId = (int) id,
-                    UserId = userId,                                                     //THIS IS A TEMP VALUE
+                    UserId = userId,                                                    
                     RatingCiteriumId = RatingCirterium[i].RatingCirteriumId,        
-                    TermId = 1,                                                     //THIS IS A TEMP VALUE
+                    TermId = TermId,                                                     
                     ScoreAssigned = InputValues[i],                                 
                     DateTime = DateTime.Now,
                     Comments = Comment                                        
