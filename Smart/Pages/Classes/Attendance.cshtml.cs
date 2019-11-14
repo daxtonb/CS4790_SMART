@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +16,14 @@ namespace Smart.Pages.Classes
     public class AttendanceModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        //private IHostingEnvironment _environment;// me 
 
+        //public AttendanceModel(IHostingEnvironment environment)//me
+        //{
+        //    _environment = environment; //me
+        //}
+
+       
         public IEnumerable<AttendanceVieModel> Attendances { get; set; }
 
         public AttendanceModel(ApplicationDbContext context)
@@ -43,9 +53,18 @@ namespace Smart.Pages.Classes
             ViewData["ClassId"] = @class.ClassId;
         }
 
+        //[BindProperty] //me
+        //public IFormFile UploadCsv { get; set; } //me
+        // on Post uploding file
         public async Task<PageResult> OnPostUploadCsvAsync()
         {
             var file = Request.Form.Files[0];
+
+            //var file = Path.Combine(_environment.ContentRootPath, "uploads", UploadCsv.FileName);
+            //using (var fileStream = new FileStream(file, FileMode.Create))
+            //{
+            //    await UploadCsv.CopyToAsync(fileStream);
+            //}
             return Page();
         }
 

@@ -45,7 +45,7 @@ namespace Smart.Pages.Classes
 
             if (assessmentId.HasValue)
             {
-                assessment = await _context.Assessment.FirstOrDefaultAsync(a => a.AssessmentId == assessmentId.Value);
+                assessment = await _context.Assessments.FirstOrDefaultAsync(a => a.AssessmentId == assessmentId.Value);
 
                 if (assessment == null)
                 {
