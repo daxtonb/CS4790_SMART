@@ -25,6 +25,6 @@ namespace Smart.Pages.Students
         {
             Student = await _context.Students
                 .Include(s => s.StudentStatus).ToListAsync();
-        }
+        }//testing
     }
 }
