@@ -132,6 +132,9 @@ namespace Smart.data.migrations
 
                     b.Property<int>("ClassId");
 
+                    b.Property<DateTime>("Deadline")
+                        .HasColumnType("date");
+
                     b.Property<string>("Description");
 
                     b.Property<int>("PointsPossible");
@@ -284,11 +287,14 @@ namespace Smart.data.migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("FileTypeId");
+                    b.Property<byte[]>("ByteData")
+                        .IsRequired();
 
-                    b.Property<string>("Path")
+                    b.Property<string>("FileName")
                         .IsRequired()
                         .HasMaxLength(256);
+
+                    b.Property<int>("FileTypeId");
 
                     b.Property<int>("StudentId");
 
@@ -303,9 +309,7 @@ namespace Smart.data.migrations
 
             modelBuilder.Entity("Smart.Data.Models.FileType", b =>
                 {
-                    b.Property<int>("FileTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<int>("FileTypeId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -446,8 +450,6 @@ namespace Smart.data.migrations
                     b.Property<string>("Address")
                         .HasMaxLength(128);
 
-                    b.Property<int?>("ClassId");
-
                     b.Property<DateTime?>("DateOfBirth")
                         .IsRequired();
 
@@ -486,8 +488,6 @@ namespace Smart.data.migrations
 
                     b.HasKey("StudentId");
 
-                    b.HasIndex("ClassId");
-
                     b.HasIndex("StudentStatusId");
 
                     b.ToTable("Student");
@@ -501,9 +501,15 @@ namespace Smart.data.migrations
 
                     b.Property<string>("Comments");
 
+                    b.Property<int?>("FileId");
+
                     b.Property<int>("PointsAwarded");
 
+                    b.Property<DateTime>("SubmissionDateTime");
+
                     b.HasKey("AssessmentId", "StudentId");
+
+                    b.HasIndex("FileId");
 
                     b.HasIndex("StudentId");
 
@@ -535,11 +541,13 @@ namespace Smart.data.migrations
 
                     b.Property<int>("StudentId");
 
-                    b.Property<byte>("TimeOfYear");
+                    b.Property<int>("TermId");
 
                     b.HasKey("StudentPublicSchoolClassId");
 
                     b.HasIndex("StudentId");
+
+                    b.HasIndex("TermId");
 
                     b.ToTable("StudentPublicSchoolClass");
                 });
@@ -707,7 +715,7 @@ namespace Smart.data.migrations
             modelBuilder.Entity("Smart.Data.Models.Assessment", b =>
                 {
                     b.HasOne("Smart.Data.Models.Class", "Class")
-                        .WithMany()
+                        .WithMany("Assessments")
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -822,10 +830,6 @@ namespace Smart.data.migrations
 
             modelBuilder.Entity("Smart.Data.Models.Student", b =>
                 {
-                    b.HasOne("Smart.Data.Models.Class")
-                        .WithMany("Students")
-                        .HasForeignKey("ClassId");
-
                     b.HasOne("Smart.Data.Models.StudentStatus", "StudentStatus")
                         .WithMany("Students")
                         .HasForeignKey("StudentStatusId")
@@ -839,6 +843,10 @@ namespace Smart.data.migrations
                         .HasForeignKey("AssessmentId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("Smart.Data.Models.File", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId");
+
                     b.HasOne("Smart.Data.Models.Student", "Student")
                         .WithMany("StudentAssessments")
                         .HasForeignKey("StudentId")
@@ -848,7 +856,7 @@ namespace Smart.data.migrations
             modelBuilder.Entity("Smart.Data.Models.StudentClass", b =>
                 {
                     b.HasOne("Smart.Data.Models.Class", "Class")
-                        .WithMany()
+                        .WithMany("StudentClasses")
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -863,6 +871,11 @@ namespace Smart.data.migrations
                     b.HasOne("Smart.Data.Models.Student", "Student")
                         .WithMany("StudentPublicSchoolClasss")
                         .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Smart.Data.Models.Term", "Term")
+                        .WithMany("StudentPublicSchoolClasses")
+                        .HasForeignKey("TermId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

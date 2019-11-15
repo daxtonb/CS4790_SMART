@@ -18,6 +18,7 @@ namespace Smart.Data.Models
         public TimeOfYear TimeOfYear { get; set; }
 
         public virtual ICollection<Class> Classes { get; set; }
+        public virtual ICollection<StudentPublicSchoolClass> StudentPublicSchoolClasses { get; set; }
 
         public override string ToString()
         {

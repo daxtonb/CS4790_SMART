@@ -1,13 +1,9 @@
-﻿@page 
+﻿@page
+
 @model Smart.Pages.Classes.StudentListModel
 @{
     ViewData["Title"] = "StudentList";
     Layout = "~/Pages/Classes/_Layout.cshtml";
-    ViewData["ClassTitle"] = Model.ClassVm.Title;
-    ViewData["ClassSubtitle"] = Model.ClassVm.Subtitle;
-    ViewData["ClassId"] = Model.ClassVm.ClassId;
-
-    Func<int, int, double> percent = (x, y) => Math.Round(((double)x / y) * 100, 2);
 }
 
 <table class="table table-striped">
@@ -19,26 +15,30 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var student in Model.ClassVm.Stuents)
+        @foreach (var student in Model.Students)
         {
             <tr>
                 <td><a asp-page="/Students/Details" asp-route-id="@student.StudentId" style="color:#7989ff">@student.Name</a></td>
-                @if (Model.ClassVm.AssessmentPointsPossible.HasValue && Model.ClassVm.AssessmentPointsPossible > 0 && student.ClassAssmentPointsTotal.HasValue)
-                {
-                    <td>@(percent(student.ClassAssmentPointsTotal.Value, Model.ClassVm.AssessmentPointsPossible.Value))%</td>
-                }
-                else
-                {
-                    <td>N/A</td>
-                }
-                @if (Model.ClassVm.AttendanceDays.HasValue && Model.ClassVm.AttendanceDays > 0 && student.ClassAttendanceTotal.HasValue)
-                {
-            <td>@(percent(student.ClassAttendanceTotal.Value, Model.ClassVm.AttendanceDays.Value))%</td>
-                }
-                else
-                {
-                    <td>N/A</td>
-                }
+                <td>
+                    @if (student.GradeAverage.HasValue)
+                    {
+                        <a href="#" data-toggle="modal" data-target="#details-modal" onclick="getStudentSubmissions(@student.StudentId)" style="color:#7989ff">@student.GradeAverage.Value%</a>
+                    }
+                    else
+                    {
+                        <text>N/A</text>
+                    }
+                </td>
+                <td>
+                    @if (student.AttendanceAverage.HasValue)
+                    {
+                        <a>@student.AttendanceAverage.Value%</a>
+                    }
+                    else
+                    {
+                        <text>N/A</text>
+                    }
+                </td>
             </tr>
         }
     </tbody>

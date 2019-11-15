@@ -28,7 +28,7 @@ namespace Smart.Pages.Students
 
         public async Task OnGetAsync()
         {
-            File = await _context.File
+            File = await _context.Files
                 .Include(f => f.FileType)
                 .Include(f => f.Student).ToListAsync();
         }
@@ -41,11 +41,11 @@ namespace Smart.Pages.Students
             }
 
            // file.FileId = 1;
-            file.FileTypeId = 1;
+            //file.FileTypeId = 1;
             file.StudentId = 9;
-            var valuor = file.Path;
+            //var valuor = file.Path;
  
-            _context.File.Add(file);
+            _context.Files.Add(file);
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }

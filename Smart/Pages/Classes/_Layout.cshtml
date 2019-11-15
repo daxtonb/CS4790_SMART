@@ -1,4 +1,4 @@
-﻿@{ 
+﻿@{
     Layout = "~/Pages/Shared/_Layout.cshtml";
     string url = Context.Request.Path.ToString();
 }
@@ -6,8 +6,8 @@
     <div class="card-body">
         <h2 class="card-title">@ViewData["ClassTitle"]</h2>
         <h5 class="card-subtitle mb-4 text-muted">@ViewData["ClassSubtitle"]</h5>
-        <div class="row">
-            <div class="col-3">
+        <div class="row border-top pt-3">
+            <div class="col-3 border-right">
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                     <a class="nav-link @(url.EndsWith("Students", StringComparison.OrdinalIgnoreCase) ? "active" : "")" href="/Classes/@ViewData["ClassId"]/Students">Students</a>
                     <a class="nav-link @(url.EndsWith("Attendance", StringComparison.OrdinalIgnoreCase) ? "active" : "")" href="/Classes/@ViewData["ClassId"]/Attendance" id="attendance-tab">Attendance</a>
@@ -22,3 +22,85 @@
         </div>
     </div>
 </div>
+
+<script>
+    const assessmentBaseUrl = '/Classes/@ViewData["classId"]/Assessments?handler=';
+    let reloadUrl;
+
+    function getAssessmentForm(assessmentId) {
+        const getHandler = assessmentBaseUrl + 'AssessmentForm&classId=@ViewData["classId"]' + (assessmentId ? '&assessmentId=' + assessmentId : '');
+        const postHandler = assessmentBaseUrl + 'SaveAssessment';
+        const modalTitle = `${assessmentId ? 'Edit' : 'Create'} Assessment`;
+        getForm(modalTitle, getHandler, postHandler);
+    }
+
+    function getSubmissions(assessmentId) {
+        const getHandler = assessmentBaseUrl + 'Submissions&classId=@ViewData["classId"]&assessmentId=' + assessmentId;
+        const modalTitle = `Student Submissions`;
+        const modalSize = 'xl';
+        reloadUrl = getHandler;
+        getDetails(modalTitle, getHandler, modalSize);
+        }
+
+    function getStudentSubmissions(studentId) {
+        const getHandler = assessmentBaseUrl + 'StudentSubmissions&classId=@ViewData["classId"]&studentId=' + studentId;
+        const modalTitle = `Student Submissions`;
+        const modalSize = 'xl';
+        reloadUrl = getHandler;
+        getDetails(modalTitle, getHandler, modalSize);
+    }
+
+    function getFile() {
+        document.getElementsByName('File')[0].click();
+        console.log(document.getElementsByName('File')[0]);
+    }
+
+    function toggleEdit(tr) {
+        const tdArr = Array.from(tr.children);
+        let span, input;
+
+        for (const td of tdArr) {
+            if (!td.children.length)
+                continue;
+
+            span = td.children[0];
+            input = td.children[1];
+
+            // Toggle visibility of text and inputs
+            if (span.classList.contains('d-none')) {
+                span.classList.remove('d-none');
+                input.classList.add('d-none');
+            } else {
+                span.classList.add('d-none');
+                input.classList.remove('d-none');
+            }
+        }
+    }
+
+    function save(tr, studentId, assessmentId) {
+        const hiddenForm = document.forms['submission-form'];
+        const inputArr = Array.from(tr.getElementsByTagName('INPUT'));
+        inputArr.push(tr.getElementsByTagName('TEXTAREA')[0]);
+
+        for (const input of inputArr) {
+            hiddenForm[input.name].value = input.value;
+        }
+
+        hiddenForm["AssessmentId"].value = assessmentId;
+        hiddenForm["StudentId"].value = studentId;
+        console.log(hiddenForm["File"].value);
+
+        hiddenForm["Submit"].click(); // Submit form
+    }
+
+    function reload() {
+        const modalBody = $('#details-modal-body');
+
+        // Clear modal body
+        $(modalBody).text('Loading...');
+
+        // Get form HTML and intialize client-side validation
+        $(modalBody).load(reloadUrl, null, () => { $.validator.unobtrusive.parse('form'); });
+    }
+
+ </script>

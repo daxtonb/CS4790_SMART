@@ -28,7 +28,7 @@ namespace Smart.Pages.Grades
                 return NotFound();
             }
 
-            Assessment = await _context.Assessment
+            Assessment = await _context.Assessments
                 .Include(a => a.Class).FirstOrDefaultAsync(m => m.AssessmentId == id);
 
             if (Assessment == null)

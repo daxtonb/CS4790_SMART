@@ -45,7 +45,11 @@ namespace Smart.Data
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<AttendanceStatus> AttendanceStatuses { get; set; }
         public DbSet<StudentStatus> StudentStatuses { get; set; }
-        
+        public DbSet<Assessment> Assessments { get; set; }
+        public DbSet<StudentAssessment> StudentAssessments { get; set; }
+        public DbSet<File> Files { get; set; }
+        public DbSet<FileType> FileTypes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -59,11 +63,12 @@ namespace Smart.Data
             // Set-up Enum conversions
             builder.Entity<ScheduleAvailability>().Property(c => c.DayOfWeek).HasConversion(new EnumToNumberConverter<DayOfWeek, byte>());
             builder.Entity<Term>().Property(t => t.TimeOfYear).HasConversion(new EnumToNumberConverter<TimeOfYear, byte>());
-            builder.Entity<StudentPublicSchoolClass>().Property(s => s.TimeOfYear).HasConversion(new EnumToNumberConverter<TimeOfYear, byte>());
             builder.Entity<Student>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());
             builder.Entity<StudentStatus>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());
             builder.Entity<Attendance>().Property(s => s.AttendanceStatusId).HasConversion(new EnumToNumberConverter<AttendanceStatusEnum, int>());
             builder.Entity<AttendanceStatus>().Property(s => s.AttendanceStatusId).HasConversion(new EnumToNumberConverter<AttendanceStatusEnum, int>());
+            builder.Entity<File>().Property(s => s.FileTypeId).HasConversion(new EnumToNumberConverter<FileTypeEnum, int>());
+            builder.Entity<FileType>().Property(s => s.FileTypeId).HasConversion(new EnumToNumberConverter<FileTypeEnum, int>());
 
             builder.Entity<UserRole>(userRole =>
             {
@@ -132,15 +137,5 @@ namespace Smart.Data
 
             Events.AddRange(events);
         }
-
-        /// <summary>
-        /// Log the change and the responsible user
-        /// </summary>
-        public DbSet<Smart.Data.Models.File> File { get; set; }
-
-        /// <summary>
-        /// Log the change and the responsible user
-        /// </summary>
-        public DbSet<Smart.Data.Models.Assessment> Assessment { get; set; }
     }
 }

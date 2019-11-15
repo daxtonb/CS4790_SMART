@@ -3,54 +3,58 @@
 
 @{
     ViewData["Title"] = "Ratings";
+    var terms = (IEnumerable<SelectListItem>)ViewData["terms"];
 }
 
-    <div>
-        <h4>Student Rating</h4>
+<div>
+    <h4>Student Rating</h4>
 
-        <dl class="row">
-            <dt class="col-sm-2 font-weight-bold">
-                @Html.DisplayNameFor(model => model.Student.FirstName)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Student.FirstName)
-            </dd>
-            <dt class="col-sm-2 font-weight-bold">
-                @Html.DisplayNameFor(model => model.Student.LastName)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Student.LastName)
-            </dd>
-        </dl>
+    <dl class="row">
+        <dt class="col-sm-2 font-weight-bold">
+            @Html.DisplayNameFor(model => model.Student.FirstName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Student.FirstName)
+        </dd>
+        <dt class="col-sm-2 font-weight-bold">
+            @Html.DisplayNameFor(model => model.Student.LastName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Student.LastName)
+        </dd>
+    </dl>
 
-        <form method="post">
-
+    <form method="post">
+        <div class="col-4">
             @foreach (var item in Model.RatingCirterium)
             {
-                <div class="font-weight-bold">
-                    @item.Title
+                <div class="font-weight-bold" style="margin-bottom: 5px">
+                    @item.Title :
                     <input type="text" name="inputValues" class="control-label" />
                     / @item.MaxScore
                 </div>
             }
 
+            @*Comments Box*@
+            <div class="form-group font-weight-bold" style="margin-top: 10px">
+                <label asp-for="ApplicantRating.Comments" class="control-label" ></label>
+                @Html.TextAreaFor(model => model.ApplicantRating.Comments, 8, 30, htmlAttributes: new { style = "width: 100%; max-width: 100%;" })
+            </div>
+
+            @*Term Select List*@
             <div class="font-weight-bold">
-                Comments:
-                <input type="text" name="comment" class="control-label" />
+                Term:
+                <select class="control-label col-12" asp-for="TermId" asp-items="@(new SelectList(terms, "Value", "Text"))"></select>
             </div>
 
             <br />
 
-            @*<div class="form-group font-weight-bold">
-                <label asp-for="ApplicantRating.Comments" class="control-label"></label>
-                @Html.TextAreaFor(model => model.ApplicantRating.Comments, 10, 40, htmlAttributes: new { style = "width: 100%; max-width: 100%;" })
-            </div>*@
-
             <div class="form-group row ">
-                <div class="col-2">
+                <div class="col-12">
                     <partial name="_EditButtons"></partial>
                 </div>
             </div>
-        </form>
+        </div>
+    </form>
 
-    </div>
+</div>

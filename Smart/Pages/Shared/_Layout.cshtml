@@ -41,6 +41,8 @@
                             <div class="dropdown-menu" aria-labelledby="navvarApplicationDropDownMenuLink" id="#navbarApplicationDropDownMenuLink">
                                 <a class="nav-link text-dark" asp-page="/Application/Index">Applicants</a>
                                 <a class="nav-link text-dark" asp-page="/RatingCriterium/Index">Rating Criterium</a>
+                                <a class="nav-link text-dark" asp-page="/Attendance/Index">Attendance</a>
+
                             </div>
                         </li>
 
@@ -52,6 +54,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-page="/Classes/Index">Classes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-page="/Attendance/Index">Attendance</a>
                         </li>
                     </ul>
                 </div>
@@ -75,6 +80,48 @@
             &copy; 2019 - Smart - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+    <!-- Form Modal -->
+    <div class="modal fade" id="form-modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="form-modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="modal-form" method="post">
+                    <div class="modal-body" id="form-modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="modal-save">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div class="modal fade" id="details-modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+        <div id="details-modal-dialog" class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="details-modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="details-modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>

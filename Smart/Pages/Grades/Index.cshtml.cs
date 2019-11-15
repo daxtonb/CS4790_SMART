@@ -23,7 +23,7 @@ namespace Smart.Pages.Grades
 
         public async Task OnGetAsync()
         {
-            Assessment = await _context.Assessment
+            Assessment = await _context.Assessments
                 .Include(a => a.Class).ToListAsync();
         }
     }

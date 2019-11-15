@@ -29,7 +29,7 @@ namespace Smart.Pages.Grades
                 return NotFound();
             }
 
-            Assessment = await _context.Assessment
+            Assessment = await _context.Assessments
                 .Include(a => a.Class).FirstOrDefaultAsync(m => m.AssessmentId == id);
 
             if (Assessment == null)
@@ -46,11 +46,11 @@ namespace Smart.Pages.Grades
                 return NotFound();
             }
 
-            Assessment = await _context.Assessment.FindAsync(id);
+            Assessment = await _context.Assessments.FindAsync(id);
 
             if (Assessment != null)
             {
-                _context.Assessment.Remove(Assessment);
+                _context.Assessments.Remove(Assessment);
                 await _context.SaveChangesAsync();
             }
 

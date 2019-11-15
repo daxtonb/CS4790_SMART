@@ -14,7 +14,7 @@ namespace Smart.Pages.Classes
     {
         private readonly ApplicationDbContext _context;
 
-        public ViewModel ClassVm { get; set; }
+        public IEnumerable<StudentViewModel> Students { get; set; }
 
         public StudentListModel(ApplicationDbContext context)
         {
@@ -32,39 +32,37 @@ namespace Smart.Pages.Classes
                 .Include(c => c.ClassSchedules).ThenInclude(c => c.ScheduleAvailability)
                 .FirstOrDefaultAsync(c => c.ClassId == classId);
 
-            ClassVm = new ViewModel()
+            double? assessmentPointsPossible = @class.Assessments.Count > 0 ? @class.Assessments.Sum(a => a.PointsPossible) : (int?)null;
+            double? attendanceDays = @class.Attendances.Count > 0 ? @class.Attendances.Select(a => a.Date.Date).Distinct().Count() : (int?)null;
+
+            Students = @class.StudentClasses.Select(s => new StudentViewModel
             {
-                ClassId = @class.ClassId,
-                Title = $"{@class.Course.Name} - {@class.Term.TimeOfYear} {@class.Term.StartDate.Year}",
-                Subtitle = ClassSchedule.GetScheduleString(@class.ClassSchedules.OrderBy(c => c.ScheduleAvailability.DayOfWeek)),
-                AssessmentPointsPossible = @class.Assessments.Count > 0 ? @class.Assessments.Sum(a => a.PointsPossible) : (int?)null,
-                AttendanceDays = @class.Attendances.Count > 0 ? @class.Attendances.Select(a => a.Date.Date).Distinct().Count() : (int?)null,
-                Stuents = @class.StudentClasses.Select(s => new StudentViewModel
-                {
-                    StudentId = s.StudentId,
-                    Name = $"{s.Student.LastName}, {s.Student.FirstName}",
-                    ClassAssmentPointsTotal = s.Student.StudentAssessments?.Sum(a => a.PointsAwarded),
-                    ClassAttendanceTotal = s.Student.Attendances?.Count(a => a.AttendanceStatusId != AttendanceStatusEnum.Absent)
-                })
-            };
+                StudentId = s.StudentId,
+                Name = $"{s.Student.LastName}, {s.Student.FirstName}",
+                GradeAverage = GetRoundedPercent(s.Student.StudentAssessments?.Sum(a => a.PointsAwarded), assessmentPointsPossible),
+                AttendanceAverage = GetRoundedPercent(s.Student.Attendances?.Count(a => a.AttendanceStatusId != AttendanceStatusEnum.Absent), attendanceDays)
+            });
+
+            // For layout
+            ViewData["ClassId"] = @class.ClassId;
+            ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.TimeOfYear} {@class.Term.StartDate.Year}";
+            ViewData["ClassSubtitle"] = ClassSchedule.GetScheduleString(@class.ClassSchedules.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
         }
 
-        public class ViewModel
+        private double? GetRoundedPercent(double? value, double? total)
         {
-            public int ClassId { get; set; }
-            public string Title { get; set; }
-            public string Subtitle { get; set; }
-            public int? AssessmentPointsPossible { get; set; }
-            public int? AttendanceDays { get; set; }
-            public IEnumerable<StudentViewModel> Stuents { get; set; }
+            if (value.HasValue && total.HasValue && total > 0)
+                return Math.Round((value.Value / total.Value) * 100, 2);
+            else
+                return null;
         }
 
         public class StudentViewModel
         {
             public int StudentId { get; set; }
             public string Name { get; set; }
-            public int? ClassAssmentPointsTotal { get; set; }
-            public int? ClassAttendanceTotal { get; set; }
+            public double? GradeAverage { get; set; }
+            public double? AttendanceAverage { get; set; }
         }
     }
 }

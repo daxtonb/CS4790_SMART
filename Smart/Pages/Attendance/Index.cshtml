@@ -1,0 +1,20 @@
+﻿@page
+@model Smart.Pages.Attendance.IndexModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+<div class="col-md-12">
+    @using (Html.BeginForm("UploadCsv", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="form-group">
+            <label for="attachment">Select a Csv File</label>
+            <label class="btn btn-default btn-file">
+                <input type="file" name="attachmentcsv" id="attachmentcsv" hidden>
+            </label>
+        </div>
+        @*<button type="submit" class="btn btn-primary">Upload</button>*@
+        <a asp-page="Import" class="btn btn-info"><i class="fas fa-file-import"></i> &nbsp;  Import Attendance File </a>
+    }
+</div>

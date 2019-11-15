@@ -3,12 +3,22 @@
 
 @{
     ViewData["Title"] = "Details";
+    var imagePath = @"" + Model.Student.Photo;
 }
 
 <h2>Student Details</h2>
 
 <div>
     <hr />
+
+    @*Photo Section*@
+    @if (!String.IsNullOrEmpty(imagePath))
+    {
+        <div class="form-group">
+            <img src="@imagePath" height="60%" width="40%" />
+        </div>
+    }
+
     <dl class="row">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Student.FirstName)

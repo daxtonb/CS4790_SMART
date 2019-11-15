@@ -5,21 +5,31 @@
     Layout = "~/Pages/Classes/_Layout.cshtml";
 }
 
+<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getAssessmentForm()"><i class="fa fa-plus"></i> Assessment</button>
 <table class="table table-striped">
     <thead>
         <tr>
             <th role="columnheader">Title</th>
             <th role="columnheader">Description</th>
-            <th role="columnheader">Submissions</th>
+            <th role="columnheader">Deadline</th>
+            <th role="columnheader">Points</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.Assessments)
         {
-            <tr>
+            <tr class="parent">
                 <td>@item.Title</td>
                 <td>@item.Description</td>
-                <td>@item.StudentAssessments.Count</td>
+                <td>@item.Deadline.ToString("M/d/yyyy")</td>
+                <td>@item.PointsPossible</td>
+                <td>
+                    <div class="btn-group-sm  show-on-parent-hover">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#details-modal" onclick="getSubmissions(@item.AssessmentId)"><i class="fas fa-th-list"></i></button>
+                        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#form-modal" onclick="getAssessmentForm(@item.AssessmentId)"><i class="fa fa-edit"></i></button>
+                    </div>
+                </td>
             </tr>
         }
     </tbody>

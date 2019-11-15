@@ -35,7 +35,7 @@ namespace Smart.Pages.Grades
                 return Page();
             }
 
-            _context.Assessment.Add(Assessment);
+            _context.Assessments.Add(Assessment);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

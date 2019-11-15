@@ -1,0 +1,96 @@
+﻿@model IEnumerable<Smart.Pages.Classes.AssessmentsModel.AssessmentSubmissionViewModel>
+
+<h2>@Model.FirstOrDefault()?.StudentName</h2>
+
+<table class="table table-sm table-responsive-sm">
+    <thead>
+        <tr>
+            <th role="columnheader">Assessment</th>
+            <th role="columnheader">Submitted</th>
+            <th role="columnheader">Score</th>
+            <th role="columnheader">Comments</th>
+            <th role="columnheader">File</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr class="parent">
+            <td>@item.AssessmentName</td>
+            <td>
+                <span>
+                    @if (item.SubmissionDateTime.HasValue)
+                    {
+                        <text>@item.SubmissionDateTime.Value.ToString("M/d/yyyy hh:mm tt")</text>
+                    }
+                    else
+                    {
+                        <i class="fa fa-minus"></i>
+                    }
+                </span>
+                <input name="SubmissionDateTime" type="datetime" value="@(item.SubmissionDateTime ?? DateTime.Now)" class="form-control d-none" />
+            </td>
+            <td>
+                <span>
+                    @if (item.PointsAwarded.HasValue)
+                    {
+                        <text>@item.PointsAwarded/@item.PointsPossible</text>
+                    }
+                    else
+                    {
+                        <i class="fa fa-minus"></i>
+                    }
+                </span>
+                <input name="PointsAwarded" type="number" value="@item.PointsAwarded" class="form-control d-none" style="width:75px" />
+            </td>
+            <td>
+                <span>
+                    @if (!string.IsNullOrEmpty(item.Comments))
+                    {
+                        <text>@item.Comments</text>
+                    }
+                    else
+                    {
+                        <i class="fa fa-minus"></i>
+                    }
+                </span>
+                <textarea name="Comments" value="@item.Comments" class="form-control d-none">@item.Comments</textarea>
+            </td>
+            <td>
+                <span>
+                    @if (!string.IsNullOrEmpty(item.FileName))
+                    {
+                        <text>@item.FileName</text>
+                    }
+                    else
+                    {
+                        <i class="fa fa-minus"></i>
+                    }
+                </span>
+
+                <button class="d-none btn btn-sm btn-success" type="button" onclick="getFile()"><i class="fa fa-upload"></i></button>
+            </td>
+            <td>
+                <button type="button" class="btn btn-success btn-sm show-on-parent-hover" onclick="toggleEdit(this.parentElement.parentElement)"><i class="fa fa-edit"></i></button>
+                <div class="btn-group btn-group-sm d-none">
+                    <button type="button" class="btn btn-primary" onclick="save(this.parentElement.parentElement.parentElement, @item.StudentId, @item.AssessmentId)"><i class="fa fa-save"></i></button>
+                    <button type="button" class="btn btn-warning" onclick="toggleEdit(this.parentElement.parentElement.parentElement)"><i class="fa fa-times"></i></button>
+                </div>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Hidden form for updating submissions -->
+<form id="submission-form" asp-page-handler="SubmitStudentAssessment" enctype="multipart/form-data" name="submission-form"  data-ajax="true" data-ajax-success="reload()">
+    <input type="hidden" name="AssessmentId" />
+    <input type="hidden" name="StudentId" />
+    <input type="hidden" name="SubmissionDateTime" />
+    <input type="hidden" name="PointsAwarded" />
+    <input type="hidden" name="Comments" />
+    <input type="file" class="d-none" name="File" />
+    <input type="submit" name="Submit" style="display:none" />
+</form>
+
