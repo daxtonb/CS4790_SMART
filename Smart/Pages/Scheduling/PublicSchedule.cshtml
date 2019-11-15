@@ -4,6 +4,88 @@
     ViewData["Title"] = "PublicSchedule";
 }
 
-<h2>Public Schedule</h2>
-<a asp-page="Index" class="btn btn-primary">Back To Schedule</a>
+<div class="row text-center">
+    <h2>Public Schedule</h2>
+</div>
+
+<form method="post">
+    <div class="row">
+        <div class="col-3 form-group">
+            <label asp-for="CourseName" class="control-label"></label>
+            <input type="text" asp-for="CourseName" class="form-control" placeholder="Enter Course Name" />
+            <span asp-validation-for="CourseName" class="text-danger"></span>
+        </div>
+        <div class="col-2 form-group">
+            <label asp-for="DayOfWeek" class="control-label"></label> <br />
+            <input type="checkbox" name="Monday" value="0" /> Monday <br />
+            <input type="checkbox" name="Tuesday" value="0" /> Tuesday <br />
+            <input type="checkbox" name="Wednesday" value="0" /> Wednesday <br />
+            <input type="checkbox" name="Thursday" value="0" /> Thursday <br />
+            <input type="checkbox" name="Friday" value="0" /> Friday <br />
+            <span asp-validation-for="DayOfWeek" class="text-danger"></span>
+        </div>
+        <div class="col-3 offset-1 form-group">
+            <label asp-for="StartTime" class="control-label"></label>
+            <input type="time" asp-for="StartTime" class="form-control" placeholder="Start Time" />
+            <span asp-validation-for="StartTime" class="text-danger"></span>
+        </div>
+        <div class="col-3 form-group">
+            <label asp-for="EndTime" class="control-label"></label>
+            <input type="time" asp-for="EndTime" class="form-control" placeholder="End Time" />
+            <span asp-validation-for="EndTime" class="text-danger"></span>
+        </div>
+
+        <div class="col-3 form-group text-left">
+            <a asp-page="Index" class="btn btn-primary">Back To Schedule</a>
+        </div>
+        <div class="col-3 offset-6 form-group text-right">
+            <input type="submit" name="Submit" class="btn btn-success" value="Add Course" />
+        </div>
+
+    </div>
+</form>
+
+<div class="row">
+    <table class="col-12 table table-secondary table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Course
+                </th>
+                <th>
+                    Day(s)
+                </th>
+                <th>
+                    Start Time:
+                </th>
+                <th>
+                    End Time:
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(Model.PublicSchedule.Count == 0)
+            {
+            <tr>
+                <td colspan="4"><h2>No Public Classes Created Yet</h2></td>
+            </tr>
+            }
+            else
+            {
+                @foreach(var myClass in Model.PublicSchedule)
+                {
+                    <tr>
+                        <td>@myClass.CourseName</td>
+                        <td>DEMO</td>
+                        <td>DEMO</td>
+                    </tr>
+
+                }
+            }
+        </tbody>
+    </table>
+
+</div>
+
+
 

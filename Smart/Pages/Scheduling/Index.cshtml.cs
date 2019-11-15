@@ -41,7 +41,6 @@ namespace Smart.Pages.Scheduling
                 }
             }
 
-
             if (studentId == null)
             {
                 MyStudent = _db.Students.Include(c => c.StudentClasses).FirstOrDefault(i => i.StudentId == 3);

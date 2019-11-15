@@ -30,13 +30,13 @@ namespace Smart.Pages.Classes
                 .Include(c => c.ClassSchedules).ThenInclude(c => c.ScheduleAvailability)
                 .FirstOrDefaultAsync(c => c.ClassId == classId);
 
-            Attendances = @class.Attendances.GroupBy(a => a.Date.Date, a => a).Select(a => new AttendanceVieModel
-            {
-                Date = a.Key,
-                OnTimeCount = a.Count(a => a.AttendanceStatusId == AttendanceStatusEnum.OnTime),
-                LateCount = a.Count(a => a.AttendanceStatusId == AttendanceStatusEnum.Late),
-                AbsentCount = a.Count(a => a.AttendanceStatusId == AttendanceStatusEnum.Absent)
-            }).OrderByDescending(a => a.Date);
+            //Attendances = @class.Attendances.GroupBy(a => a.Date.Date, a => a).Select(a => new AttendanceVieModel
+            //{
+            //    Date = a.Key,
+            //    OnTimeCount = a.Count(a => a.AttendanceStatusId == AttendanceStatusEnum.OnTime),
+            //    LateCount = a.Count(a => a.AttendanceStatusId == AttendanceStatusEnum.Late),
+            //    AbsentCount = a.Count(a => a.AttendanceStatusId == AttendanceStatusEnum.Absent)
+            //}).OrderByDescending(a => a.Date);
 
             ViewData["ClassTitle"] = @class.Course.Name;
             ViewData["ClassSubtitle"] = ClassSchedule.GetScheduleString(@class.ClassSchedules.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
@@ -51,4 +51,6 @@ namespace Smart.Pages.Classes
             public int AbsentCount { get; set; }
         }
     }
+
+
 }
