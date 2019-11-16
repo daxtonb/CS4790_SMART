@@ -19,6 +19,9 @@ namespace Smart.Pages.Application
         private readonly ApplicationDbContext _context;
         private readonly IHostingEnvironment _hostingEnvironment;
 
+        [BindProperty]
+        public Student Student { get; set; }
+
         public CreateModel(ApplicationDbContext context, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
@@ -31,32 +34,58 @@ namespace Smart.Pages.Application
             return Page();
         }
 
-        [BindProperty]
-        public Student Student { get; set; }
-
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid) return Page();
 
-            string webRootPath = _hostingEnvironment.WebRootPath;
-            var files = HttpContext.Request.Form.Files;
-
             _context.Students.Add(Student);
             await _context.SaveChangesAsync();  //we have to save here so that we can access the db's student Id below
 
-            if (files.Count > 0)
-            {
-                var uploads = Path.Combine(webRootPath, "images");
-                var extension = Path.GetExtension(files[0].FileName);
-                using (var fileStream = new FileStream(Path.Combine(uploads, Student.StudentId.ToString() + extension), FileMode.Create))
-                {
-                    files[0].CopyTo(fileStream);
-                }
+            #region Photo
+            string webRootPath = _hostingEnvironment.WebRootPath;
+            var files = HttpContext.Request.Form.Files;
 
-                Student.Photo = @"\images\" + Student.StudentId + extension;
+            foreach(var file in files)
+            {
+                if (file.Name == "photo")
+                {
+                    var uploads = Path.Combine(webRootPath, "images");
+                    var extension = Path.GetExtension(files[0].FileName);
+                    using (var fileStream = new FileStream(Path.Combine(uploads, Student.StudentId.ToString() + extension), FileMode.Create))
+                    {
+                        files[0].CopyTo(fileStream);
+                    }
+
+                    Student.Photo = @"\images\" + Student.StudentId + extension;
+                }
+                else //from the document upload box
+                {
+                    byte[] doc = null;
+
+                    using (var fs = file.OpenReadStream())
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            fs.CopyTo(ms);
+                            doc = ms.ToArray();
+                        }
+                    }
+
+                    var newFile = new Data.Models.File
+                    {
+                        ByteData = doc,
+                        FileTypeId = FileTypeEnum.Other,
+                        FileName = file.FileName,
+                        StudentId = Student.StudentId
+                    };
+
+                    _context.Files.Add(newFile);
+                    await _context.SaveChangesAsync();
+                }
             }
 
             await _context.SaveChangesAsync();  //save here to update file path
+            #endregion
 
             return RedirectToPage("./Index");
         }
