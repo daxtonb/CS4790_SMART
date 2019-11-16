@@ -47,6 +47,7 @@ namespace Smart.Pages.Students
 
         public async Task<IActionResult> OnPostAsync()
         {
+            /*
             if (!ModelState.IsValid)
             {
                 return Page();
@@ -68,8 +69,22 @@ namespace Smart.Pages.Students
                 {
                     throw;
                 }
-            }
+            }*/
+            string webRootPath = _hostingEnvironment.WebRootPath;
+            var files = HttpContext.Request.Form.Files;
 
+            if (files.Count > 0)
+            {
+                var uploads = Path.Combine(webRootPath, "images");
+                var extension = Path.GetExtension(files[0].FileName);
+                using (var fileStream = new FileStream(Path.Combine(uploads, Student.StudentId.ToString() + extension), FileMode.Create))
+                {
+                    files[0].CopyTo(fileStream);
+                }
+
+                Student.Photo = @"\images\" + Student.StudentId + extension;
+            }
+            await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
 

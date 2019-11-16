@@ -5,7 +5,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Notes</h1>
+    <h1>@Model.Student[0].FirstName @Model.Student[0].LastName</h1>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="collapse navbar-collapse" id="navbarNav">
@@ -34,12 +34,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Note[0].Text)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Note[0].Student)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Note[0].User)
-            </th>
 
             <th></th>
         </tr>
@@ -52,20 +46,14 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Text)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Student.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.Email)
-                </td>
 
                 <td>
-                    <a asp-page="./Edit" asp-route-id="@item.NoteId">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.NoteId">Details</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.NoteId">Delete</a>
+                    <a asp-page="./Edit" class="btn btn-primary text-white" asp-route-id="@item.NoteId" asp-route-studentId="@Model.studentIdentifies"><i class="fas fa-edit"></i></a> 
+                    <a asp-page="./Details" class="btn btn-success text-white" asp-route-id="@item.NoteId" asp-route-studentId="@Model.studentIdentifies"><i class="fas fa-list-alt"></i></a> 
+                    <a asp-page="./Delete" class="btn btn-danger text-white" asp-route-id="@item.NoteId" asp-route-studentId="@Model.studentIdentifies"><i class="fas fa-trash-alt"></i></a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<a asp-page="Create" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Create New Student </a>
+<a asp-page="Create" asp-route-studentId="@Model.studentIdentifies" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Add Note </a>

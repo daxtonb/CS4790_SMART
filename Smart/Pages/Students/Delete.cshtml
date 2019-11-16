@@ -5,7 +5,6 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
@@ -13,16 +12,16 @@
                 <a class="nav-link" href="#">Student <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="~/Grades">Grades</a>
+                <a class="nav-link" asp-page="../Grades/Index" asp-route-studentId="@Model.Student.StudentId">Grades</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-page="Files" asp-route-id="@Model.Student.StudentId">Files</a>
+                <a class="nav-link" asp-page="../Files/Index" asp-route-studentId="@Model.Student.StudentId">Files</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" asp-page="~/Scheduling" asp-route-id="@Model.Student.StudentId">Schedule</a>
+                <a class="nav-link" asp-page="../Scheduling/Index" asp-route-id="@Model.Student.StudentId">Schedule</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="~/Notes">Notes</a>
+                <a class="nav-link" asp-page="../Notes/Index" asp-route-studentId="@Model.Student.StudentId">Notes</a>
             </li>
         </ul>
     </div>

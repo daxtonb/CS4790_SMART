@@ -8,12 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Notes
+namespace Smart.Pages.Files
 {
     public class DeleteModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
-        public int studentIdentification;
 
         public DeleteModel(Smart.Data.ApplicationDbContext context)
         {
@@ -21,44 +20,42 @@ namespace Smart.Pages.Notes
         }
 
         [BindProperty]
-        public Note Note { get; set; }
+        public File File { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id, int studentId)
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
-            studentIdentification = studentId;
             if (id == null)
             {
                 return NotFound();
             }
 
-            Note = await _context.Notes
-                .Include(n => n.NoteType)
-                .Include(n => n.Student)
-                .Include(n => n.User).FirstOrDefaultAsync(m => m.NoteId == id);
+            File = await _context.Files
+                .Include(f => f.FileType)
+                .Include(f => f.Student).FirstOrDefaultAsync(m => m.FileId == id);
 
-            if (Note == null)
+            if (File == null)
             {
                 return NotFound();
             }
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id, int studentId)
+        public async Task<IActionResult> OnPostAsync(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Note = await _context.Notes.FindAsync(id);
+            File = await _context.Files.FindAsync(id);
 
-            if (Note != null)
+            if (File != null)
             {
-                _context.Notes.Remove(Note);
+                _context.Files.Remove(File);
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToPage("./Index", new { studentId });
+            return RedirectToPage("./Index");
         }
     }
 }

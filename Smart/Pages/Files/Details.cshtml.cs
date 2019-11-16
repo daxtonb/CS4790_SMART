@@ -8,34 +8,31 @@ using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Notes
+namespace Smart.Pages.Files
 {
     public class DetailsModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
-        public int studentIdentification;
 
         public DetailsModel(Smart.Data.ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public Note Note { get; set; }
+        public File File { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id, int studentId)
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
-            studentIdentification = studentId;
             if (id == null)
             {
                 return NotFound();
             }
 
-            Note = await _context.Notes
-                .Include(n => n.NoteType)
-                .Include(n => n.Student)
-                .Include(n => n.User).FirstOrDefaultAsync(m => m.NoteId == id);
+            File = await _context.Files
+                .Include(f => f.FileType)
+                .Include(f => f.Student).FirstOrDefaultAsync(m => m.FileId == id);
 
-            if (Note == null)
+            if (File == null)
             {
                 return NotFound();
             }

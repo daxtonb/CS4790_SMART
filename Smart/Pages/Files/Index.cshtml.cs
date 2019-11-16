@@ -8,31 +8,35 @@ using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
 
-namespace Smart.Pages.Notes
+namespace Smart.Pages.Files
 {
     public class IndexModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
-        public int studentIdentifies;
 
         public IndexModel(Smart.Data.ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public IList<Note> Note { get;set; }
+        public IList<File> File { get;set; }
 
-    
-        public IList<Student> Student { get; set; }
+        public int studentIdentifies;
 
-        public async Task OnGet(int studentId)
+        public async Task OnGet(int id)
         {
-            Note = _context.Notes.Where(n => n.Studentid == studentId).ToList();
-            studentIdentifies = studentId;
+            /*
+            File = await _context.Files
+                .Include(f => f.FileType)
+                .Include(f => f.Student).ToListAsync();*/
 
-            Student = _context.Students.Where(i => i.StudentId == studentId).ToList();
+            studentIdentifies = id;
 
-            
+            File =  _context.Files
+                .Where(f => f.StudentId == id).ToList();
+
+          //  Notes = _context.Notes.Where(n => n.Studentid == studentId).ToList();
+
         }
     }
 }

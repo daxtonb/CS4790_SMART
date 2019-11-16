@@ -37,10 +37,16 @@
             @Html.DisplayFor(model => model.Note.NoteType.NoteTypeId)
         </dd>
     </dl>
-    
+
     <form method="post">
         <input type="hidden" asp-for="Note.NoteId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-page="./Index">Back to List</a>
+        <div class="row">
+            <div class="col-6">
+                <input type="submit" value="Delete" class="btn btn-danger" asp-route-id="@Model.Note.NoteId" asp-route-studentId="@Model.studentIdentification" />
+            </div>
+            <div class="col-6">
+                <a asp-page="Index" class="btn btn-success" asp-route-studentId="@Model.studentIdentification">Back to List</a>
+            </div>
+        </div>
     </form>
 </div>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,17 +15,25 @@ namespace Smart.Pages.Notes
     public class EditModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
+        public int studentIdentification;
+        private readonly UserManager<User> _userManager;
 
-        public EditModel(Smart.Data.ApplicationDbContext context)
+        public EditModel(Smart.Data.ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [BindProperty]
         public Note Note { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int? id, int studentId)
         {
+            studentIdentification = studentId;
+            var user = await _userManager.GetUserAsync(User);
+            var idu = user.Id;
+
+
             if (id == null)
             {
                 return NotFound();
@@ -40,12 +49,12 @@ namespace Smart.Pages.Notes
                 return NotFound();
             }
            ViewData["NoteTypeId"] = new SelectList(_context.NoteTypes, "NoteTypeId", "NoteTypeId");
-           ViewData["Studentid"] = new SelectList(_context.Students, "StudentId", "FirstName");
-           ViewData["UserId"] = new SelectList(_context.Users, "Id", "Email");
+           ViewData["Studentid"] = new SelectList(_context.Students.Where(n => n.StudentId == studentId).ToList(), "StudentId", "FirstName");
+           ViewData["UserId"] = new SelectList(_context.Users.Where(n => n.Id == user.Id).ToList(), "Id", "Email");
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id, int studentId)
         {
             if (!ModelState.IsValid)
             {
@@ -70,7 +79,7 @@ namespace Smart.Pages.Notes
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("./Index", new { studentId });
         }
 
         private bool NoteExists(int id)

@@ -1,0 +1,46 @@
+﻿@page
+@model Smart.Pages.Files.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+           
+            <th>
+                @Html.DisplayNameFor(model => model.File[0].FileName)
+            </th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.File[0].FileType)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.File) {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.FileName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FileType.Description)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.FileId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.FileId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.FileId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<a asp-page="Create" asp-route-studentId="@Model.studentIdentifies" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Add New File </a>
