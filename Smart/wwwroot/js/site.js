@@ -1,4 +1,6 @@
-﻿// Retrieves form and places in form modal
+﻿let doRefresh = false;
+
+// Retrieves form and places in form modal
 function getForm(modalTitle, getHandlerUrl, postHandlerUrl) {
 
     // Add form action
@@ -42,3 +44,10 @@ function getDetails(modalTitle, getHandlerUrl, modalSize) {
     // Get form HTML and intialize client-side validation
     $(modalBody).load(getHandlerUrl, null, () => { $.validator.unobtrusive.parse('form'); });
 }
+
+$(document).on('hide.bs.modal', '.modal', function () {
+    // CONDITION: Page refresh is queued. 
+    if (doRefresh) {
+        window.location.reload();
+    }
+});
