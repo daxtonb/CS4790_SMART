@@ -20,7 +20,7 @@ namespace Smart.Pages.Grades
         }
 
         [BindProperty]
-        public Assessment Assessment { get; set; }
+        public StudentAssessment StudentAssessment { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -29,10 +29,12 @@ namespace Smart.Pages.Grades
                 return NotFound();
             }
 
-            Assessment = await _context.Assessments
-                .Include(a => a.Class).FirstOrDefaultAsync(m => m.AssessmentId == id);
+            StudentAssessment = await _context.StudentAssessments
+                .Include(s => s.Assessment)
+                .Include(s => s.File)
+                .Include(s => s.Student).FirstOrDefaultAsync(m => m.AssessmentId == id);
 
-            if (Assessment == null)
+            if (StudentAssessment == null)
             {
                 return NotFound();
             }
@@ -46,11 +48,11 @@ namespace Smart.Pages.Grades
                 return NotFound();
             }
 
-            Assessment = await _context.Assessments.FindAsync(id);
+            StudentAssessment = await _context.StudentAssessments.FindAsync(id);
 
-            if (Assessment != null)
+            if (StudentAssessment != null)
             {
-                _context.Assessments.Remove(Assessment);
+                _context.StudentAssessments.Remove(StudentAssessment);
                 await _context.SaveChangesAsync();
             }
 

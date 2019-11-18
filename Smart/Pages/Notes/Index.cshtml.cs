@@ -31,8 +31,7 @@ namespace Smart.Pages.Notes
             studentIdentifies = studentId;
 
             Student = _context.Students.Where(i => i.StudentId == studentId).ToList();
-
-            
+           
         }
     }
 }

@@ -14,41 +14,54 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Assessment[0].Title)
+                @Html.DisplayNameFor(model => model.StudentAssessment[0].PointsAwarded)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Assessment[0].Description)
+                @Html.DisplayNameFor(model => model.StudentAssessment[0].Comments)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Assessment[0].PointsPossible)
+                @Html.DisplayNameFor(model => model.StudentAssessment[0].SubmissionDateTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Assessment[0].Class)
+                @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentAssessment[0].Student)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentAssessment[0].File)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Assessment) {
+@foreach (var item in Model.StudentAssessment) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @Html.DisplayFor(modelItem => item.PointsAwarded)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
+                @Html.DisplayFor(modelItem => item.Comments)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PointsPossible)
+                @Html.DisplayFor(modelItem => item.SubmissionDateTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Class.ClassId)
+                @Html.DisplayFor(modelItem => item.Assessment.Title)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.AssessmentId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.AssessmentId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.AssessmentId">Delete</a>
+                @Html.DisplayFor(modelItem => item.Student.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.File.FileName)
+            </td>
+            <td>
+                <a asp-page="./Edit" class="btn btn-primary text-white" asp-route-idassesment="@item.AssessmentId" asp-route-studentId="@item.StudentId"><i class="fas fa-edit"></i></a>
+                <a asp-page="./Details" class="btn btn-success text-white" asp-route-idassesment="@item.AssessmentId" asp-route-studentId="@item.StudentId"><i class="fas fa-list-alt"></i></a>
+                <a asp-page="./Delete" class="btn btn-danger text-white" asp-route-idassesment="@item.AssessmentId" asp-route-studentId="@item.StudentId"><i class="fas fa-trash-alt"></i></a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+<a asp-page="Create" asp-route-studentId="@Model.StudentAssessment[0].StudentId" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Add Grade </a>

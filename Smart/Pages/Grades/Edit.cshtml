@@ -7,32 +7,33 @@
 
 <h1>Edit</h1>
 
-<h4>Assessment</h4>
+<h4>StudentAssessment</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Assessment.AssessmentId" />
+            <input type="hidden" asp-for="StudentAssessment.AssessmentId" />
+            <input type="hidden" asp-for="StudentAssessment.StudentId" />
             <div class="form-group">
-                <label asp-for="Assessment.ClassId" class="control-label"></label>
-                <select asp-for="Assessment.ClassId" class="form-control" asp-items="ViewBag.ClassId"></select>
-                <span asp-validation-for="Assessment.ClassId" class="text-danger"></span>
+                <label asp-for="StudentAssessment.PointsAwarded" class="control-label"></label>
+                <input asp-for="StudentAssessment.PointsAwarded" class="form-control" />
+                <span asp-validation-for="StudentAssessment.PointsAwarded" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Assessment.Title" class="control-label"></label>
-                <input asp-for="Assessment.Title" class="form-control" />
-                <span asp-validation-for="Assessment.Title" class="text-danger"></span>
+                <label asp-for="StudentAssessment.Comments" class="control-label"></label>
+                <input asp-for="StudentAssessment.Comments" class="form-control" />
+                <span asp-validation-for="StudentAssessment.Comments" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Assessment.Description" class="control-label"></label>
-                <input asp-for="Assessment.Description" class="form-control" />
-                <span asp-validation-for="Assessment.Description" class="text-danger"></span>
+                <label asp-for="StudentAssessment.SubmissionDateTime" class="control-label"></label>
+                <input asp-for="StudentAssessment.SubmissionDateTime" class="form-control" />
+                <span asp-validation-for="StudentAssessment.SubmissionDateTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Assessment.PointsPossible" class="control-label"></label>
-                <input asp-for="Assessment.PointsPossible" class="form-control" />
-                <span asp-validation-for="Assessment.PointsPossible" class="text-danger"></span>
+                <label asp-for="StudentAssessment.FileId" class="control-label"></label>
+                <select asp-for="StudentAssessment.FileId" class="form-control" asp-items="ViewBag.FileId"></select>
+                <span asp-validation-for="StudentAssessment.FileId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

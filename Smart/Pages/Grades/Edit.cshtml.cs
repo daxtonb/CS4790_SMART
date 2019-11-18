@@ -21,7 +21,7 @@ namespace Smart.Pages.Grades
         }
 
         [BindProperty]
-        public Assessment Assessment { get; set; }
+        public StudentAssessment StudentAssessment { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -30,14 +30,18 @@ namespace Smart.Pages.Grades
                 return NotFound();
             }
 
-            Assessment = await _context.Assessments
-                .Include(a => a.Class).FirstOrDefaultAsync(m => m.AssessmentId == id);
+            StudentAssessment = await _context.StudentAssessments
+                .Include(s => s.Assessment)
+                .Include(s => s.File)
+                .Include(s => s.Student).FirstOrDefaultAsync(m => m.AssessmentId == id);
 
-            if (Assessment == null)
+            if (StudentAssessment == null)
             {
                 return NotFound();
             }
-           ViewData["ClassId"] = new SelectList(_context.Classes, "ClassId", "ClassId");
+           ViewData["AssessmentId"] = new SelectList(_context.Assessments, "AssessmentId", "Title");
+           ViewData["FileId"] = new SelectList(_context.Files, "FileId", "FileName");
+           ViewData["StudentId"] = new SelectList(_context.Students, "StudentId", "FirstName");
             return Page();
         }
 
@@ -48,7 +52,7 @@ namespace Smart.Pages.Grades
                 return Page();
             }
 
-            _context.Attach(Assessment).State = EntityState.Modified;
+            _context.Attach(StudentAssessment).State = EntityState.Modified;
 
             try
             {
@@ -56,7 +60,7 @@ namespace Smart.Pages.Grades
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AssessmentExists(Assessment.AssessmentId))
+                if (!StudentAssessmentExists(StudentAssessment.AssessmentId))
                 {
                     return NotFound();
                 }
@@ -69,9 +73,9 @@ namespace Smart.Pages.Grades
             return RedirectToPage("./Index");
         }
 
-        private bool AssessmentExists(int id)
+        private bool StudentAssessmentExists(int id)
         {
-            return _context.Assessments.Any(e => e.AssessmentId == id);
+            return _context.StudentAssessments.Any(e => e.AssessmentId == id);
         }
     }
 }

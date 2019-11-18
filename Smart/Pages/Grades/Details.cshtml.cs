@@ -19,19 +19,21 @@ namespace Smart.Pages.Grades
             _context = context;
         }
 
-        public Assessment Assessment { get; set; }
+        public StudentAssessment StudentAssessment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int idassesment, int studentId)
         {
-            if (id == null)
+            if (idassesment == null)
             {
                 return NotFound();
             }
 
-            Assessment = await _context.Assessments
-                .Include(a => a.Class).FirstOrDefaultAsync(m => m.AssessmentId == id);
+            StudentAssessment = await _context.StudentAssessments
+                .Include(s => s.Assessment)
+                .Include(s => s.File)
+                .Include(s => s.Student).FirstOrDefaultAsync(m => m.AssessmentId == idassesment && m.StudentId == studentId);
 
-            if (Assessment == null)
+            if (StudentAssessment == null)
             {
                 return NotFound();
             }
