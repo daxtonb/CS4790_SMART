@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +17,7 @@ namespace Smart.Pages.Scheduling
     {
         public List<StudentPublicSchoolClass> PublicSchedule { get; set; }
         private readonly ApplicationDbContext _db;
+        public List<PublicScheduleVM> MyPublicSchoolSchedule { get; set; }
 
 
         [BindProperty]
@@ -37,6 +40,7 @@ namespace Smart.Pages.Scheduling
         public PublicScheduleModel(ApplicationDbContext context)
         {
             _db = context;
+            MyPublicSchoolSchedule = new List<PublicScheduleVM>();
         }
 
         public async Task OnGetAsync(int? studentId)
@@ -44,7 +48,15 @@ namespace Smart.Pages.Scheduling
             if(studentId != null)
             {
                 this.StudentID = (int)studentId;
-                PublicSchedule = await _db.StudentPublicSchoolClasss.Where(s => s.StudentId == studentId).ToListAsync();
+                PublicSchedule = await _db.StudentPublicSchoolClasss
+                                          .Where(s => s.StudentId == studentId)
+                                          .Include(s => s.PublicSchoolClassSchedules)
+                                          .ToListAsync();
+
+                foreach(var schoolClass in PublicSchedule)
+                {
+                    MyPublicSchoolSchedule.Add(new PublicScheduleVM((int)studentId, schoolClass.TermId, schoolClass.StudentPublicSchoolClassId, _db));
+                }
             }
             else
             {
@@ -58,8 +70,6 @@ namespace Smart.Pages.Scheduling
             {
                 return Page();
             }
-            //Get the current term ID'
-            //TODO
 
             //The values as they are saved in the database
             var monday = Request.Form["Monday"]; //1
@@ -69,7 +79,7 @@ namespace Smart.Pages.Scheduling
             var friday = Request.Form["Friday"]; //5
 
             List<ScheduleAvailability> days = new List<ScheduleAvailability>();
-            if(monday == 0)
+            if (monday.Count > 0)
             {
                 days.Add(new ScheduleAvailability()
                 {
@@ -78,7 +88,7 @@ namespace Smart.Pages.Scheduling
                     EndTime = EndTime.TimeOfDay
                 });
             }
-            if (tuesday == 0)
+            if (tuesday.Count > 0)
             {
                 days.Add(new ScheduleAvailability()
                 {
@@ -87,7 +97,7 @@ namespace Smart.Pages.Scheduling
                     EndTime = EndTime.TimeOfDay
                 });
             }
-            if (wednesday == 0)
+            if (wednesday.Count > 0)
             {
                 days.Add(new ScheduleAvailability()
                 {
@@ -96,7 +106,7 @@ namespace Smart.Pages.Scheduling
                     EndTime = EndTime.TimeOfDay
                 });
             }
-            if (thursday == 0)
+            if (thursday.Count > 0)
             {
                 days.Add(new ScheduleAvailability()
                 {
@@ -105,7 +115,7 @@ namespace Smart.Pages.Scheduling
                     EndTime = EndTime.TimeOfDay
                 });
             }
-            if (friday == 0)
+            if (friday.Count > 0)
             {
                 days.Add(new ScheduleAvailability()
                 {
@@ -115,6 +125,8 @@ namespace Smart.Pages.Scheduling
                 });
             }
 
+            Term myTerm = _db.Terms.Where(i => i.StartDate < DateTime.Now && i.EndDate > DateTime.Now).FirstOrDefault();
+
             StudentPublicSchoolClass myClass = new StudentPublicSchoolClass()
             {
                 CourseName = this.CourseName,
@@ -122,14 +134,75 @@ namespace Smart.Pages.Scheduling
                 PublicSchoolClassSchedules = days.Select(i => new PublicSchoolClassSchedule()
                 {
                     ScheduleAvailabilityd = i
-                }).ToList()
+                }).ToList(),
+                TermId = myTerm.TermId
             };
 
             _db.StudentPublicSchoolClasss.Add(myClass);
             await _db.SaveChangesAsync();
+
             return RedirectToPage("PublicSchedule", new { this.StudentID });
         }
 
 
+    }
+
+    public class PublicScheduleVM
+    {
+        public int StudentID { get; set; }
+        public string CourseName { get; set; }
+        public int TermId { get; set; }
+        public int ClassId { get; set; }
+        public string DaysOfTheWeek { get; set; } = "";
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
+        public List<ScheduleAvailability> Schedule { get; set; }
+        private readonly ApplicationDbContext _db;
+
+        public PublicScheduleVM(int studentId, int termId, int classId, ApplicationDbContext context)
+        {
+            this.StudentID = studentId;
+            this.TermId = termId;
+            this.ClassId = classId;
+            _db = context;
+            Schedule = new List<ScheduleAvailability>();
+
+            getSchedule();
+        }
+
+        private void getSchedule()
+        {
+            using (SqlConnection conn = new SqlConnection("Server=titan.cs.weber.edu,10433;Database=AustinsFinalProjectTestDatabase;user id=4790;password=4790$tudent"))
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = new SqlCommand("SELECT CASE " +
+                                                       "WHEN DayOfWeek = 1 THEN 'M' " +
+                                                       "WHEN DayOfWeek = 2 THEN 'Tu' " +
+                                                       "WHEN DayOfWeek = 3 THEN 'W' " +
+                                                       "WHEN DayOfWeek = 4 THEN 'Th' " +
+                                                       "WHEN DayOfWeek = 5 THEN 'F' " +
+                                                       "END AS [CourseDayOfWeek], StartTime, EndTime, CourseName FROM StudentPublicSchoolClass c INNER JOIN PublicSchoolClassSchedule s ON s.StudentPublicSchoolClassId = c.StudentPublicSchoolClassId INNER JOIN ScheduleAvailability a ON a.ScheduleAvailabilityId = s.ScheduleAvailabilityId INNER JOIN Term t ON t.TermId = c.TermId WHERE StudentId = @StudentID AND c.TermId = @TermId AND c.StudentPublicSchoolClassId = @ClassId", conn))
+                {
+                    cmd.Parameters.Add("@StudentId", SqlDbType.Int).Value = this.StudentID;
+                    cmd.Parameters.Add("@TermId", SqlDbType.Int).Value = this.TermId;
+                    cmd.Parameters.Add("@ClassId", SqlDbType.Int).Value = this.ClassId;
+
+                    using (SqlDataReader rd = cmd.ExecuteReader())
+                    {
+                        while(rd.Read())
+                        {
+                            CourseName = rd["CourseName"].ToString();
+                            StartTime = rd["StartTime"].ToString();
+                            EndTime = rd["EndTime"].ToString();
+                            DaysOfTheWeek += rd["CourseDayOfWeek"].ToString();
+                        }
+                        rd.Close();
+                    }
+                }
+
+                conn.Close();
+            }
+        }
     }
 }

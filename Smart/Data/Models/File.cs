@@ -28,7 +28,7 @@ namespace Smart.Data.Models
         {
             return await Task.Factory.StartNew(() =>
             {
-                using var ms = new MemoryStream();
+                var ms = new MemoryStream();
                 file.CopyTo(ms);
                 return ms.ToArray();
             });
