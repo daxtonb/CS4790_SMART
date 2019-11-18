@@ -2,11 +2,17 @@
 @model Smart.Pages.Scheduling.PublicScheduleModel
 @{
     ViewData["Title"] = "PublicSchedule";
+    var daysOfTheWeek = "";
+    var startTime = "";
+    var endTime = "";
 }
 
-<div class="row text-center">
-    <h2>Public Schedule</h2>
-</div>
+    <div class="row text-center">
+        <h2>Public Schedule</h2>
+    </div>
+    <div class="row" style="padding-bottom: 10px">
+        <a asp-page="Index" class="btn btn-primary">Back To Schedule</a>
+    </div>
 
 <form method="post">
     <div class="row">
@@ -34,10 +40,6 @@
             <input type="time" asp-for="EndTime" class="form-control" placeholder="End Time" />
             <span asp-validation-for="EndTime" class="text-danger"></span>
         </div>
-
-        <div class="col-3 form-group text-left">
-            <a asp-page="Index" class="btn btn-primary">Back To Schedule</a>
-        </div>
         <div class="col-3 offset-6 form-group text-right">
             <input type="submit" name="Submit" class="btn btn-success" value="Add Course" />
         </div>
@@ -64,20 +66,21 @@
             </tr>
         </thead>
         <tbody>
-            @if(Model.PublicSchedule.Count == 0)
+            @if (Model.PublicSchedule.Count == 0)
             {
-            <tr>
-                <td colspan="4"><h2>No Public Classes Created Yet</h2></td>
-            </tr>
+                <tr>
+                    <td colspan="4"><h2>No Public Classes Created Yet</h2></td>
+                </tr>
             }
             else
             {
-                @foreach(var myClass in Model.PublicSchedule)
+                @foreach (var schoolClass in Model.MyPublicSchoolSchedule)
                 {
                     <tr>
-                        <td>@myClass.CourseName</td>
-                        <td>DEMO</td>
-                        <td>DEMO</td>
+                        <td>@schoolClass.CourseName</td>
+                        <td>@schoolClass.DaysOfTheWeek</td>
+                        <td>@schoolClass.StartTime</td>
+                        <td>@schoolClass.EndTime</td>
                     </tr>
 
                 }

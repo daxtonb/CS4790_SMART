@@ -20,12 +20,15 @@ namespace Smart.Pages.Scheduling
         public List<Course> RequiredCourses { get; set; }
         public List<Class> Classes { get; set; }
         public List<ScheduleAvailability> ScheduleAvailabilities { get; set; }
+        public List<PublicScheduleVM> MyPublicSchoolSchedule { get; set; }
+        public List<StudentPublicSchoolClass> PublicSchedule { get; set; }
 
 
         public IndexModel(ApplicationDbContext dbContext)
         {
             _db = dbContext;
             ScheduleAvailabilities = new List<ScheduleAvailability>();
+            MyPublicSchoolSchedule = new List<PublicScheduleVM>();
         }
 
         public async Task OnGetAsync(int? studentId)
@@ -45,11 +48,31 @@ namespace Smart.Pages.Scheduling
             {
                 MyStudent = _db.Students.Include(c => c.StudentClasses).FirstOrDefault(i => i.StudentId == 3);
                 MyClasses = await _db.StudentClasses.Include(c => c.Class).Where(c => c.StudentId == 3).ToListAsync();
+
+                PublicSchedule = await _db.StudentPublicSchoolClasss
+                                         .Where(s => s.StudentId == 3)
+                                         .Include(s => s.PublicSchoolClassSchedules)
+                                         .ToListAsync();
+
+                foreach (var schoolClass in PublicSchedule)
+                {
+                    MyPublicSchoolSchedule.Add(new PublicScheduleVM((int)3, schoolClass.TermId, schoolClass.StudentPublicSchoolClassId, _db));
+                }
             }
             else
             {
                 MyStudent = _db.Students.Include(c => c.StudentClasses).FirstOrDefault(i => i.StudentId == studentId);
                 MyClasses = await _db.StudentClasses.Include(c => c.Class).Where(c => c.StudentId == studentId).ToListAsync();
+
+                PublicSchedule = await _db.StudentPublicSchoolClasss
+                                         .Where(s => s.StudentId == studentId)
+                                         .Include(s => s.PublicSchoolClassSchedules)
+                                         .ToListAsync();
+
+                foreach (var schoolClass in PublicSchedule)
+                {
+                    MyPublicSchoolSchedule.Add(new PublicScheduleVM((int)studentId, schoolClass.TermId, schoolClass.StudentPublicSchoolClassId, _db));
+                }
             }
         }
         public async Task<IActionResult> OnPostAsync(int id, int studentId)

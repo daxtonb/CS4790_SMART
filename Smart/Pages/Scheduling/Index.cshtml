@@ -14,11 +14,89 @@
     <div class="col-6">
         <h2>Schedule</h2>
         <h2>@Model.MyStudent.FirstName @Model.MyStudent.LastName</h2>
-        <a asp-page="PublicSchedule" asp-route-studentId="3" class="btn btn-primary">Add Public School Schedule</a>
+        
     </div>
-    <div class="col-6">
-        <h2>Required Courses</h2>
-        <table class="table table-primary table-hover">
+    <div class="col-6 text-right">
+        <a asp-page="PublicSchedule" asp-route-studentId="@Model.MyStudent.StudentId" class="btn btn-primary">Add Public School Schedule</a>
+    </div>
+</div>
+
+
+<div class="row" style="padding-top: 10px;">
+    <div class="alert alert-primary col-12 text-center" role="alert"><h2>Enrolled Courses</h2></div>
+    <div class="col-12">
+        <table class="table table-striped border col-md-12">
+            <thead>
+                <tr>
+                    <th>Class</th>
+                    <th>Instructor</th>
+                    <th>Schedule</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.MyClasses.Count == 0)
+                {
+                    <tr>
+                        <td colspan="4"><h4 class="text-danger">Not Currently enrolled in any courses this term</h4></td>
+                    </tr>
+                }
+                @foreach (var course in Model.MyClasses)
+                {
+                    <tr>
+                        <td>@course.Class.Course.Name</td>
+                        <td>@(@course.Class.InstructorUser.FirstName) @(@course.Class.InstructorUser.LastName)</td>
+                        <td>@ClassSchedule.GetScheduleString(course.Class.ClassSchedules)</td>
+                        <td>INSERT DELETE OPERATION HERE</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row" style="padding-top: 10px">
+    <div class="alert alert-info col-12 text-center"><h2>Public School Schedule</h2></div>
+    <div class="col-12">
+        <table class="table table-striped border col-md-12">
+            <thead>
+                <tr>
+                    <th>Class</th>
+                    <th>Days</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PublicSchedule.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5"><h4 class="text-danger">No Public Classes Added Yet</h4></td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var schoolClass in Model.MyPublicSchoolSchedule)
+                    {
+                        <tr>
+                            <td>@schoolClass.CourseName</td>
+                            <td>@schoolClass.DaysOfTheWeek</td>
+                            <td>@schoolClass.StartTime</td>
+                            <td>@schoolClass.EndTime</td>
+                            <td>INSERT OPERATIONS HERE</td>
+                        </tr>
+
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="alert alert-warning col-12 text-center"><h2>Required Courses</h2></div>
+    <div class="col-12">
+        <table class="table table-striped border col-md-12">
             <thead data-toggle="collapse">
                 <tr>
                     <th>Course Id</th>
@@ -38,16 +116,16 @@
                             <div id="ClassesOptions" class="collapse">
                                 <table class="table table-info">
                                     @*@foreach (var classOption in reqCourse.Classes)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    @classOption.Course
-                                                </td>
-                                                <td>
-                                                    Register
-                                                </td>
-                                            </tr>
-                                        }*@
+                                    {
+                                        <tr>
+                                            <td>
+                                                @classOption.Course
+                                            </td>
+                                            <td>
+                                                Register
+                                            </td>
+                                        </tr>
+                                    }*@
                                     @for (int i = 0; i < 5; i++)
                                     {
                                         <tr>
@@ -71,12 +149,15 @@
 </div>
 
 
-<div class="row" style="padding-top: 10px;">
-    <h2>Enrolled Courses</h2>
-    <div class="col-12">
-        <table class="table table-striped border col-md-12">
+<div class="row" style="padding-bottom: 10px">
+    <a class="btn btn-primary" data-toggle="collapse" href="#PotentialClassesAccordion" role="button" aria-expanded="false" aria-controls="PotentialClassesAccordion">Potential Classes</a>
+</div>
+<div class="row col-12">
+    <div class="collapse col-12" id="PotentialClassesAccordion">
+        <table class="table table-striped table-hover col-md-12">
             <thead>
                 <tr>
+                    <th>Class Id</th>
                     <th>Class</th>
                     <th>Instructor</th>
                     <th>Schedule</th>
@@ -84,57 +165,25 @@
                 </tr>
             </thead>
             <tbody>
-                @if(Model.MyClasses.Count == 0)
+                @foreach (var classOption in Model.Classes)
                 {
                     <tr>
-                        <td colspan="4"><h4 class="text-danger">Not Currently enrolled in any courses this term</h4></td>
-                    </tr>
-                }
-                @foreach (var course in Model.MyClasses)
-                {
-                    <tr>
-                        <td>@course.Class.Course.Name</td>
-                        <td>@(@course.Class.InstructorUser.FirstName) @(@course.Class.InstructorUser.LastName)</td>
-                        <td>@ClassSchedule.GetScheduleString(course.Class.ClassSchedules)</td>
-                        <td>INSERT DELETE OPERATION HERE</td>
+                        <td>@classOption.ClassId</td>
+                        <td>@classOption.Course.Name</td>
+                        <td>@(@classOption.InstructorUser.FirstName) @(classOption.InstructorUser.LastName)</td>
+                        <td>@ClassSchedule.GetScheduleString(classOption.ClassSchedules)</td>
+                        <td style="width: 150px">
+                            <form method="post">
+                                <div class="form-group">
+                                    <button type="submit" asp-route-id="@classOption.ClassId" asp-route-studentId="@Model.MyStudent.StudentId" class="btn btn-primary fas fa-plus"> Register</button>
+                                </div>
+                            </form>
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-</div>
-
-<div class="row">
-    <h2>Potential Classes</h2>
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>Class Id</th>
-                <th>Class</th>
-                <th>Instructor</th>
-                <th>Schedule</th>
-                <th>Options</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var classOption in Model.Classes)
-            {
-                <tr>
-                    <td>@classOption.ClassId</td>
-                    <td>@classOption.Course.Name</td>
-                    <td>@(@classOption.InstructorUser.FirstName) @(classOption.InstructorUser.LastName)</td>
-                    <td>@ClassSchedule.GetScheduleString(classOption.ClassSchedules)</td>
-                    <td style="width: 150px">
-                        <form method="post">
-                            <div class="form-group">
-                                <button type="submit" asp-route-id="@classOption.ClassId" asp-route-studentId="@Model.MyStudent.StudentId" class="btn btn-primary fas fa-plus"> Register</button>
-                            </div>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
 </div>
 
 <!-- Delete Modal -->
