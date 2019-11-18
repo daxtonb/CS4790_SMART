@@ -35,16 +35,20 @@
                 <select asp-for="StudentAssessment.FileId" class="form-control" asp-items="ViewBag.FileId"></select>
                 <span asp-validation-for="StudentAssessment.FileId" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="row">
+                <div class="col-6">
+                    <input type="submit" value="Save" class="btn btn-info form-control" asp-route-id="@Model.StudentAssessment.StudentId" asp-route-studentId="@Model.studentIdentification" />
+                </div>
+                <div class="col-6">
+                    <a asp-page="Index" class="btn btn-success form-control" asp-route-studentId="@Model.studentIdentification">Back to List</a>
+                </div>
             </div>
+
+
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-page="./Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

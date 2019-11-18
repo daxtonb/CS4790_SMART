@@ -13,6 +13,7 @@ namespace Smart.Pages.Grades
     public class DeleteModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
+        public int studentIdentification;
 
         public DeleteModel(Smart.Data.ApplicationDbContext context)
         {
@@ -22,9 +23,10 @@ namespace Smart.Pages.Grades
         [BindProperty]
         public StudentAssessment StudentAssessment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int? idassesment, int studentId)
         {
-            if (id == null)
+            studentIdentification = studentId;
+            if (idassesment == null)
             {
                 return NotFound();
             }
@@ -32,7 +34,7 @@ namespace Smart.Pages.Grades
             StudentAssessment = await _context.StudentAssessments
                 .Include(s => s.Assessment)
                 .Include(s => s.File)
-                .Include(s => s.Student).FirstOrDefaultAsync(m => m.AssessmentId == id);
+                .Include(s => s.Student).FirstOrDefaultAsync(m => m.AssessmentId == idassesment);
 
             if (StudentAssessment == null)
             {
@@ -41,7 +43,7 @@ namespace Smart.Pages.Grades
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int? id, int studentId)
         {
             if (id == null)
             {
@@ -56,7 +58,7 @@ namespace Smart.Pages.Grades
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("./Index", new { studentId });
         }
     }
 }

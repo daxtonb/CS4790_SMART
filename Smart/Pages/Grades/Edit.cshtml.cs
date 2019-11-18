@@ -14,6 +14,7 @@ namespace Smart.Pages.Grades
     public class EditModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
+        public int studentIdentification;
 
         public EditModel(Smart.Data.ApplicationDbContext context)
         {
@@ -23,9 +24,10 @@ namespace Smart.Pages.Grades
         [BindProperty]
         public StudentAssessment StudentAssessment { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int? idassesment, int studentId)
         {
-            if (id == null)
+            studentIdentification = studentId;
+            if (idassesment == null)
             {
                 return NotFound();
             }
@@ -33,7 +35,7 @@ namespace Smart.Pages.Grades
             StudentAssessment = await _context.StudentAssessments
                 .Include(s => s.Assessment)
                 .Include(s => s.File)
-                .Include(s => s.Student).FirstOrDefaultAsync(m => m.AssessmentId == id);
+                .Include(s => s.Student).FirstOrDefaultAsync(m => m.AssessmentId == idassesment && m.StudentId == studentId);
 
             if (StudentAssessment == null)
             {
@@ -45,7 +47,7 @@ namespace Smart.Pages.Grades
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id, int studentId)
         {
             if (!ModelState.IsValid)
             {
@@ -70,7 +72,7 @@ namespace Smart.Pages.Grades
                 }
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("./Index", new { studentId });
         }
 
         private bool StudentAssessmentExists(int id)

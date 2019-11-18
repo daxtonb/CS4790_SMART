@@ -13,6 +13,7 @@ namespace Smart.Pages.Students
     public class DetailsModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
+        public int studentIdentification;
 
         public DetailsModel(Smart.Data.ApplicationDbContext context)
         {
@@ -21,8 +22,9 @@ namespace Smart.Pages.Students
 
         public Student Student { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int? id, int studentId)
         {
+            studentIdentification = studentId;
             if (id == null)
             {
                 return NotFound();
