@@ -4,12 +4,32 @@
 @{
     ViewData["Title"] = "Index";
 }
+<h1>@Model.Student[0].FirstName @Model.Student[0].LastName</h1>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" asp-page="../Students/Details" asp-route-id="@Model.Student[0].StudentId">Student</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="../Grades/Index" asp-route-studentId="@Model.Student[0].StudentId">Grades<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="../Files/Index" asp-route-studentId="@Model.Student[0].StudentId">Files</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="../Scheduling/Index" asp-route-studentId="@Model.Student[0].StudentId">Schedule</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="../Attendance/Index" asp-route-studentId="@Model.Student[0].StudentId">Attendace</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="../Notes/Index" asp-route-studentId="@Model.Student[0].StudentId">Notes</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 <table class="table">
     <thead>
         <tr>
@@ -26,37 +46,32 @@
                 @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StudentAssessment[0].Student)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.StudentAssessment[0].File)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.StudentAssessment) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PointsAwarded)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Comments)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubmissionDateTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Assessment.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Student.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.File.FileName)
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.StudentAssessment)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PointsAwarded)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Comments)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubmissionDateTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Assessment.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.File.FileName)
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
-<a asp-page="Create" asp-route-studentId="@Model.StudentAssessment[0].StudentId" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Add Grade </a>
+

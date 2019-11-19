@@ -20,6 +20,7 @@ namespace Smart.Pages.Files
         }
 
         public IList<File> File { get;set; }
+        public IList<Student> Student { get; set; }
 
         public int studentIdentifies;
 
@@ -31,7 +32,7 @@ namespace Smart.Pages.Files
             File =  _context.Files
                 .Where(f => f.StudentId == studentId).ToList();
 
-          //  Notes = _context.Notes.Where(n => n.Studentid == studentId).ToList();
+            Student = _context.Students.Where(i => i.StudentId == studentId).ToList();
 
         }
     }

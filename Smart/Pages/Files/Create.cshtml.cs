@@ -16,6 +16,7 @@ namespace Smart.Pages.Files
     {
         private readonly Smart.Data.ApplicationDbContext _context;
         private readonly IHostingEnvironment _hostingEnvironment;
+        public int studentIdentification;
 
         public CreateModel(Smart.Data.ApplicationDbContext context, IHostingEnvironment hostingEnvironment)
         {
@@ -25,7 +26,8 @@ namespace Smart.Pages.Files
 
         public async Task OnGetAsync(int studentId)
         {
-        ViewData["FileTypeId"] = new SelectList(_context.FileTypes, "FileTypeId", "Description");
+            studentIdentification = studentId;
+            ViewData["FileTypeId"] = new SelectList(_context.FileTypes, "FileTypeId", "Description");
             ViewData["StudentId"] = new SelectList(_context.Students.Where(n => n.StudentId == studentId), "StudentId", "FirstName");
 
         }
@@ -33,11 +35,8 @@ namespace Smart.Pages.Files
         [BindProperty]
         public Smart.Data.Models.File File { get; set; }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int studentId)
         {
-         
-      //      if (ModelState.IsValid)
-            {
                 var files = HttpContext.Request.Form.Files;
                 if (files.Count > 0)
                 {
@@ -56,9 +55,8 @@ namespace Smart.Pages.Files
                 }
                 _context.Files.Add(File);
                 await _context.SaveChangesAsync();
-                return RedirectToPage("./Index");
-            }
-            return RedirectToPage("./Index");
+                return RedirectToPage("./Index", new { studentId });
+
         }
 
 
