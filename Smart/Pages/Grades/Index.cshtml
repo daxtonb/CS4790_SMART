@@ -55,11 +55,6 @@
             <td>
                 @Html.DisplayFor(modelItem => item.File.FileName)
             </td>
-            <td>
-                <a asp-page="./Edit" class="btn btn-primary text-white" asp-route-idassesment="@item.AssessmentId" asp-route-studentId="@item.StudentId"><i class="fas fa-edit"></i></a>
-                <a asp-page="./Details" class="btn btn-success text-white" asp-route-idassesment="@item.AssessmentId" asp-route-studentId="@item.StudentId"><i class="fas fa-list-alt"></i></a>
-                <a asp-page="./Delete" class="btn btn-danger text-white" asp-route-idassesment="@item.AssessmentId" asp-route-studentId="@item.StudentId"><i class="fas fa-trash-alt"></i></a>
-            </td>
         </tr>
 }
     </tbody>

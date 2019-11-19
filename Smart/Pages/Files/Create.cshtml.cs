@@ -23,11 +23,11 @@ namespace Smart.Pages.Files
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public IActionResult OnGet()
+        public async Task OnGetAsync(int studentId)
         {
         ViewData["FileTypeId"] = new SelectList(_context.FileTypes, "FileTypeId", "Description");
-        ViewData["StudentId"] = new SelectList(_context.Students, "StudentId", "FirstName");
-            return Page();
+            ViewData["StudentId"] = new SelectList(_context.Students.Where(n => n.StudentId == studentId), "StudentId", "FirstName");
+
         }
 
         [BindProperty]
@@ -35,7 +35,8 @@ namespace Smart.Pages.Files
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+         
+      //      if (ModelState.IsValid)
             {
                 var files = HttpContext.Request.Form.Files;
                 if (files.Count > 0)
@@ -49,6 +50,8 @@ namespace Smart.Pages.Files
                             pic = ms.ToArray();
                         }
                     }
+                    File.FileTypeId = FileTypeEnum.Other;
+                    File.FileName = files[0].FileName;
                     File.ByteData = pic;
                 }
                 _context.Files.Add(File);
