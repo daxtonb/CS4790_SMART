@@ -4,10 +4,10 @@
     ViewData["Title"] = "Attendance";
     Layout = "~/Pages/Classes/_Layout.cshtml";
 }
-    <form asp-page-handler="UploadCsv" enctype="multipart/form-data">
-        <input name="file" type="file" asp-page="Import" class="btn btn-info"><i class="fas fa-file-import"></i> &nbsp;  Import Attendance File </>
-        <input type="submit" />
-    </form>
+<form asp-page-handler="UploadCsv" enctype="multipart/form-data">
+    <input name="file" type="file" value="Upload" asp-page="Import" class="btn btn-info"><i class="fas fa-file-import"></i> &nbsp;  Import Attendance File </>
+    <input type="submit" />
+</form>
 
 <table class="table table-striped">
     <thead>
@@ -32,4 +32,8 @@
 </table>
 
 
+
+<script>
+
+</script>
 

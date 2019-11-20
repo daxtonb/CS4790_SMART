@@ -1,30 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using LINQtoCSV;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using Smart.Data;
 using Smart.Data.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace Smart.Pages.Classes
 {
     public class AttendanceModel : PageModel
     {
         private readonly ApplicationDbContext _context;
-        //private IHostingEnvironment _environment;// me 
 
-        //public AttendanceModel(IHostingEnvironment environment)//me
-        //{
-        //    _environment = environment; //me
-        //}
-
-       
         public IEnumerable<AttendanceVieModel> Attendances { get; set; }
+
+        [BindProperty]
+        public Attendance Attendance { get; set; }
 
         public AttendanceModel(ApplicationDbContext context)
         {
@@ -53,20 +55,75 @@ namespace Smart.Pages.Classes
             ViewData["ClassId"] = @class.ClassId;
         }
 
-        //[BindProperty] //me
-        //public IFormFile UploadCsv { get; set; } //me
-        // on Post uploding file
+
+        // OnPost uplodingCsvfile
         public async Task<PageResult> OnPostUploadCsvAsync()
         {
             var file = Request.Form.Files[0];
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            {
+                reader.ReadLine();
+                while (reader.Peek() >= 0)
+                {
+                    string test = reader.ReadLine();
+                    string[] row = test.Split(',');
+                    string time = row[2] + " " + row[3];
+                    DateTime dateTime = Convert.ToDateTime(time);
+                    // DateTime dateTime = Convert.ToDateTime(row[3]);
 
-            //var file = Path.Combine(_environment.ContentRootPath, "uploads", UploadCsv.FileName);
-            //using (var fileStream = new FileStream(file, FileMode.Create))
-            //{
-            //    await UploadCsv.CopyToAsync(fileStream);
-            //}
+                    var attendance = new Data.Models.Attendance()
+                    {
+                        StudentId = int.Parse(row[0]),
+                        ClassId = int.Parse(row[1]),
+                        Date = dateTime.Date,
+                        TimeIn = dateTime.TimeOfDay,
+                        AttendanceStatusId = AttendanceStatusEnum.Late
+
+
+                        //StudentId = int.Parse(row[0]),
+                        //ClassId = int.Parse(row[1]),
+                        //Date = dateTime.Date,
+                        //TimeIn = dateTime.TimeOfDay,
+                        //AttendanceStatusId = CalculateAttendance(dt)
+                    };
+                    _context.Attendances.Add(attendance);
+                }
+                await _context.SaveChangesAsync();
+            }
+
+
             return Page();
         }
+
+
+       /* public async int CalculateAttendance(DateTime dt)
+        {
+
+
+            var scheduleAvailability = _context.Classeschedules
+                .Include(c => c.ScheduleAvailability)
+                .FirstOrDefaultAsync(c => c.ClassId == ClassId && c.ScheduleAvailability
+                .Any(s => s.DayOfWeek == dateTime.DayOfWeek))
+                .ScheduleAvailability;
+            
+            AttendanceStatusEnum attendanceStatusId;
+            
+            if (dt.TimeOfDay > scheduleAvailability.StartTime)
+            {
+                attendanceStatusId = AttendanceStatusEnum.Late;
+            }
+            else if (dt.TimeOfDay == scheduleAvailability.startTime)
+            {
+                attendanceStatusId = AttendanceStatusEnum.OnTime;
+            }
+            else
+            {
+                attendanceStatusId = AttendanceStatusEnum.Absent;
+            }
+
+            return 0;
+        }
+        */
 
         public class AttendanceVieModel
         {
