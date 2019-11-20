@@ -21,6 +21,7 @@ namespace Smart.Data.Models
         [Required]
         [MaxLength(128)]
         public override string Email { get; set; }
+        public bool IsActive { get; set; }
 
         public virtual ICollection<ApplicantRating> ApplicantRatings { get; set; }
         public virtual ICollection<Class> Classes { get; set; }
