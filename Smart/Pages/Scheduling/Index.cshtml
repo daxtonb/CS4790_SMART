@@ -6,24 +6,22 @@
     //Sunday is 0
     int currentDayOfWeek = (int)DateTime.Now.DayOfWeek - 1;
 }
-<script type="text/javascript">
-    console.log(@currentDayOfWeek)
-</script>
 
-<div class="row">
-    <div class="col-6">
-        <h2>Schedule</h2>
-        <h2>@Model.MyStudent.FirstName @Model.MyStudent.LastName</h2>
+    <div class="row">
+        <div class="col-6">
+            <h2>Schedule</h2>
+            <h2>@Model.MyStudent.FirstName @Model.MyStudent.LastName</h2>
 
+        </div>
+        <div class="col-6">
+            <h4>Required Courses</h4>
+            <h5>1. English @Model.MyStudent.EnglishLevel</h5>
+            <h5>2. IT @Model.MyStudent.ItLevel</h5>
+        </div>
     </div>
-    <div class="col-6 text-right">
-        <a asp-page="PublicSchedule" asp-route-studentId="@Model.MyStudent.StudentId" class="btn btn-primary">Add Public School Schedule</a>
-    </div>
-</div>
-
 
 <div class="row" style="padding-top: 10px;">
-    <div class="alert alert-primary col-12 text-center" role="alert"><h2>Enrolled Courses</h2></div>
+    <div class="alert alert-primary col-12 text-center" role="alert"><h2>Enrolled SMART Courses</h2></div>
     <div class="col-12">
         <table class="table table-striped border col-md-12">
             <thead>
@@ -31,6 +29,7 @@
                     <th>Class</th>
                     <th>Instructor</th>
                     <th>Schedule</th>
+                    <th>Is Required</th>
                     <th>Options</th>
                 </tr>
             </thead>
@@ -38,7 +37,7 @@
                 @if (Model.MyClasses.Count == 0)
                 {
                     <tr>
-                        <td colspan="4"><h4 class="text-danger">Not Currently enrolled in any courses this term</h4></td>
+                        <td colspan="5"><h4 class="text-danger">Not Currently enrolled in any courses this term</h4></td>
                     </tr>
                 }
                 @foreach (var course in Model.MyClasses)
@@ -47,10 +46,23 @@
                         <td>@course.Class.Course.Name</td>
                         <td>@(@course.Class.InstructorUser.FirstName) @(@course.Class.InstructorUser.LastName)</td>
                         <td>@ClassSchedule.GetScheduleString(course.Class.ClassSchedules)</td>
+                        <td>
+                            @if (@course.Class.Course.IsCoreRequirement)
+                            {
+                                <i class="far fa-thumbs-up fa-2x"></i>
+                            }
+                            else
+                            {
+                                <i class="far fa-thumbs-down fa-2x"></i>
+                            }
+                        </td>
                         <td style="width:150px">
-                            <div class="btn-group" role="group">
-                                <button onclick="document.getElementById('SelectedClass').value = @course.ClassId; document.getElementById('IsPublicSchool').value = '0';" class="btn btn-danger text-white" data-target="#DeleteModal" data-toggle="modal"><i class="fas fa-trash-alt"></i></button>
-                            </div>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="btn-group" role="group">
+                                    <button onclick="document.getElementById('SelectedClass').value = @course.ClassId; document.getElementById('IsPublicSchool').value = '0';" class="btn btn-danger text-white" data-target="#DeleteModal" data-toggle="modal"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            }
                         </td>
                     </tr>
                 }
@@ -60,7 +72,14 @@
 </div>
 
 <div class="row" style="padding-top: 10px">
-    <div class="alert alert-info col-12 text-center"><h2>Public School Schedule</h2></div>
+    <div class="alert alert-info col-12">
+        <div class="text-center col-12">
+            <h2>Public School Schedule</h2>
+        </div>
+        <div class="text-center col-12">
+            <a asp-page="PublicSchedule" asp-route-studentId="@Model.MyStudent.StudentId" class="btn btn-primary">Add Public School Schedule</a>
+        </div>
+    </div>
     <div class="col-12">
         <table class="table table-striped border col-md-12">
             <thead>
@@ -102,6 +121,7 @@
         </table>
     </div>
 </div>
+<!--
 <div class="row">
     <div class="alert alert-warning col-12 text-center"><h2>Required Courses</h2></div>
     <div class="col-12">
@@ -156,6 +176,7 @@
         </table>
     </div>
 </div>
+-->
 
 
 <div class="row" style="padding-bottom: 10px">
@@ -170,25 +191,39 @@
                     <th>Class</th>
                     <th>Instructor</th>
                     <th>Schedule</th>
+                    <th>Is Required</th>
                     <th>Options</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var classOption in Model.Classes)
                 {
-                    <tr>
-                        <td>@classOption.ClassId</td>
-                        <td>@classOption.Course.Name</td>
-                        <td>@(@classOption.InstructorUser.FirstName) @(classOption.InstructorUser.LastName)</td>
-                        <td>@ClassSchedule.GetScheduleString(classOption.ClassSchedules)</td>
-                        <td style="width: 150px">
-                            <form method="post">
-                                <div class="form-group">
-                                    <button type="submit" asp-route-id="@classOption.ClassId" asp-route-studentId="@Model.MyStudent.StudentId" class="btn btn-primary fas fa-plus"> Register</button>
-                                </div>
-                            </form>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>@classOption.ClassId</td>
+                    <td>@classOption.Course.Name</td>
+                    <td>@(@classOption.InstructorUser.FirstName) @(classOption.InstructorUser.LastName)</td>
+                    <td>@ClassSchedule.GetScheduleString(classOption.ClassSchedules)</td>
+                    <td>
+                        @if (classOption.Course.IsCoreRequirement)
+                        {
+                            <i class="far fa-thumbs-up fa-2x"></i>
+                        }
+                        else
+                        {
+                            <i class="far fa-thumbs-down fa-2x"></i>
+                        }
+                    </td>
+                    <td style="width: 150px">
+                        @if(User.IsInRole("Admin"))
+                        {
+                        <form method="post">
+                            <div class="form-group">
+                                <button type="submit" asp-route-id="@classOption.ClassId" asp-route-studentId="@Model.MyStudent.StudentId" class="btn btn-primary fas fa-plus"> Register</button>
+                            </div>
+                        </form>
+                        }
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>
@@ -200,12 +235,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Delete Class</h4>
+                <h4 class="modal-title">Remove @Model.MyStudent.FirstName from Class</h4>
             </div>
             <div class="modal-body">
                 <div id="ClassName"></div>
                 <p>
-                    Are you sure you'd like to remove the student from
+                    Are you sure you'd like to remove @Model.MyStudent.FirstName @Model.MyStudent.LastName from
                     this class? <br>This action can't be undone.
                 </p>
                 <form class="form-group" method="post">
@@ -213,7 +248,7 @@
                     <input type="hidden" name="StudentId" value="@Model.MyStudent.StudentId" />
                     <input type="hidden" id="IsPublicSchool" name="IsPublicSchool" value="0" />
                     <input type="submit" class="btn btn-primary" name="RemoveClass" value="Remove">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
                 </form>
 
             </div>

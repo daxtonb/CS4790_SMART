@@ -9,9 +9,11 @@ using Smart.Data;
 using Smart.Data.Models;
 using System.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Smart.Pages.Scheduling
 {
+    [Authorize(Roles = "Instructor,Admin")]
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _db;
@@ -37,6 +39,7 @@ namespace Smart.Pages.Scheduling
                                .Include(i => i.ClassSchedules)
                                .Include(i => i.InstructorUser)
                                .Include(i => i.StudentClasses)
+                               .OrderBy(i => i.Course.Name)
                                //.Where(i => !i.StudentClasses.Any(s => s.StudentId == 3))
                                .ToListAsync();
 
@@ -76,23 +79,6 @@ namespace Smart.Pages.Scheduling
             }
             else
             {
-                //Classes = await _db.Classes
-                //               .Include(i => i.ClassSchedules)
-                //               .Include(i => i.InstructorUser)
-                //               .Include(i => i.StudentClasses)
-                //               .Where(i => !i.StudentClasses.Any(s => s.StudentId == studentId))
-                //               .ToListAsync();
-
-                //foreach (Class c in Classes)
-                //{
-                //    foreach (ClassSchedule cs in c.ClassSchedules)
-                //    {
-                //        ScheduleAvailabilities.AddRange(_db.ScheduleAvailabilities
-                //                                           .Where(i => i.ScheduleAvailabilityId == cs.ScheduleAvailabilityId)
-                //                                           .ToList());
-                //    }
-                //}
-
                 MyStudent = _db.Students.Include(c => c.StudentClasses)
                                         .FirstOrDefault(i => i.StudentId == studentId);
                 MyClasses = await _db.StudentClasses.Include(c => c.Class)
@@ -139,27 +125,34 @@ namespace Smart.Pages.Scheduling
                         await _db.SaveChangesAsync();
                     }
                 }
-                return RedirectToPage();
+                return RedirectToPage("Index", new { studentId });
             }
             else
             {
-                if (id != null)
+                try
                 {
-                    StudentClass myClass = new StudentClass() { ClassId = id, StudentId = studentId };
-
-                    var classCheck = _db.StudentClasses.Where(i => i.ClassId == id && i.StudentId == studentId);
-                    if(classCheck == null)
+                    if (id != null)
                     {
+                        StudentClass myClass = new StudentClass() { ClassId = id, StudentId = studentId };
+
+                        //var classCheck = _db.StudentClasses.Where(i => i.ClassId == id && i.StudentId == studentId);
+                        //if(classCheck == null)
+                        //{
                         _db.StudentClasses.Add(myClass);
                         await _db.SaveChangesAsync();
 
-                        return RedirectToPage();
+                        return RedirectToPage("Index", new { studentId });
+                        //}
+                        //else
+                        //{
+                        //    return RedirectToPage();
+                        //}
+
                     }
-                    else
-                    {
-                        return RedirectToPage();
-                    }
-                    
+                }
+                catch(Exception)
+                {
+                    return NotFound();
                 }
             }
 

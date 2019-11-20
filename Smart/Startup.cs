@@ -59,6 +59,12 @@ namespace Smart
             services.AddTransient<DbSeeder>();
             services.AddTransient<IFileManager, WwwRootFileManager>();
             services.AddHttpContextAccessor();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireInstructor", policy => policy.RequireRole("Instructor"));
+            });
+
             services.AddMvc()
                 .AddRazorPagesOptions(options =>
                 {
@@ -66,6 +72,7 @@ namespace Smart
                     options.Conventions.AddPageRoute("/Classes/Students", "Classes/{classId}/Students");
                     options.Conventions.AddPageRoute("/Classes/Assessments", "Classes/{classId}/Assessments");
                     options.Conventions.AddPageRoute("/Classes/Attendance", "Classes/{classId}/Attendance");
+                    options.Conventions.AuthorizeFolder("/Scheduling/", "RequireInstructor");
 
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
