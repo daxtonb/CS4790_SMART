@@ -17,6 +17,7 @@ namespace Smart.Pages.Students
     {
         private readonly Smart.Data.ApplicationDbContext _context;
         private readonly IHostingEnvironment _hostingEnvironment;
+        public int studentIdentification;
 
         public EditModel(Smart.Data.ApplicationDbContext context, IHostingEnvironment hostingEnvironment)
         {
@@ -27,8 +28,9 @@ namespace Smart.Pages.Students
         [BindProperty]
         public Student Student { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
+            studentIdentification = id;
             if (id == null)
             {
                 return NotFound();
@@ -45,31 +47,10 @@ namespace Smart.Pages.Students
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int id)
         {
-            /*
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            _context.Attach(Student).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!StudentExists(Student.StudentId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }*/
+            var student = await _context.Students.FindAsync(Student.StudentId);
+          
             string webRootPath = _hostingEnvironment.WebRootPath;
             var files = HttpContext.Request.Form.Files;
 
@@ -77,13 +58,39 @@ namespace Smart.Pages.Students
             {
                 var uploads = Path.Combine(webRootPath, "images");
                 var extension = Path.GetExtension(files[0].FileName);
-                using (var fileStream = new FileStream(Path.Combine(uploads, Student.StudentId.ToString() + extension), FileMode.Create))
+
+                var ex = student.Photo;
+
+                if (student.Photo != null)
+                {
+                    var imagePath = Path.Combine(webRootPath, student.Photo.TrimStart('\\'));
+
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        System.IO.File.Delete(imagePath);
+                    }
+                }
+                          
+                using (var fileStream = new FileStream(Path.Combine(uploads, Student.StudentId + extension), FileMode.Create))
                 {
                     files[0].CopyTo(fileStream);
                 }
-
-                Student.Photo = @"\images\" + Student.StudentId + extension;
+                
+                student.Photo = @"\images\" + Student.StudentId + extension;
             }
+            student.FirstName = Student.FirstName;
+            student.LastName = Student.LastName;
+            student.DateOfBirth = Student.DateOfBirth;
+            student.Address = Student.Address;
+            student.Village = Student.Village;
+            student.LocationLattitude = Student.LocationLattitude;
+            student.LocationLongitude = Student.LocationLongitude;
+            student.PublicSchoolLevel = Student.PublicSchoolLevel;
+            student.EnglishLevel = Student.EnglishLevel;
+            student.ItLevel = Student.ItLevel;
+            student.GuardianName = Student.GuardianName;
+            student.Phone = Student.Phone;
+            student.StudentStatusId = Student.StudentStatusId;
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
