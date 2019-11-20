@@ -20,22 +20,19 @@ namespace Smart.Pages.Files
         }
 
         public IList<File> File { get;set; }
+        public IList<Student> Student { get; set; }
 
         public int studentIdentifies;
 
-        public async Task OnGet(int id)
+        public async Task OnGetAsync(int studentId)
         {
-            /*
-            File = await _context.Files
-                .Include(f => f.FileType)
-                .Include(f => f.Student).ToListAsync();*/
 
-            studentIdentifies = id;
+            studentIdentifies = studentId;
 
             File =  _context.Files
-                .Where(f => f.StudentId == id).ToList();
+                .Where(f => f.StudentId == studentId).ToList();
 
-          //  Notes = _context.Notes.Where(n => n.Studentid == studentId).ToList();
+            Student = _context.Students.Where(i => i.StudentId == studentId).ToList();
 
         }
     }

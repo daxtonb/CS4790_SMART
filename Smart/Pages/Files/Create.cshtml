@@ -36,13 +36,15 @@
                 <input asp-for="File.FileName" class="form-control" />
                 <span asp-validation-for="File.FileName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="row">
+                <div class="col-6">
+                    <input type="submit" class="btn btn-info form-control" value="Create" asp-route-studentId="@Model.studentIdentification" />
+                </div>
+                <div class="col-6">
+                    <a asp-page="Index" class="btn btn-success form-control" asp-route-studentId="@Model.studentIdentification">Back to List</a>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-page="Index">Back to List</a>
-</div>

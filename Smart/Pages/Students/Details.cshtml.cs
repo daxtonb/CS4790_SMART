@@ -22,14 +22,14 @@ namespace Smart.Pages.Students
 
         public Student Student { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id, int studentId)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            studentIdentification = studentId;
+            
             if (id == null)
             {
                 return NotFound();
             }
-
+            studentIdentification = id;
             Student = await _context.Students
                 .Include(s => s.StudentStatus).FirstOrDefaultAsync(m => m.StudentId == id);
 

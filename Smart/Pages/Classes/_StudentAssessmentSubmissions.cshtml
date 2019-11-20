@@ -59,9 +59,9 @@
             </td>
             <td>
                 <span>
-                    @if (!string.IsNullOrEmpty(item.FileName))
+                    @if (item.FileId != null)
                     {
-                        <text>@item.FileName</text>
+                        <a asp-controller="File" asp-action="Download" asp-route-fileId="@item.FileId" style="color:#7989ff">@(item.FileName ?? "(Download)")</a>
                     }
                     else
                     {

@@ -122,6 +122,7 @@ namespace Smart.Pages.Classes
                     StudentName = student.LastName + ", " + student.FirstName,
                     Comments = studentAssessment?.Comments,
                     FileName = studentAssessment?.File?.FileName,
+                    FileId = studentAssessment?.FileId,
                     PointsAwarded = studentAssessment?.PointsAwarded,
                     SubmissionDateTime = studentAssessment?.SubmissionDateTime
                 });
@@ -153,6 +154,7 @@ namespace Smart.Pages.Classes
                     PointsPossible = s.Assessment.PointsPossible,
                     StudentId = s.StudentId,
                     FileName = s.File != null ? s.File.FileName : null,
+                    FileId = s.File != null ? s.FileId : (int?)null,
                     SubmissionDateTime = s.SubmissionDateTime,
                     StudentName = s.Student.LastName + ", " + s.Student.FirstName
                 }).ToListAsync();
@@ -233,6 +235,7 @@ namespace Smart.Pages.Classes
             public string StudentName { get; set; }
             public int? PointsAwarded { get; set; }
             public int PointsPossible { get; set; }
+            public int? FileId { get; set; }
             public string FileName { get; set; }
             public string Comments { get; set; }
             public DateTime? SubmissionDateTime { get; set; }

@@ -88,9 +88,10 @@
 
         hiddenForm["AssessmentId"].value = assessmentId;
         hiddenForm["StudentId"].value = studentId;
-        console.log(hiddenForm["File"].value);
 
         hiddenForm["Submit"].click(); // Submit form
+
+        doRefresh = true;
     }
 
     function reload() {

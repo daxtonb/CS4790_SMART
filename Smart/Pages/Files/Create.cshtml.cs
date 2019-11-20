@@ -16,6 +16,7 @@ namespace Smart.Pages.Files
     {
         private readonly Smart.Data.ApplicationDbContext _context;
         private readonly IHostingEnvironment _hostingEnvironment;
+        public int studentIdentification;
 
         public CreateModel(Smart.Data.ApplicationDbContext context, IHostingEnvironment hostingEnvironment)
         {
@@ -23,20 +24,19 @@ namespace Smart.Pages.Files
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public IActionResult OnGet()
+        public async Task OnGetAsync(int studentId)
         {
-        ViewData["FileTypeId"] = new SelectList(_context.FileTypes, "FileTypeId", "Description");
-        ViewData["StudentId"] = new SelectList(_context.Students, "StudentId", "FirstName");
-            return Page();
+            studentIdentification = studentId;
+            ViewData["FileTypeId"] = new SelectList(_context.FileTypes, "FileTypeId", "Description");
+            ViewData["StudentId"] = new SelectList(_context.Students.Where(n => n.StudentId == studentId), "StudentId", "FirstName");
+
         }
 
         [BindProperty]
         public Smart.Data.Models.File File { get; set; }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int studentId)
         {
-            if (ModelState.IsValid)
-            {
                 var files = HttpContext.Request.Form.Files;
                 if (files.Count > 0)
                 {
@@ -49,13 +49,14 @@ namespace Smart.Pages.Files
                             pic = ms.ToArray();
                         }
                     }
+                    File.FileTypeId = FileTypeEnum.Other;
+                    File.FileName = files[0].FileName;
                     File.ByteData = pic;
                 }
                 _context.Files.Add(File);
                 await _context.SaveChangesAsync();
-                return RedirectToPage("./Index");
-            }
-            return RedirectToPage("./Index");
+                return RedirectToPage("./Index", new { studentId });
+
         }
 
 
