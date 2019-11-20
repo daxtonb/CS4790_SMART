@@ -39,8 +39,8 @@ namespace Smart.Pages.Classes
             {
                 StudentId = s.StudentId,
                 Name = $"{s.Student.LastName}, {s.Student.FirstName}",
-                GradeAverage = GetRoundedPercent(s.Student.StudentAssessments?.Where(s => s.Assessment != null).Sum(a => a.PointsAwarded), assessmentPointsPossible),
-                AttendanceAverage = GetRoundedPercent(s.Student.Attendances?.Where(s => s.ClassId == classId).Count(a => a.AttendanceStatusId != AttendanceStatusEnum.Absent), attendanceDays)
+                GradeAverage = GetRoundedPercent(s.Student.StudentAssessments?.Where(k => k.Assessment != null).Sum(a => a.PointsAwarded), assessmentPointsPossible),
+                AttendanceAverage = GetRoundedPercent(s.Student.Attendances?.Where(k => k.ClassId == classId).Count(a => a.AttendanceStatusId != AttendanceStatusEnum.Absent), attendanceDays)
             });
 
             // For layout
