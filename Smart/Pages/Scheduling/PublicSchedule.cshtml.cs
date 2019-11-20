@@ -66,81 +66,97 @@ namespace Smart.Pages.Scheduling
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            if(Request.Form["RemoveClass"].Count > 0)
             {
-                return Page();
-            }
+                var classToRemove = Request.Form["classId"][0];
+                var myStudentId = Request.Form["StudentId"][0];
 
-            //The values as they are saved in the database
-            var monday = Request.Form["Monday"]; //1
-            var tuesday = Request.Form["Tuesday"]; //2
-            var wednesday = Request.Form["Wednesday"]; //3
-            var thursday = Request.Form["Thursday"]; //4
-            var friday = Request.Form["Friday"]; //5
+                var tempPublicClass = _db.StudentPublicSchoolClasss.Where(i => i.StudentPublicSchoolClassId == int.Parse(classToRemove)).FirstOrDefault();
 
-            List<ScheduleAvailability> days = new List<ScheduleAvailability>();
-            if (monday.Count > 0)
-            {
-                days.Add(new ScheduleAvailability()
+                if (tempPublicClass != null)
                 {
-                    DayOfWeek = System.DayOfWeek.Monday,
-                    StartTime = StartTime.TimeOfDay,
-                    EndTime = EndTime.TimeOfDay
-                });
+                    _db.StudentPublicSchoolClasss.Remove(tempPublicClass);
+                    await _db.SaveChangesAsync();
+                }
             }
-            if (tuesday.Count > 0)
+            else
             {
-                days.Add(new ScheduleAvailability()
+                if (!ModelState.IsValid)
                 {
-                    DayOfWeek = System.DayOfWeek.Tuesday,
-                    StartTime = StartTime.TimeOfDay,
-                    EndTime = EndTime.TimeOfDay
-                });
-            }
-            if (wednesday.Count > 0)
-            {
-                days.Add(new ScheduleAvailability()
-                {
-                    DayOfWeek = System.DayOfWeek.Wednesday,
-                    StartTime = StartTime.TimeOfDay,
-                    EndTime = EndTime.TimeOfDay
-                });
-            }
-            if (thursday.Count > 0)
-            {
-                days.Add(new ScheduleAvailability()
-                {
-                    DayOfWeek = System.DayOfWeek.Thursday,
-                    StartTime = StartTime.TimeOfDay,
-                    EndTime = EndTime.TimeOfDay
-                });
-            }
-            if (friday.Count > 0)
-            {
-                days.Add(new ScheduleAvailability()
-                {
-                    DayOfWeek = System.DayOfWeek.Friday,
-                    StartTime = StartTime.TimeOfDay,
-                    EndTime = EndTime.TimeOfDay
-                });
-            }
+                    return Page();
+                }
 
-            Term myTerm = _db.Terms.Where(i => i.StartDate < DateTime.Now && i.EndDate > DateTime.Now).FirstOrDefault();
+                //The values as they are saved in the database
+                var monday = Request.Form["Monday"]; //1
+                var tuesday = Request.Form["Tuesday"]; //2
+                var wednesday = Request.Form["Wednesday"]; //3
+                var thursday = Request.Form["Thursday"]; //4
+                var friday = Request.Form["Friday"]; //5
 
-            StudentPublicSchoolClass myClass = new StudentPublicSchoolClass()
-            {
-                CourseName = this.CourseName,
-                StudentId = this.StudentID,
-                PublicSchoolClassSchedules = days.Select(i => new PublicSchoolClassSchedule()
+                List<ScheduleAvailability> days = new List<ScheduleAvailability>();
+                if (monday.Count > 0)
                 {
-                    ScheduleAvailabilityd = i
-                }).ToList(),
-                TermId = myTerm.TermId
-            };
+                    days.Add(new ScheduleAvailability()
+                    {
+                        DayOfWeek = System.DayOfWeek.Monday,
+                        StartTime = StartTime.TimeOfDay,
+                        EndTime = EndTime.TimeOfDay
+                    });
+                }
+                if (tuesday.Count > 0)
+                {
+                    days.Add(new ScheduleAvailability()
+                    {
+                        DayOfWeek = System.DayOfWeek.Tuesday,
+                        StartTime = StartTime.TimeOfDay,
+                        EndTime = EndTime.TimeOfDay
+                    });
+                }
+                if (wednesday.Count > 0)
+                {
+                    days.Add(new ScheduleAvailability()
+                    {
+                        DayOfWeek = System.DayOfWeek.Wednesday,
+                        StartTime = StartTime.TimeOfDay,
+                        EndTime = EndTime.TimeOfDay
+                    });
+                }
+                if (thursday.Count > 0)
+                {
+                    days.Add(new ScheduleAvailability()
+                    {
+                        DayOfWeek = System.DayOfWeek.Thursday,
+                        StartTime = StartTime.TimeOfDay,
+                        EndTime = EndTime.TimeOfDay
+                    });
+                }
+                if (friday.Count > 0)
+                {
+                    days.Add(new ScheduleAvailability()
+                    {
+                        DayOfWeek = System.DayOfWeek.Friday,
+                        StartTime = StartTime.TimeOfDay,
+                        EndTime = EndTime.TimeOfDay
+                    });
+                }
 
-            _db.StudentPublicSchoolClasss.Add(myClass);
-            await _db.SaveChangesAsync();
+                Term myTerm = _db.Terms.Where(i => i.StartDate < DateTime.Now && i.EndDate > DateTime.Now).FirstOrDefault();
 
+                StudentPublicSchoolClass myClass = new StudentPublicSchoolClass()
+                {
+                    CourseName = this.CourseName,
+                    StudentId = this.StudentID,
+                    PublicSchoolClassSchedules = days.Select(i => new PublicSchoolClassSchedule()
+                    {
+                        ScheduleAvailabilityd = i
+                    }).ToList(),
+                    TermId = myTerm.TermId
+                };
+
+                _db.StudentPublicSchoolClasss.Add(myClass);
+                await _db.SaveChangesAsync();
+            }
+            
             return RedirectToPage("PublicSchedule", new { this.StudentID });
         }
 

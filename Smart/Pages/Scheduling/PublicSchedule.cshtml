@@ -7,12 +7,12 @@
     var endTime = "";
 }
 
-    <div class="row text-center">
-        <h2>Public Schedule</h2>
-    </div>
-    <div class="row" style="padding-bottom: 10px">
-        <a asp-page="Index" class="btn btn-primary">Back To Schedule</a>
-    </div>
+<div class="row text-center">
+    <h2>Public Schedule</h2>
+</div>
+<div class="row" style="padding-bottom: 10px">
+    <a asp-page="Index" class="btn btn-primary">Back To Schedule</a>
+</div>
 
 <form method="post">
     <div class="row">
@@ -40,7 +40,7 @@
             <input type="time" asp-for="EndTime" class="form-control" placeholder="End Time" />
             <span asp-validation-for="EndTime" class="text-danger"></span>
         </div>
-        <div class="col-3 offset-6 form-group text-right">
+        <div class="col-3 offset-9 form-group text-right">
             <input type="submit" name="Submit" class="btn btn-success" value="Add Course" />
         </div>
 
@@ -63,6 +63,7 @@
                 <th>
                     End Time:
                 </th>
+                <th>Options</th>
             </tr>
         </thead>
         <tbody>
@@ -81,12 +82,46 @@
                         <td>@schoolClass.DaysOfTheWeek</td>
                         <td>@schoolClass.StartTime</td>
                         <td>@schoolClass.EndTime</td>
+                        <td style="width:150px">
+                            <div class="btn-group" role="group">
+                                <button onclick="document.getElementById('SelectedClass').value = @schoolClass.ClassId; document.getElementById('IsPublicSchool').value = '1';" class="btn btn-danger text-white" data-target="#DeleteModal" data-toggle="modal"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>
                     </tr>
 
                 }
             }
         </tbody>
     </table>
+
+</div>
+
+
+<!-- Delete Modal -->
+<div class="modal fade" id="DeleteModal" tabIndex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Delete Class</h4>
+            </div>
+            <div class="modal-body">
+                <div id="ClassName"></div>
+                <p>
+                    Are you sure you'd like to remove the student from
+                    this class? <br>This action can't be undone.
+                </p>
+                <form class="form-group" method="post">
+                    <input type="hidden" id="SelectedClass" name="classId" />
+                    <input type="hidden" name="StudentId" value="@Model.StudentID" />
+                    <input type="hidden" id="IsPublicSchool" name="IsPublicSchool" value="0" />
+                    <input type="submit" class="btn btn-primary" name="RemoveClass" value="Remove">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
 
 </div>
 
