@@ -33,21 +33,36 @@ namespace Smart.Pages.Scheduling
 
         public async Task OnGetAsync(int? studentId)
         {
-            RequiredCourses = await _db.Courses.Where(c => c.IsCoreRequirement).ToListAsync();
-            Classes = await _db.Classes.Include(i => i.ClassSchedules).Include(i => i.InstructorUser).ToListAsync();
-            
-            foreach(Class c in Classes)
+            Classes = await _db.Classes
+                               .Include(i => i.ClassSchedules)
+                               .Include(i => i.InstructorUser)
+                               .Include(i => i.StudentClasses)
+                               //.Where(i => !i.StudentClasses.Any(s => s.StudentId == 3))
+                               .ToListAsync();
+
+            foreach (Class c in Classes)
             {
-                foreach(ClassSchedule cs in c.ClassSchedules)
+                foreach (ClassSchedule cs in c.ClassSchedules)
                 {
-                    ScheduleAvailabilities.AddRange(_db.ScheduleAvailabilities.Where(i => i.ScheduleAvailabilityId == cs.ScheduleAvailabilityId).ToList());
+                    ScheduleAvailabilities.AddRange(_db.ScheduleAvailabilities
+                                                       .Where(i => i.ScheduleAvailabilityId == cs.ScheduleAvailabilityId)
+                                                       .ToList());
                 }
             }
 
+            RequiredCourses = await _db.Courses
+                                       .Where(c => c.IsCoreRequirement)
+                                       .ToListAsync();
+            
+
             if (studentId == null)
             {
-                MyStudent = _db.Students.Include(c => c.StudentClasses).FirstOrDefault(i => i.StudentId == 3);
-                MyClasses = await _db.StudentClasses.Include(c => c.Class).Where(c => c.StudentId == 3).ToListAsync();
+                MyStudent = _db.Students.Include(c => c.StudentClasses)
+                                       .FirstOrDefault(i => i.StudentId == 3);
+                MyClasses = await _db.StudentClasses.Include(c => c.Class)
+                                                    //.ThenInclude(s => s.ClassSchedules)
+                                                    .Where(c => c.StudentId == 3)
+                                                    .ToListAsync();
 
                 PublicSchedule = await _db.StudentPublicSchoolClasss
                                          .Where(s => s.StudentId == 3)
@@ -61,8 +76,28 @@ namespace Smart.Pages.Scheduling
             }
             else
             {
-                MyStudent = _db.Students.Include(c => c.StudentClasses).FirstOrDefault(i => i.StudentId == studentId);
-                MyClasses = await _db.StudentClasses.Include(c => c.Class).Where(c => c.StudentId == studentId).ToListAsync();
+                //Classes = await _db.Classes
+                //               .Include(i => i.ClassSchedules)
+                //               .Include(i => i.InstructorUser)
+                //               .Include(i => i.StudentClasses)
+                //               .Where(i => !i.StudentClasses.Any(s => s.StudentId == studentId))
+                //               .ToListAsync();
+
+                //foreach (Class c in Classes)
+                //{
+                //    foreach (ClassSchedule cs in c.ClassSchedules)
+                //    {
+                //        ScheduleAvailabilities.AddRange(_db.ScheduleAvailabilities
+                //                                           .Where(i => i.ScheduleAvailabilityId == cs.ScheduleAvailabilityId)
+                //                                           .ToList());
+                //    }
+                //}
+
+                MyStudent = _db.Students.Include(c => c.StudentClasses)
+                                        .FirstOrDefault(i => i.StudentId == studentId);
+                MyClasses = await _db.StudentClasses.Include(c => c.Class)
+                                                    .Where(c => c.StudentId == studentId)
+                                                    .ToListAsync();
 
                 PublicSchedule = await _db.StudentPublicSchoolClasss
                                          .Where(s => s.StudentId == studentId)
@@ -77,36 +112,61 @@ namespace Smart.Pages.Scheduling
         }
         public async Task<IActionResult> OnPostAsync(int id, int studentId)
         {
-            if (id != null)
+            //Count is greater than 0 meaning that there are elements found within
+            if(Request.Form["RemoveClass"].Count > 0)
             {
-                StudentClass myClass = new StudentClass() { ClassId = id, StudentId = studentId };
+                var classToRemove = Request.Form["classId"][0];
+                var myStudentId = Request.Form["StudentId"][0];
 
-                _db.StudentClasses.Add(myClass);
-                await _db.SaveChangesAsync();
+                if (Request.Form["IsPublicSchool"][0].ToString().Equals("1"))
+                {
+                    //This is public school and I want to erase that link
+                    var tempPublicClass = _db.StudentPublicSchoolClasss.Where(i => i.StudentPublicSchoolClassId == int.Parse(classToRemove)).FirstOrDefault();
 
-                return RedirectToPage( );
+                    if(tempPublicClass != null)
+                    {
+                        _db.StudentPublicSchoolClasss.Remove(tempPublicClass);
+                        await _db.SaveChangesAsync();
+                    }
+                }
+                else
+                {
+                    var tempClass = _db.StudentClasses.Where(i => i.ClassId == int.Parse(classToRemove) && int.Parse(myStudentId) == i.StudentId).FirstOrDefault();
+
+                    if (tempClass != null)
+                    {
+                        _db.StudentClasses.Remove(tempClass);
+                        await _db.SaveChangesAsync();
+                    }
+                }
+                return RedirectToPage();
+            }
+            else
+            {
+                if (id != null)
+                {
+                    StudentClass myClass = new StudentClass() { ClassId = id, StudentId = studentId };
+
+                    var classCheck = _db.StudentClasses.Where(i => i.ClassId == id && i.StudentId == studentId);
+                    if(classCheck == null)
+                    {
+                        _db.StudentClasses.Add(myClass);
+                        await _db.SaveChangesAsync();
+
+                        return RedirectToPage();
+                    }
+                    else
+                    {
+                        return RedirectToPage();
+                    }
+                    
+                }
             }
 
             //This right now means that there is an error
             return NotFound();
         }
 
-        public async Task<IActionResult> OnDeleteAsync(int id, int studentId)
-        {
-            if(ModelState.IsValid)
-            {
-                if(id != null && studentId != null)
-                {
-                    var myClass = _db.StudentClasses.Where(s => s.StudentId == studentId && s.ClassId == id).FirstOrDefault();
 
-                    _db.StudentClasses.Remove(myClass);
-                    await _db.SaveChangesAsync();
-
-                    return RedirectToPage("Index", studentId);
-                }
-            }
-
-            return NotFound();
-        }
     }
 }
