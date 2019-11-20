@@ -36,13 +36,14 @@
             <input asp-for="ConfirmPassword" class="form-control" />
             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
         </div>
+        <p><input type="checkbox" asp-for="IsActive" class="mr-2" />Active</p>
 
         <div class="form-group">
             <h5>Roles</h5>
             @for (int i = 0; i < Model.Roles.Count; i++)
             {
                 var role = Model.Roles[i];
-                <p><input type="checkbox" name="Roles[@i].IsSelected" asp-for="@role.IsSelected" /> @role.Name</p>
+                <p><input type="checkbox" name="Roles[@i].IsSelected" asp-for="@role.IsSelected" class="mr-2" />@role.Name</p>
                 <input type="hidden" name="Roles[@i].Name" value="@role.Name" />
                 <input type="hidden" name="Roles[@i].RoleId" value="@role.RoleId" />
             }

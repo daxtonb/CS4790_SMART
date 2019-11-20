@@ -15,6 +15,7 @@
                     <th role="columnheader">Name</th>
                     <th role="columnheader">Email</th>
                     <th role="columnheader">Roles</th>
+                    <th role="columnheader">Status</th>
                     <th></th>
                 </tr>
             </thead>
@@ -25,6 +26,7 @@
                         <td>@user.Name</td>
                         <td>@user.Email</td>
                         <td>@user.Roles</td>
+                        <td><i class="fa fa-lock@(user.IsActive ? "-open" : "")"></i></td>
                         <td>
                             <button type="button" class="btn btn-sm btn-success mb-3" data-toggle="modal" data-target="#form-modal" onclick="getUserForm(@user.UserId)"><i class="fa fa-edit"></i></button>
                         </td>
@@ -64,6 +66,7 @@
                 addListener(newPassword);
                 isValid = false;
             }
+            // The unobtrusive script keeps incorrectly labeling ConfirmPassword is invalid when it actually is valid
             if (confirmPassowrd.value === newPassword.value && !confirmPassowrd.attributes['aria-invalid']) {
                 setInputErrorMessage(confirmPassowrd, '');
                 confirmPassowrd.attributes['aria-invalid'] = false;

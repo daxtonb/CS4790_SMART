@@ -40,7 +40,8 @@ namespace Smart.Pages.Manage
                     UserId = u.Id,
                     Name = u.LastName + ", " + u.FirstName,
                     Roles = string.Join(',', u.UserRoles.Select(r => r.Role.Name)),
-                    Email = u.Email
+                    Email = u.Email,
+                    IsActive = u.IsActive
                 }).ToListAsync();
         }
 
@@ -66,6 +67,7 @@ namespace Smart.Pages.Manage
                 model.LastName = user.LastName;
                 model.Email = user.Email;
                 model.UserId = user.Id;
+                model.IsActive = user.IsActive;
 
                 foreach (var role in model.Roles)
                 {
@@ -104,6 +106,7 @@ namespace Smart.Pages.Manage
                 user.NormalizedEmail = model.Email.ToUpper();
                 user.UserName = model.Email;
                 user.NormalizedUserName = model.Email.ToUpper();
+                user.IsActive = model.IsActive;
 
                 await _context.SaveChangesAsync();
 
@@ -172,6 +175,7 @@ namespace Smart.Pages.Manage
             public string Name { get; set; }
             public string Email { get; set; }
             public string Roles { get; set; }
+            public bool IsActive { get; set; }
         }
         public class InputModel
         {
@@ -203,6 +207,7 @@ namespace Smart.Pages.Manage
             [Display(Name = "Confirm password")]
             [Compare("NewPassword", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+            public bool IsActive { get; set; }
 
             public List<UserRole> Roles { get; set; }
 
