@@ -34,6 +34,13 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-page="/Index">Home</a>
                         </li>
+                        @*Manage Pages Dropdown Menu*@
+                        <li class="nav-item dropdown text-white-50">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarManageDropDownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Manage</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarManageDropDownMenuLink" id="#navbarManageDropDownMenuLink">
+                                <a class="nav-link text-dark" asp-page="/Manage/Users">Users</a>
+                            </div>
+                        </li>
 
                         @*Application Pages Dropdown Menu*@
                         <li class="nav-item dropdown text-white-50">
@@ -41,8 +48,6 @@
                             <div class="dropdown-menu" aria-labelledby="navvarApplicationDropDownMenuLink" id="#navbarApplicationDropDownMenuLink">
                                 <a class="nav-link text-dark" asp-page="/Application/Index">Applicants</a>
                                 <a class="nav-link text-dark" asp-page="/RatingCriterium/Index">Rating Criterium</a>
-                                <a class="nav-link text-dark" asp-page="/Attendance/Index">Attendance</a>
-
                             </div>
                         </li>
 
@@ -50,13 +55,7 @@
                             <a class="nav-link text-dark" asp-page="/Students/Index">Students</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Scheduling/Index">Scheduling</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-page="/Classes/Index">Classes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Attendance/Index">Attendance</a>
                         </li>
                     </ul>
                 </div>
@@ -121,9 +120,6 @@
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
-        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
-        <script src="~/lib/jquery.unobtrusive-ajax/dist/jquery.unobtrusive-ajax.js"></script>
     </environment>
     <environment exclude="Development">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
@@ -139,9 +135,9 @@
                 integrity="sha256-E/V4cWE4qvAeO5MOhjtGtqDzPndRO1LBk8lJ/PR7CA4=">
         </script>
         <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-        <script src="~/lib/jquery.unobtrusive-ajax/dist/jquery.unobtrusive-ajax.min.js"></script>
     </environment>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @RenderSection("Scripts", required: false)

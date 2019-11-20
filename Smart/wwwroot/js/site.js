@@ -1,11 +1,29 @@
 ﻿let doRefresh = false;
 
 // Retrieves form and places in form modal
-function getForm(modalTitle, getHandlerUrl, postHandlerUrl) {
+function getForm(modalTitle, getHandlerUrl, postHandlerUrl, successCallback, failureCallback, validator) {
+
+    const modalForm = $('#modal-form');
 
     // Add form action
     if (postHandlerUrl) {
-        $('#modal-form').attr('action', postHandlerUrl);
+        $(modalForm).attr('action', postHandlerUrl);
+    }
+    // Add unobtrusive AJAX
+    if (successCallback || failureCallback) {
+        $(modalForm).attr('data-ajax', true);
+    }
+    // Add success callback
+    if (successCallback) {
+        $(modalForm).attr('data-ajax-success', successCallback.name);
+    }
+    // Add failure callback
+    if (failureCallback) {
+        $(modalForm).attr('data-ajax-failure', failureCallback.name);
+    }
+    // Add validation
+    if (validator) {
+        $(modalForm).on('submit', validator);
     }
 
     const modalBody = $('#form-modal-body');

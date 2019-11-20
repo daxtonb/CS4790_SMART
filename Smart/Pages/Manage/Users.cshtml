@@ -1,0 +1,102 @@
+﻿@page
+@model Smart.Pages.Manage.UsersModel
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h1 class="card-title">Users</h1>
+        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getUserForm()"><i class="fa fa-plus"></i> User</button>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th role="columnheader">Name</th>
+                    <th role="columnheader">Email</th>
+                    <th role="columnheader">Roles</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model.Users)
+                {
+                    <tr>
+                        <td>@user.Name</td>
+                        <td>@user.Email</td>
+                        <td>@user.Roles</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-success mb-3" data-toggle="modal" data-target="#form-modal" onclick="getUserForm(@user.UserId)"><i class="fa fa-edit"></i></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const userBaseUrl = '/Manage/Users?handler=';
+
+        function validatePasswords() {
+            const form = document.forms['modal-form'];
+            const userId = form['UserId'];
+            const currentPassword = form['CurrentPassword'];
+            const newPassword = form['NewPassword'];
+            const confirmPassowrd = form['ConfirmPassword'];
+            let isValid = true;
+
+            // Clear any validation messages
+            setInputErrorMessage(newPassword, '');
+            setInputErrorMessage(currentPassword, '');
+            setInputErrorMessage(confirmPassowrd, '');
+
+            // CONDITION: We are editting an existing user, and a new password was entered, but current password is missing
+            if (userId.value.length && newPassword.value.length && !currentPassword.value.length) {
+                setInputErrorMessage(currentPassword, 'Current password is required');
+                addListener(currentPassword);
+                isValid = false;
+            } 
+            // CONDITION: We are creating a new user, but a password was not entered
+            if (!userId.value.length && !newPassword.value.length) {
+                setInputErrorMessage(newPassword, 'Password is required.');
+                addListener(newPassword);
+                isValid = false;
+            }
+            if (confirmPassowrd.value === newPassword.value && !confirmPassowrd.attributes['aria-invalid']) {
+                setInputErrorMessage(confirmPassowrd, '');
+                confirmPassowrd.attributes['aria-invalid'] = false;
+                addListener(confirmPassowrd);
+            }
+
+            return isValid;
+        }
+
+        function setInputErrorMessage(input, message) {
+            if (input) {
+                input.parentNode.children[2].innerText = message;
+            }
+        }
+
+        function addListener(input) {
+            input.addEventListener('keyup', validatePasswords);
+        }
+
+        function successHandler() {
+            window.location.reload();
+        }
+
+        function errorHandler(err) {
+            alert(err.responseText || 'Something went wrong.');
+            console.log(err);
+        }
+
+        function getUserForm(userId) {
+            const getHandler = userBaseUrl + 'UserForm' + (userId ? '&userId=' + userId : '');
+            const postHandler = userBaseUrl + 'SaveUser';
+            const modalTitle = `${userId ? 'Edit' : 'Create'} User`;
+            getForm(modalTitle, getHandler, postHandler, successHandler, errorHandler, validatePasswords);
+        }
+    </script>
+}
