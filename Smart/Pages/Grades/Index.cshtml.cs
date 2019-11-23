@@ -42,6 +42,10 @@ namespace Smart.Pages.Grades
 
             Student = _context.Students.Where(i => i.StudentId == studentId).ToList();
 
+            if(StudentAssessment.Count > 0)
+            {
+
+            }
             File = _context.Files.Where(n => n.FileId == StudentAssessment[0].FileId).ToList();
 
         }
