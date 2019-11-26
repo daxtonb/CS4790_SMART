@@ -43,6 +43,9 @@
                 @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment.Class)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.StudentAssessment[0].File)
             </th>
             <th></th>
@@ -51,23 +54,28 @@
     <tbody>
         @foreach (var item in Model.StudentAssessment)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PointsAwarded)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Comments)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SubmissionDateTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Assessment.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.File.FileName)
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PointsAwarded)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Comments)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubmissionDateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Assessment.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Assessment.Class.Course.Name)
+            </td>
+            <td>
+                <span>
+                    <a asp-controller="File" asp-action="Download" asp-route-fileId="@item.File.FileId" style="color:#7989ff">@item.File.FileName</a>
+                </span>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

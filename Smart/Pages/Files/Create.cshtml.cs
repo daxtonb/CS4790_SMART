@@ -50,7 +50,8 @@ namespace Smart.Pages.Files
                         }
                     }
                     File.FileTypeId = FileTypeEnum.Other;
-                    File.FileName = files[0].FileName;
+                
+                    File.FileName = files[0].FileName.Substring(files[0].FileName.LastIndexOf('\\')+1);
                     File.ByteData = pic;
                 }
                 _context.Files.Add(File);
