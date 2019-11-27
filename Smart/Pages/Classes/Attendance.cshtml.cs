@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Smart.Data;
 using Smart.Data.Models;
@@ -16,14 +17,11 @@ namespace Smart.Pages.Classes
     public class AttendanceModel : PageModel
     {
         private readonly ApplicationDbContext _context;
-        //private IHostingEnvironment _environment;// me 
 
-        //public AttendanceModel(IHostingEnvironment environment)//me
-        //{
-        //    _environment = environment; //me
-        //}
+        [BindProperty]
+        public int ClassId { set; get; }
 
-       
+
         public IEnumerable<AttendanceVieModel> Attendances { get; set; }
 
         public AttendanceModel(ApplicationDbContext context)
@@ -31,8 +29,23 @@ namespace Smart.Pages.Classes
             _context = context;
         }
 
+
+        public async Task<IActionResult> OnGetAttendanceList(string dateTime, int classId)
+        {
+            var attendance = await _context.Attendances.Where(a => a.ClassId == classId && a.Date == Convert.ToDateTime(dateTime).Date).ToArrayAsync();
+
+
+            return new PartialViewResult()
+            {
+                ViewName = "_AttendanceForm",
+                ViewData = new ViewDataDictionary<IEnumerable<Data.Models.Attendance>>(ViewData, attendance)
+
+
+            };
+        }
         public async Task OnGetAsync(int classId)
         {
+            ClassId = classId;
             var @class = await _context.Classes
                 .Include(c => c.Attendances)
                 .Include(c => c.Course)
@@ -53,19 +66,63 @@ namespace Smart.Pages.Classes
             ViewData["ClassId"] = @class.ClassId;
         }
 
-        //[BindProperty] //me
-        //public IFormFile UploadCsv { get; set; } //me
-        // on Post uploding file
-        public async Task<PageResult> OnPostUploadCsvAsync()
+
+
+
+        // OnPost uplodingCsvfile
+        public async Task<RedirectToPageResult> OnPostUploadCsvAsync()
         {
             var file = Request.Form.Files[0];
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            {
+                reader.ReadLine();   
+                while (reader.Peek() >= 0)
+                {
+                    string test = reader.ReadLine();
+                    string[] row = test.Split(','); 
+                    int classId = int.Parse(row[1]); 
+                    DateTime dateTime = Convert.ToDateTime(row[2]); 
 
-            //var file = Path.Combine(_environment.ContentRootPath, "uploads", UploadCsv.FileName);
-            //using (var fileStream = new FileStream(file, FileMode.Create))
-            //{
-            //    await UploadCsv.CopyToAsync(fileStream);
-            //}
-            return Page();
+                    var attendance = new Data.Models.Attendance()
+                    {
+                        StudentId = int.Parse(row[0]),
+                        ClassId = classId,
+                        Date = dateTime.Date,    
+                        TimeIn = dateTime.TimeOfDay,
+                        AttendanceStatusId = await CalculateAttendance(dateTime, classId)
+
+                    };
+                    _context.Attendances.Add(attendance);
+                }
+                await _context.SaveChangesAsync();
+            }
+
+
+            return RedirectToPage(new { ClassId });
+        }
+
+        //Method Calculates Student Attendance
+        public async Task<AttendanceStatusEnum> CalculateAttendance(DateTime dt, int classId)
+        {
+
+            var scheduleAvailability = (await _context.Classeschedules
+                .Include(c => c.ScheduleAvailability)
+                .FirstOrDefaultAsync(c => c.ClassId == classId && c.ScheduleAvailability.DayOfWeek == dt.DayOfWeek))?.ScheduleAvailability;
+
+            if (scheduleAvailability == null)
+            {
+                throw new Exception($"Student does not have class at this time: {dt}");
+            }
+
+            if (dt.TimeOfDay > scheduleAvailability.StartTime)
+            {
+                return AttendanceStatusEnum.Late;
+            }
+            else
+            {
+                return AttendanceStatusEnum.OnTime;
+            }
+    
         }
 
         public class AttendanceVieModel

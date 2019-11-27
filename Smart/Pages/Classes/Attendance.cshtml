@@ -4,7 +4,8 @@
     ViewData["Title"] = "Attendance";
     Layout = "~/Pages/Classes/_Layout.cshtml";
 }
-    <form asp-page-handler="UploadCsv" enctype="multipart/form-data">
+    <form asp-page-handler="UploadCsv" enctype="multipart/form-data" >
+        <input type="hidden" asp-for="ClassId"/>
         <input name="file" type="file" asp-page="Import" class="btn btn-info"><i class="fas fa-file-import"></i> &nbsp;  Import Attendance File </>
         <input type="submit" />
     </form>
@@ -12,7 +13,7 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th role="columnheader">Date</th>
+            <th role="columnheader" >Date</th>
             <th role="columnheader">On Time</th>
             <th role="columnheader">Late</th>
             <th role="columnheader">Absent</th>
@@ -22,14 +23,28 @@
         @foreach (var item in Model.Attendances)
         {
             <tr>
-                <td>@item.Date.ToString("d MMMM")</td>
+                <td><a data-toggle="modal" data-target="#details-modal" onclick="getAttendanceList('@item.Date.ToString("yyyy-MM-dd")')">@item.Date.ToString("d MMMM")</a></td>
                 <td>@item.OnTimeCount</td>
                 <td>@item.LateCount</td>
                 <td>@item.AbsentCount</td>
             </tr>
+
         }
     </tbody>
 </table>
+
+
+<script>
+
+    function getAttendanceList(DateTime) {
+        var title = DateTime;
+        const attendanceBaseUrl = '/Classes/@ViewData["classId"]/Attendance?handler=AttendanceList?dateTime=' + new Date(DateTime).toISOString() + '&classId=@ViewData["classId"]' ;
+        console.log(attendanceBaseUrl);
+        getDetails(title, attendanceBaseUrl);
+
+
+    }
+</script>
 
 
 
