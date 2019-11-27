@@ -37,12 +37,18 @@ namespace Smart.Pages.Grades
             StudentAssessment = await _context.StudentAssessments
                 .Include(s => s.Assessment)
                 .Include(s => s.Assessment.Class)
+                .Include(s => s.Assessment.Class.Course)
+                .Include(s=> s.File)
                 .Where(s => s.Assessment.Class.InstructorUserId == idu && s.StudentId == studentId)
                 .ToListAsync();
 
             Student = _context.Students.Where(i => i.StudentId == studentId).ToList();
 
-            File = _context.Files.Where(n => n.FileId == StudentAssessment[0].FileId).ToList();
+            if(StudentAssessment.Count > 0)
+            {
+
+            }
+          //  File = _context.Files.Where(n => n.FileId == StudentAssessment[0].FileId).ToList();
 
         }
     }
