@@ -7,8 +7,11 @@
     var endTime = "";
 }
 
-<div class="row text-center">
-    <h2>Public Schedule</h2>
+<div class="row">
+    <h1>Public Schedule</h1>
+</div>
+<div class="row">
+    <div id="SelectedSchool"><h3>School 1</h3></div>
 </div>
 <div class="row" style="padding-bottom: 10px">
     <a asp-page="Index" asp-route-studentId="@Model.StudentID" class="btn btn-primary">Back To Schedule</a>
@@ -67,30 +70,7 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model.PublicSchedule.Count == 0)
-            {
-                <tr>
-                    <td colspan="5"><h2>No Public Classes Created Yet</h2></td>
-                </tr>
-            }
-            else
-            {
-                @foreach (var schoolClass in Model.MyPublicSchoolSchedule)
-                {
-                    <tr>
-                        <td>@schoolClass.CourseName</td>
-                        <td>@schoolClass.DaysOfTheWeek</td>
-                        <td>@schoolClass.StartTime</td>
-                        <td>@schoolClass.EndTime</td>
-                        <td style="width:150px">
-                            <div class="btn-group" role="group">
-                                <button onclick="document.getElementById('SelectedClass').value = @schoolClass.ClassId; document.getElementById('IsPublicSchool').value = '1';" class="btn btn-danger text-white" data-target="#DeleteModal" data-toggle="modal"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-
-                }
-            }
+         
         </tbody>
     </table>
 
@@ -112,7 +92,7 @@
                 </p>
                 <form class="form-group" method="post">
                     <input type="hidden" id="SelectedClass" name="classId" />
-                    <input type="hidden" name="StudentId" value="@Model.StudentID" />
+                    <input type="hidden" name="StudentId" value="1234567" />
                     <input type="hidden" id="IsPublicSchool" name="IsPublicSchool" value="0" />
                     <input type="submit" class="btn btn-primary" name="RemoveClass" value="Remove">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
@@ -124,6 +104,3 @@
     </div>
 
 </div>
-
-
-

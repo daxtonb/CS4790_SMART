@@ -2,258 +2,232 @@
 @model Smart.Pages.Scheduling.IndexModel
 @{
     ViewData["Title"] = "Index";
-
-    //Sunday is 0
-    int currentDayOfWeek = (int)DateTime.Now.DayOfWeek - 1;
 }
 
-    <div class="row">
-        <div class="col-6">
-            <h2>Schedule</h2>
-            <h2>@Model.MyStudent.FirstName @Model.MyStudent.LastName</h2>
-
-        </div>
-        <div class="col-6">
-            <h4>Required Courses</h4>
-            <h5>1. English @Model.MyStudent.EnglishLevel</h5>
-            <h5>2. IT @Model.MyStudent.ItLevel</h5>
-        </div>
-    </div>
-
-<div class="row" style="padding-top: 10px;">
-    <div class="alert alert-primary col-12 text-center" role="alert"><h2>Enrolled SMART Courses</h2></div>
-    <div class="col-12">
-        <table class="table table-striped border col-md-12">
-            <thead>
-                <tr>
-                    <th>Class</th>
-                    <th>Instructor</th>
-                    <th>Schedule</th>
-                    <th>Is Required</th>
-                    <th>Options</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.MyClasses.Count == 0)
-                {
-                    <tr>
-                        <td colspan="5"><h4 class="text-danger">Not Currently enrolled in any courses this term</h4></td>
-                    </tr>
-                }
-                @foreach (var course in Model.MyClasses)
-                {
-                    <tr>
-                        <td>@course.Class.Course.Name</td>
-                        <td>@(@course.Class.InstructorUser.FirstName) @(@course.Class.InstructorUser.LastName)</td>
-                        <td>@ClassSchedule.GetScheduleString(course.Class.ClassSchedules)</td>
-                        <td>
-                            @if (@course.Class.Course.IsCoreRequirement)
-                            {
-                                <i class="far fa-thumbs-up fa-2x"></i>
-                            }
-                            else
-                            {
-                                <i class="far fa-thumbs-down fa-2x"></i>
-                            }
-                        </td>
-                        <td style="width:150px">
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <div class="btn-group" role="group">
-                                    <button onclick="document.getElementById('SelectedClass').value = @course.ClassId; document.getElementById('IsPublicSchool').value = '0';" class="btn btn-danger text-white" data-target="#DeleteModal" data-toggle="modal"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+<div class="alert alert-primary text-center">
+    <h1>Schedule</h1>
+    <select>
+        @foreach(var term in Model.Terms)
+        {
+            <option value="@term.TimeOfYear">@term.TimeOfYear: @term.StartDate.ToString("dd, MMMM, yyyy") - @term.EndDate.ToString("dd, MMMM, yyyy")</option>
+        }
+    </select>
 </div>
 
-<div class="row" style="padding-top: 10px">
-    <div class="alert alert-info col-12">
-        <div class="text-center col-12">
-            <h2>Public School Schedule</h2>
-        </div>
-        <div class="text-center col-12">
-            <a asp-page="PublicSchedule" asp-route-studentId="@Model.MyStudent.StudentId" class="btn btn-primary">Add Public School Schedule</a>
-        </div>
-    </div>
-    <div class="col-12">
-        <table class="table table-striped border col-md-12">
-            <thead>
-                <tr>
-                    <th>Class</th>
-                    <th>Days</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Options</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model.PublicSchedule.Count == 0)
-                {
-                    <tr>
-                        <td colspan="5"><h4 class="text-danger">No Public Classes Added Yet</h4></td>
-                    </tr>
-                }
-                else
-                {
-                    @foreach (var schoolClass in Model.MyPublicSchoolSchedule)
-                    {
-                        <tr>
-                            <td>@schoolClass.CourseName</td>
-                            <td>@schoolClass.DaysOfTheWeek</td>
-                            <td>@schoolClass.StartTime</td>
-                            <td>@schoolClass.EndTime</td>
-                            <td style="width:150px">
-                                <div class="btn-group" role="group">
-                                    <!--DeleteModal-->
-                                    <button onclick="document.getElementById('SelectedClass').value = @schoolClass.ClassId; document.getElementById('IsPublicSchool').value = '1';" class="btn btn-danger text-white" data-target="#DeleteModal" data-toggle="modal"><i class="fas fa-trash-alt"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-
-                    }
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-<!--
 <div class="row">
-    <div class="alert alert-warning col-12 text-center"><h2>Required Courses</h2></div>
-    <div class="col-12">
-        <table class="table table-striped border col-md-12">
-            <thead data-toggle="collapse">
-                <tr>
-                    <th>Course Id</th>
-                    <th>Course</th>
-                    <th>Details</th>
-                    <th>Registered?</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var reqCourse in Model.RequiredCourses)
-                {
-                    <tr>
-                        <td>@reqCourse.CourseId</td>
-                        <td>@reqCourse.Name</td>
-                        <td>
-                            <input type="button" class="btn btn-primary" data-toggle="collapse" data-target="ClassesOptions" value="Test" />
-                            <div id="ClassesOptions" class="collapse">
-                                <table class="table table-info">
-                                    @*@foreach (var classOption in reqCourse.Classes)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    @classOption.Course
-                                                </td>
-                                                <td>
-                                                    Register
-                                                </td>
-                                            </tr>
-                                        }*@
-                                    @for (int i = 0; i < 5; i++)
-                                    {
-                                        <tr>
-                                            <td>
-                                                Test
-                                            </td>
-                                            <td>
-                                                Register
-                                            </td>
-                                        </tr>
-                                    }
-                                </table>
-                            </div>
-                        </td>
-                        <td><i class="far fa-thumbs-up fa-2x"></i></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="col-6 text-left">
+        <h1>@Model.MyStudent.FirstName @Model.MyStudent.LastName</h1>
     </div>
-</div>
--->
-
-
-<div class="row" style="padding-bottom: 10px">
-    <a class="btn btn-primary" data-toggle="collapse" href="#PotentialClassesAccordion" role="button" aria-expanded="false" aria-controls="PotentialClassesAccordion">Potential Classes</a>
-</div>
-<div class="row col-12">
-    <div class="collapse col-12" id="PotentialClassesAccordion">
-        <table class="table table-striped table-hover col-md-12">
-            <thead>
-                <tr>
-                    <th>Class Id</th>
-                    <th>Class</th>
-                    <th>Instructor</th>
-                    <th>Schedule</th>
-                    <th>Is Required</th>
-                    <th>Options</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var classOption in Model.Classes)
-                {
-                <tr>
-                    <td>@classOption.ClassId</td>
-                    <td>@classOption.Course.Name</td>
-                    <td>@(@classOption.InstructorUser.FirstName) @(classOption.InstructorUser.LastName)</td>
-                    <td>@ClassSchedule.GetScheduleString(classOption.ClassSchedules)</td>
-                    <td>
-                        @if (classOption.Course.IsCoreRequirement)
-                        {
-                            <i class="far fa-thumbs-up fa-2x"></i>
-                        }
-                        else
-                        {
-                            <i class="far fa-thumbs-down fa-2x"></i>
-                        }
-                    </td>
-                    <td style="width: 150px">
-                        @if(User.IsInRole("Admin"))
-                        {
-                        <form method="post">
-                            <div class="form-group">
-                                <button type="submit" asp-route-id="@classOption.ClassId" asp-route-studentId="@Model.MyStudent.StudentId" class="btn btn-primary fas fa-plus"> Register</button>
-                            </div>
-                        </form>
-                        }
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
+    <div class="col-6 text-justify text-right">
+        <h2>English Level: @Model.MyStudent.EnglishLevel</h2>
+        <h2>It Level: @Model.MyStudent.ItLevel</h2>
     </div>
 </div>
 
-<!-- Delete Modal -->
-<div class="modal fade" id="DeleteModal" tabIndex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Remove @Model.MyStudent.FirstName from Class</h4>
-            </div>
-            <div class="modal-body">
-                <div id="ClassName"></div>
-                <p>
-                    Are you sure you'd like to remove @Model.MyStudent.FirstName @Model.MyStudent.LastName from
-                    this class? <br>This action can't be undone.
-                </p>
-                <form class="form-group" method="post">
-                    <input type="hidden" id="SelectedClass" name="classId" />
-                    <input type="hidden" name="StudentId" value="@Model.MyStudent.StudentId" />
-                    <input type="hidden" id="IsPublicSchool" name="IsPublicSchool" value="0" />
-                    <input type="submit" class="btn btn-primary" name="RemoveClass" value="Remove">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-                </form>
 
-            </div>
-
+<div class="alert alert-info col-12">
+    <div class="row" style="padding-top: 10px">
+        <div class="col-6 text-left">
+            <h3>SMART Courses</h3>
+        </div>
+        <div class="col-6 text-right">
+            <a class="btn btn-primary" href="~/Classes">Add Course</a>
         </div>
     </div>
-
 </div>
+<div class="col-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan="3">
+                        Course Name:
+                    </th>
+                    <th colspan="3">
+                        Instructor:
+                    </th>
+                    <th colspan="3">
+                        Time Options:
+                    </th>
+                    <th colspan="3" class="text-right">
+                        Options
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="3">Class 1</td>
+                    <td colspan="3">Instructor 1</td>
+                    <td colspan="3">Time 1 <br />Time 2</td>
+                    <td colspan="3" class="text-right">
+                        <div class="btn-group" role="group">
+                            <a class="btn btn-danger text-white">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<div class="row" style="padding-left: 25px; padding-right: 25px; padding-bottom:15px;">
+    <button class="btn btn-info" data-toggle="collapse" href="#SmartCoursesDropDowntable" role="button" aria-expanded="false" aria-controls="SmartsCoursesDropDowntable">Potential Classes</button>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="collapse" id="SmartCoursesDropDowntable">
+            <div class="alert alert-info col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <h2>Available SMART Courses</h2>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th colspan="3">
+                            Course Name:
+                        </th>
+                        <th colspan="3">
+                            Instructor:
+                        </th>
+                        <th colspan="3">
+                            Time Options:
+                        </th>
+                        <th colspan="3" class="text-right">
+                            Options
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3">Class 1</td>
+                        <td colspan="3">Instructor 1</td>
+                        <td colspan="3">Time 1 <br />Time 2</td>
+                        <td colspan="3" class="text-right">
+                            <form method="post">
+                                <button type="submit" class="btn btn-primary fas fa-plus"> Register</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="alert alert-warning col-12">
+        <div class="row" style="padding-top: 10px">
+            <div class="col-4 text-left">
+                <h3>Public Courses</h3>
+            </div>
+            <div class="col-4 text-center">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="PublicSchoolDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Public Schools
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="PublicSchoolDropdown">
+                        <button class="dropdown-item" onclick="document.getElementById('PublicSchoolSelected').innerHTML = '<h2>School 1</h2>'; document.getElementById('SelectedPublicSchoolForPotentialClasses').innerText = 'School 1'; document.getElementById('SelectedPublicSchool').value = 1;">School 1</button>
+                        <button class="dropdown-item" onclick="document.getElementById('PublicSchoolSelected').innerHTML = '<h2>School 2</h2>'; document.getElementById('SelectedPublicSchoolForPotentialClasses').innerText = 'School 2'; document.getElementById('SelectedPublicSchool').value = 2;">School 2</button>
+                        <button class="dropdown-item" onclick="document.getElementById('PublicSchoolSelected').innerHTML = '<h2>School 3</h2>'; document.getElementById('SelectedPublicSchoolForPotentialClasses').innerText = 'School 3'; document.getElementById('SelectedPublicSchool').value = 3;">School 3</button>
+                    </div>
+                    <input type="hidden" id="SelectedPublicSchool" />
+                </div>
+                
+            </div>
+            <div class="col-4 text-right">
+                <a class="btn btn-primary" asp-page="PublicSchedule">Add Course</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-left" style="padding-top: 7px;" id="PublicSchoolSelected"></div>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <table class="table">
+        <thead>
+            <tr>
+                <th colspan="3">
+                    Course Name:
+                </th>
+                <th colspan="3">
+                    Instructor:
+                </th>
+                <th colspan="3">
+                    Time Options:
+                </th>
+                <th colspan="3" class="text-right">
+                    Options
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="3">Class 1</td>
+                <td colspan="3">Instructor 1</td>
+                <td colspan="3">Time 1 <br />Time 2</td>
+                <td colspan="3" class="text-right">
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-danger text-white">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="row" style="padding-left: 25px; padding-right: 25px; padding-bottom:15px;">
+    <button class="btn btn-info" data-toggle="collapse" href="#PublicCoursesDropDowntable" role="button" aria-expanded="false" aria-controls="PublicCoursesDropDowntable">Potential Classes</button>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="collapse" id="PublicCoursesDropDowntable">
+            <div class="alert alert-warning col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <h2>Available Courses at <span id="SelectedPublicSchoolForPotentialClasses"></span></h2>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th colspan="3">
+                            Course Name:
+                        </th>
+                        <th colspan="3">
+                            Instructor:
+                        </th>
+                        <th colspan="3">
+                            Time Options:
+                        </th>
+                        <th colspan="3" class="text-right">
+                            Options
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3">Class 1</td>
+                        <td colspan="3">Instructor 1</td>
+                        <td colspan="3">Time 1 <br />Time 2</td>
+                        <td colspan="3" class="text-right">
+                            <form method="post">
+                                <button type="submit" class="btn btn-primary fas fa-plus"> Register</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
