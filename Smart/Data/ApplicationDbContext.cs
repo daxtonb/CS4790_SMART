@@ -43,7 +43,6 @@ namespace Smart.Data
         public DbSet<Note> Notes { get; set; }
         public DbSet<NoteType> NoteTypes { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
-        public DbSet<AttendanceStatus> AttendanceStatuses { get; set; }
         public DbSet<StudentStatus> StudentStatuses { get; set; }
         public DbSet<Assessment> Assessments { get; set; }
         public DbSet<AssessmentType> AssessmentTypes { get; set; }
@@ -58,6 +57,7 @@ namespace Smart.Data
             // Set up composite keys
             builder.Entity<StudentMeeting>().HasKey(s => new { s.MeetingId, s.StudentId }); // A student can only be enrolled to a meeting once
             builder.Entity<StudentAssessment>().HasKey(s => new { s.AssessmentId, s.StudentId }); // A student can only be assessed once for an assessment
+            builder.Entity<Attendance>().HasKey(a => new { a.StudentId, a.ClassId, a.Date });  // A student should only have one attendance for a class per day
 
             // Set up alternate keys
             builder.Entity<Meeting>().HasAlternateKey(m => new { m.ClassId, m.ScheduleAvailabilityId, m.MeetingOrderNum });    // Only one meeting can exist for a schedule availability
@@ -67,8 +67,6 @@ namespace Smart.Data
             builder.Entity<ScheduleAvailability>().Property(c => c.DayOfWeek).HasConversion(new EnumToNumberConverter<DayOfWeek, byte>());
             builder.Entity<Student>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());
             builder.Entity<StudentStatus>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());
-            builder.Entity<Attendance>().Property(s => s.AttendanceStatusId).HasConversion(new EnumToNumberConverter<AttendanceStatusEnum, int>());
-            builder.Entity<AttendanceStatus>().Property(s => s.AttendanceStatusId).HasConversion(new EnumToNumberConverter<AttendanceStatusEnum, int>());
             builder.Entity<File>().Property(s => s.FileTypeId).HasConversion(new EnumToNumberConverter<FileTypeEnum, int>());
             builder.Entity<FileType>().Property(s => s.FileTypeId).HasConversion(new EnumToNumberConverter<FileTypeEnum, int>());
 

@@ -32,7 +32,7 @@ namespace Smart.Pages.Classes
 
         public async Task<IActionResult> OnGetAttendanceList(string dateTime, int classId)
         {
-            var attendance = await _context.Attendances.Where(a => a.MeetingId == classId && a.Date == Convert.ToDateTime(dateTime).Date).ToArrayAsync();
+            var attendance = await _context.Attendances.Where(a => a.ClassId == classId && a.Date == Convert.ToDateTime(dateTime)).ToArrayAsync();
 
 
             return new PartialViewResult()
@@ -56,41 +56,72 @@ namespace Smart.Pages.Classes
             Attendances = @class.Attendances.GroupBy(a => a.Date.Date, a => a).Select(a => new AttendanceVieModel
             {
                 Date = a.Key,
-                OnTimeCount = a.Count(x => x.AttendanceStatusId == AttendanceStatusEnum.OnTime),
-                LateCount = a.Count(x => x.AttendanceStatusId == AttendanceStatusEnum.Late),
-                AbsentCount = a.Count(x => x.AttendanceStatusId == AttendanceStatusEnum.Absent)
+                Count = a.Count()
             }).OrderByDescending(a => a.Date);
 
             ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.Name}";
-            ViewData["ClassSubtitle"] = Meeting.GetScheduleString(@class.Meetings.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
+            ViewData["ClassSubtitle"] = ScheduleAvailability.GetScheduleString(@class.Meetings.Select(m => m.ScheduleAvailability).OrderBy(c => c.DayOfWeek));
             ViewData["ClassId"] = @class.ClassId;
         }
 
-
-
-
-        // OnPost uplodingCsvfile
         public async Task<RedirectToPageResult> OnPostUploadCsvAsync()
         {
             var file = Request.Form.Files[0];
+            var courses = await _context.Courses.ToListAsync();
+            Class @class = null;
+            string previousCourseName = null;
+
             using (var reader = new StreamReader(file.OpenReadStream()))
             {
-                reader.ReadLine();   
+                reader.ReadLine();   // Skip column headers
                 while (reader.Peek() >= 0)
                 {
-                    string test = reader.ReadLine();
-                    string[] row = test.Split(','); 
-                    int classId = int.Parse(row[1]);
-                    DateTime dateTime = Convert.ToDateTime(row[2]);
-                    var attendance = new Data.Models.Attendance()
+                    string[] columns = reader.ReadLine().Split(',');
+                    int studentId = int.Parse(columns[0]);
+                    string courseName = columns[1];
+                    DateTime date = Convert.ToDateTime(columns[2]).Date;
+                    TimeSpan? timeIn = null;
+                    
+                    // CONDITION: A valid time was provided
+                    if (columns[3].IndexOf(':') > 0)
                     {
-                        StudentId = int.Parse(row[0]),
-                        MeetingId = classId,
-                        Date = dateTime,
-                    AttendanceStatusId = await CalculateAttendance(dateTime, classId)
+                        int[] timeParts = columns[3].Split(':').Select(x => int.Parse(x)).ToArray();
+                        timeIn = new TimeSpan(timeParts[0], timeParts[1], timeParts[2]);
+                    }
 
-                    };
-                    _context.Attendances.Add(attendance);
+                    // CONDITION: We have not previously looked up this class in the database
+                    if (courseName != previousCourseName)
+                    {
+                        // Find a class that is for the given course name that has an active term for the given date
+                        @class = await _context.Classes
+                        .Include(c => c.Course)
+                        .Include(c => c.Term).
+                        FirstOrDefaultAsync(c => c.Course.Name.Equals(courseName, StringComparison.OrdinalIgnoreCase) && c.Term.StartDate >= date && c.Term.EndDate <= date);
+                    }
+
+                    // CONDITION: Class and student exist
+                    if (@class != null && await _context.Students.AnyAsync(s => s.StudentId == studentId))
+                    {
+                        var attendance = await _context.Attendances.FirstOrDefaultAsync(a => a.StudentId == studentId && a.ClassId == @class.ClassId && a.Date == date);
+                        // CONDITION: This is not a previously recorded attendance
+                        if (attendance == null)
+                        {
+                            _context.Attendances.Add(new Data.Models.Attendance()
+                            {
+                                StudentId = studentId,
+                                ClassId = @class.ClassId,
+                                Date = date.Date,
+                                TimeIn = timeIn
+                            });
+                        }
+                        else
+                        {
+                            attendance.TimeIn = timeIn; // Update the time
+                            attendance.Comments = null; // Remove previous comments
+                        }
+                    }
+
+                    previousCourseName = courseName;
                 }
                 await _context.SaveChangesAsync();
             }
@@ -99,36 +130,10 @@ namespace Smart.Pages.Classes
             return RedirectToPage(new { ClassId });
         }
 
-        //Method Calculates Student Attendance
-        public async Task<AttendanceStatusEnum> CalculateAttendance(DateTime dt, int classId)
-        {
-
-            var scheduleAvailability = (await _context.Meetings
-                .Include(c => c.ScheduleAvailability)
-                .FirstOrDefaultAsync(c => c.ClassId == classId && c.ScheduleAvailability.DayOfWeek == dt.DayOfWeek))?.ScheduleAvailability;
-
-            if (scheduleAvailability == null)
-            {
-                throw new Exception($"Student does not have class at this time: {dt}");
-            }
-
-            if (dt.TimeOfDay > scheduleAvailability.StartTime)
-            {
-                return AttendanceStatusEnum.Late;
-            }
-            else
-            {
-                return AttendanceStatusEnum.OnTime;
-            }
-    
-        }
-
         public class AttendanceVieModel
         {
             public DateTime Date { get; set; }
-            public int OnTimeCount { get; set; }
-            public int LateCount { get; set; }
-            public int AbsentCount { get; set; }
+            public int Count { get; set; }
         }
     }
 }

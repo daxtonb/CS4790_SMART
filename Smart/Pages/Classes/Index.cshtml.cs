@@ -25,33 +25,59 @@ namespace Smart.Pages.Classes
         public IEnumerable<CourseViewModel> Courses { get; set; }
         [BindProperty]
         public IEnumerable<ScheduleAvailability> ScheduleAvailabilities { get; set; }
+        public IEnumerable<Term> Terms { get; set; }
+        public IEnumerable<School> Schools { get; set; }
         public int? SelectedCourseId { get; set; }
+        public int SelectedTermId { get; set; }
+        public int SchoolId { get; set; }
 
-        public async Task OnGetAsync(int? termId, int? courseId)
+        public async Task OnGetAsync(int? schoolId, int? termId, int? courseId)
         {
             SelectedCourseId = courseId;
 
-            Courses = await _context.Courses
-                .Include(c => c.Classes).ThenInclude(c => c.InstructorUser)
-                .Include(c => c.Classes).ThenInclude(c => c.Term)
-                .Include(c => c.Classes).ThenInclude(c => c.Meetings).ThenInclude(c => c.ScheduleAvailability)
-                .Include(c => c.Classes).ThenInclude(c => c.Meetings).ThenInclude(c => c.StudentMeetings)
-                .OrderBy(c => c.Name)
-                .Select(c => new CourseViewModel()
+            // Schools
+            Schools = await _context.Schools.ToListAsync();
+            if (schoolId == null)
+            {
+                SchoolId = Schools.First().SchoolId;
+            }
+            else
+            {
+                SchoolId = schoolId.Value;
+            }
+
+            // Term
+            Terms = await _context.Terms.ToListAsync();
+            if (termId == null)
+            {
+                SelectedTermId = Terms.FirstOrDefault(t => t.StartDate >= DateTime.Today && DateTime.Today <= t.EndDate)?.TermId ?? Terms.First().TermId;
+            }
+            else
+            {
+                SelectedTermId = termId.Value;
+            }
+
+            // Classes
+            var classes = await _context.Classes
+                .Include(c => c.Course)
+                .Include(c => c.Meetings).ThenInclude(m => m.StudentMeetings)
+                .Include(c => c.Meetings).ThenInclude(m => m.ScheduleAvailability)
+                .Where(c => c.TermId == SelectedTermId && c.Course.SchoolId == SchoolId).ToListAsync();
+
+            // Courses
+            Courses = classes.Select(c => c.Course).Distinct().OrderBy(c => c.Name).Select(c => new CourseViewModel
+            {
+                Course = c,
+                Classes = c.Classes.Select(l => new CourseClassViewModel
                 {
-                    Course = c,
-                    Classes = c.Classes
-                        .Where(l => termId.HasValue ? l.TermId == termId.Value : l.Term.StartDate >= DateTime.Today && l.Term.EndDate <= DateTime.Today)
-                        .Select(l => new CourseClassViewModel()
-                        {
-                            ClassId = l.ClassId,
-                            CourseId = c.CourseId,
-                            Capacity = l.Capacity,
-                            EnrolledStudentCount = l.Meetings.SelectMany(m => m.StudentMeetings.Select(s => s.StudentId)).Distinct().Count(),
-                            Schedule = Meeting.GetScheduleString(l.Meetings.OrderBy(s => s.ScheduleAvailability.DayOfWeek)),
-                            InstructorName = l.InstructorUser != null ? l.InstructorUser.LastName + ", " + l.InstructorUser.FirstName : "",
-                        })
-                }).ToListAsync();
+                    ClassId = l.ClassId,
+                    CourseId = c.CourseId,
+                    Capacity = l.Capacity,
+                    EnrolledStudentCount = l.Meetings.SelectMany(m => m.StudentMeetings.Select(s => s.StudentId)).Distinct().Count(),
+                    Schedule = ScheduleAvailability.GetScheduleString(l.Meetings.Select(m => m.ScheduleAvailability).OrderBy(s => s.DayOfWeek)),
+                    InstructorName = l.InstructorUser != null ? l.InstructorUser.LastName + ", " + l.InstructorUser.FirstName : "",
+                })
+            });
             
             if (SelectedCourseId == null && Courses.Any())
             {

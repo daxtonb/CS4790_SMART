@@ -24,7 +24,6 @@ namespace Smart.Data.Models
         public virtual Course Course { get; set; }
         public virtual Term Term { get; set; }
         public virtual User InstructorUser { get; set; }
-        public virtual ICollection<StudentMeeting> StudentClasses { get; set; }
         public virtual ICollection<Meeting> Meetings { get; set; }
         public virtual ICollection<Attendance> Attendances { get; set; }
         public virtual ICollection<Assessment> Assessments { get; set; }

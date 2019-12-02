@@ -10,15 +10,16 @@ namespace Smart.Data.Models
     [Table(nameof(Attendance))]
     public class Attendance
     {
-        public int AttendanceId { get; set; }
         public int StudentId { get; set; }
-        public int MeetingId { get; set; }
+        public int ClassId { get; set; }
+        [Column(TypeName = "date")]
         public DateTime Date { get; set; }
-        public AttendanceStatusEnum AttendanceStatusId { get; set; }
+        [Column(TypeName = "time(0)")]
+        public TimeSpan? TimeIn { get; set; }
+        [MaxLength(256)]
         public string Comments { get; set; }
 
         public virtual Student Student { get; set; }
-        public virtual Meeting Meeting { get; set; }
-        public AttendanceStatus AttendanceStatus { get; set; }
+        public virtual Class Class { get; set; }
     }
 }
