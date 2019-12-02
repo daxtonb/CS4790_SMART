@@ -9,7 +9,7 @@
     <select>
         @foreach(var term in Model.Terms)
         {
-            <option value="@term.TimeOfYear">@term.TimeOfYear: @term.StartDate.ToString("dd, MMMM, yyyy") - @term.EndDate.ToString("dd, MMMM, yyyy")</option>
+            <option value="@term.TermId">@term.Name: @term.StartDate.ToString("dd, MMMM, yyyy") - @term.EndDate.ToString("dd, MMMM, yyyy")</option>
         }
     </select>
 </div>

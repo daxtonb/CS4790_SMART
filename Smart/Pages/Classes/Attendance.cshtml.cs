@@ -32,7 +32,7 @@ namespace Smart.Pages.Classes
 
         public async Task<IActionResult> OnGetAttendanceList(string dateTime, int classId)
         {
-            var attendance = await _context.Attendances.Where(a => a.ClassId == classId && a.Date == Convert.ToDateTime(dateTime).Date).ToArrayAsync();
+            var attendance = await _context.Attendances.Where(a => a.MeetingId == classId && a.Date == Convert.ToDateTime(dateTime).Date).ToArrayAsync();
 
 
             return new PartialViewResult()
@@ -50,7 +50,7 @@ namespace Smart.Pages.Classes
                 .Include(c => c.Attendances)
                 .Include(c => c.Course)
                 .Include(c => c.Term)
-                .Include(c => c.ClassSchedules).ThenInclude(c => c.ScheduleAvailability)
+                .Include(c => c.Meetings).ThenInclude(c => c.ScheduleAvailability)
                 .FirstOrDefaultAsync(c => c.ClassId == classId);
 
             Attendances = @class.Attendances.GroupBy(a => a.Date.Date, a => a).Select(a => new AttendanceVieModel
@@ -61,8 +61,8 @@ namespace Smart.Pages.Classes
                 AbsentCount = a.Count(x => x.AttendanceStatusId == AttendanceStatusEnum.Absent)
             }).OrderByDescending(a => a.Date);
 
-            ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.TimeOfYear} {@class.Term.StartDate.Year}";
-            ViewData["ClassSubtitle"] = ClassSchedule.GetScheduleString(@class.ClassSchedules.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
+            ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.Name}";
+            ViewData["ClassSubtitle"] = Meeting.GetScheduleString(@class.Meetings.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
             ViewData["ClassId"] = @class.ClassId;
         }
 
@@ -80,16 +80,14 @@ namespace Smart.Pages.Classes
                 {
                     string test = reader.ReadLine();
                     string[] row = test.Split(','); 
-                    int classId = int.Parse(row[1]); 
-                    DateTime dateTime = Convert.ToDateTime(row[2]); 
-
+                    int classId = int.Parse(row[1]);
+                    DateTime dateTime = Convert.ToDateTime(row[2]);
                     var attendance = new Data.Models.Attendance()
                     {
                         StudentId = int.Parse(row[0]),
-                        ClassId = classId,
-                        Date = dateTime.Date,    
-                        TimeIn = dateTime.TimeOfDay,
-                        AttendanceStatusId = await CalculateAttendance(dateTime, classId)
+                        MeetingId = classId,
+                        Date = dateTime,
+                    AttendanceStatusId = await CalculateAttendance(dateTime, classId)
 
                     };
                     _context.Attendances.Add(attendance);
@@ -105,7 +103,7 @@ namespace Smart.Pages.Classes
         public async Task<AttendanceStatusEnum> CalculateAttendance(DateTime dt, int classId)
         {
 
-            var scheduleAvailability = (await _context.Classeschedules
+            var scheduleAvailability = (await _context.Meetings
                 .Include(c => c.ScheduleAvailability)
                 .FirstOrDefaultAsync(c => c.ClassId == classId && c.ScheduleAvailability.DayOfWeek == dt.DayOfWeek))?.ScheduleAvailability;
 

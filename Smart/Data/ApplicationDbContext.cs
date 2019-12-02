@@ -27,25 +27,26 @@ namespace Smart.Data
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public DbSet<School> Schools { get; set; }
         public  DbSet<Student> Students { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Term> Terms { get; set; }
         public DbSet<Class> Classes { get; set; }
-        public DbSet<ClassSchedule> Classeschedules { get; set; }
-        public DbSet<StudentClass> StudentClasses { get; set; }
+        public DbSet<Meeting> Meetings { get; set; }
+        public DbSet<StudentMeeting> StudentMeetings { get; set; }
+        public DbSet<StudentMeeting> StudentClasses { get; set; }
         public DbSet<ApplicantRating> ApplicantRatings { get; set; }
         public DbSet<RatingCirterium> RatingCirteria { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Error> Errors { get; set; }
         public DbSet<ScheduleAvailability> ScheduleAvailabilities { get; set; }
-        public DbSet<PublicSchoolClassSchedule> PublicSchoolClassSchedules { get; set; }
-        public DbSet<StudentPublicSchoolClass> StudentPublicSchoolClasss { get; set; }
         public DbSet<Note> Notes { get; set; }
         public DbSet<NoteType> NoteTypes { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<AttendanceStatus> AttendanceStatuses { get; set; }
         public DbSet<StudentStatus> StudentStatuses { get; set; }
         public DbSet<Assessment> Assessments { get; set; }
+        public DbSet<AssessmentType> AssessmentTypes { get; set; }
         public DbSet<StudentAssessment> StudentAssessments { get; set; }
         public DbSet<File> Files { get; set; }
         public DbSet<FileType> FileTypes { get; set; }
@@ -55,14 +56,15 @@ namespace Smart.Data
             base.OnModelCreating(builder);
 
             // Set up composite keys
-            builder.Entity<StudentClass>().HasKey(s => new { s.ClassId, s.StudentId });
-            builder.Entity<Attendance>().HasKey(a => new { a.StudentId, a.ClassId, a.Date }); // A student can only have attendance in a course once a day
-            builder.Entity<ClassSchedule>().HasKey(c => new { c.ClassId, c.ScheduleAvailabilityId });
+            builder.Entity<StudentMeeting>().HasKey(s => new { s.MeetingId, s.StudentId }); // A student can only be enrolled to a meeting once
             builder.Entity<StudentAssessment>().HasKey(s => new { s.AssessmentId, s.StudentId }); // A student can only be assessed once for an assessment
 
-            // Set-up Enum conversions
+            // Set up alternate keys
+            builder.Entity<Meeting>().HasAlternateKey(m => new { m.ClassId, m.ScheduleAvailabilityId, m.MeetingOrderNum });    // Only one meeting can exist for a schedule availability
+            builder.Entity<Class>().HasAlternateKey(c => new { c.CourseId, c.TermId }); // Only one class can exist for a course per term
+
+            // Set up Enum conversions
             builder.Entity<ScheduleAvailability>().Property(c => c.DayOfWeek).HasConversion(new EnumToNumberConverter<DayOfWeek, byte>());
-            builder.Entity<Term>().Property(t => t.TimeOfYear).HasConversion(new EnumToNumberConverter<TimeOfYear, byte>());
             builder.Entity<Student>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());
             builder.Entity<StudentStatus>().Property(s => s.StudentStatusId).HasConversion(new EnumToNumberConverter<StudentStatusEnum, int>());
             builder.Entity<Attendance>().Property(s => s.AttendanceStatusId).HasConversion(new EnumToNumberConverter<AttendanceStatusEnum, int>());

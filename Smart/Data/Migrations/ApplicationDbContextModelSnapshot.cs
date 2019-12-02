@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Smart.Data;
 
-namespace Smart.data.migrations
+namespace Smart.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -143,6 +143,8 @@ namespace Smart.data.migrations
                         .IsRequired()
                         .HasMaxLength(128);
 
+                    b.Property<double>("Weight");
+
                     b.HasKey("AssessmentId");
 
                     b.HasIndex("ClassId");
@@ -150,25 +152,52 @@ namespace Smart.data.migrations
                     b.ToTable("Assessment");
                 });
 
+            modelBuilder.Entity("Smart.Data.Models.AssessmentType", b =>
+                {
+                    b.Property<int>("AssessmentTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(256);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(64);
+
+                    b.HasKey("AssessmentTypeId");
+
+                    b.ToTable("AssessmentType");
+                });
+
             modelBuilder.Entity("Smart.Data.Models.Attendance", b =>
                 {
-                    b.Property<int>("StudentId");
-
-                    b.Property<int>("ClassId");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("date");
+                    b.Property<int>("AttendanceId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("AttendanceStatusId");
 
-                    b.Property<TimeSpan?>("TimeIn")
-                        .HasColumnType("time(0)");
+                    b.Property<int?>("ClassId");
 
-                    b.HasKey("StudentId", "ClassId", "Date");
+                    b.Property<string>("Comments");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<int>("MeetingId");
+
+                    b.Property<int>("StudentId");
+
+                    b.HasKey("AttendanceId");
 
                     b.HasIndex("AttendanceStatusId");
 
                     b.HasIndex("ClassId");
+
+                    b.HasIndex("MeetingId");
+
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Attendance");
                 });
@@ -198,30 +227,19 @@ namespace Smart.data.migrations
 
                     b.Property<int>("InstructorUserId");
 
+                    b.Property<double>("PassingGradeThreshold");
+
                     b.Property<int>("TermId");
 
                     b.HasKey("ClassId");
 
-                    b.HasIndex("CourseId");
+                    b.HasAlternateKey("CourseId", "TermId");
 
                     b.HasIndex("InstructorUserId");
 
                     b.HasIndex("TermId");
 
                     b.ToTable("Class");
-                });
-
-            modelBuilder.Entity("Smart.Data.Models.ClassSchedule", b =>
-                {
-                    b.Property<int>("ClassId");
-
-                    b.Property<int>("ScheduleAvailabilityId");
-
-                    b.HasKey("ClassId", "ScheduleAvailabilityId");
-
-                    b.HasIndex("ScheduleAvailabilityId");
-
-                    b.ToTable("ClassSchedule");
                 });
 
             modelBuilder.Entity("Smart.Data.Models.Course", b =>
@@ -236,7 +254,11 @@ namespace Smart.data.migrations
                         .IsRequired()
                         .HasMaxLength(128);
 
+                    b.Property<int>("SchoolId");
+
                     b.HasKey("CourseId");
+
+                    b.HasIndex("SchoolId");
 
                     b.ToTable("Course");
                 });
@@ -320,17 +342,45 @@ namespace Smart.data.migrations
                     b.ToTable("FileType");
                 });
 
+            modelBuilder.Entity("Smart.Data.Models.Meeting", b =>
+                {
+                    b.Property<int>("MeetingId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ClassId");
+
+                    b.Property<int>("MeetingOrderNum");
+
+                    b.Property<int>("ScheduleAvailabilityId");
+
+                    b.HasKey("MeetingId");
+
+                    b.HasAlternateKey("ClassId", "ScheduleAvailabilityId", "MeetingOrderNum");
+
+                    b.HasIndex("ScheduleAvailabilityId");
+
+                    b.ToTable("Meeting");
+                });
+
             modelBuilder.Entity("Smart.Data.Models.Note", b =>
                 {
                     b.Property<int>("NoteId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreateDate");
+
                     b.Property<int>("NoteTypeId");
 
                     b.Property<int>("Studentid");
 
-                    b.Property<string>("Text");
+                    b.Property<string>("Text")
+                        .IsRequired();
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(128);
 
                     b.Property<int>("UserId");
 
@@ -356,25 +406,6 @@ namespace Smart.data.migrations
                     b.HasKey("NoteTypeId");
 
                     b.ToTable("NoteType");
-                });
-
-            modelBuilder.Entity("Smart.Data.Models.PublicSchoolClassSchedule", b =>
-                {
-                    b.Property<int>("PublicSchoolClassScheduleId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ScheduleAvailabilityId");
-
-                    b.Property<int>("StudentPublicSchoolClassId");
-
-                    b.HasKey("PublicSchoolClassScheduleId");
-
-                    b.HasIndex("ScheduleAvailabilityId");
-
-                    b.HasIndex("StudentPublicSchoolClassId");
-
-                    b.ToTable("PublicSchoolClassSchedule");
                 });
 
             modelBuilder.Entity("Smart.Data.Models.RatingCirterium", b =>
@@ -433,12 +464,30 @@ namespace Smart.data.migrations
                     b.Property<TimeSpan>("EndTime")
                         .HasColumnType("time(0)");
 
+                    b.Property<int>("SchoolId");
+
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time(0)");
 
                     b.HasKey("ScheduleAvailabilityId");
 
+                    b.HasIndex("SchoolId");
+
                     b.ToTable("ScheduleAvailability");
+                });
+
+            modelBuilder.Entity("Smart.Data.Models.School", b =>
+                {
+                    b.Property<int>("SchoolId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(128);
+
+                    b.HasKey("SchoolId");
+
+                    b.ToTable("School");
                 });
 
             modelBuilder.Entity("Smart.Data.Models.Student", b =>
@@ -450,8 +499,7 @@ namespace Smart.data.migrations
                     b.Property<string>("Address")
                         .HasMaxLength(128);
 
-                    b.Property<DateTime?>("DateOfBirth")
-                        .IsRequired();
+                    b.Property<DateTime?>("DateOfBirth");
 
                     b.Property<byte>("EnglishLevel");
 
@@ -516,40 +564,21 @@ namespace Smart.data.migrations
                     b.ToTable("StudentAssessment");
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.StudentClass", b =>
+            modelBuilder.Entity("Smart.Data.Models.StudentMeeting", b =>
                 {
-                    b.Property<int>("ClassId");
+                    b.Property<int>("MeetingId");
 
                     b.Property<int>("StudentId");
 
-                    b.HasKey("ClassId", "StudentId");
+                    b.Property<int?>("ClassId");
+
+                    b.HasKey("MeetingId", "StudentId");
+
+                    b.HasIndex("ClassId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("StudentClass");
-                });
-
-            modelBuilder.Entity("Smart.Data.Models.StudentPublicSchoolClass", b =>
-                {
-                    b.Property<int>("StudentPublicSchoolClassId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CourseName")
-                        .IsRequired()
-                        .HasMaxLength(128);
-
-                    b.Property<int>("StudentId");
-
-                    b.Property<int>("TermId");
-
-                    b.HasKey("StudentPublicSchoolClassId");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("TermId");
-
-                    b.ToTable("StudentPublicSchoolClass");
+                    b.ToTable("StudentMeeting");
                 });
 
             modelBuilder.Entity("Smart.Data.Models.StudentStatus", b =>
@@ -574,10 +603,12 @@ namespace Smart.data.migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(128);
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("date");
-
-                    b.Property<byte>("TimeOfYear");
 
                     b.HasKey("TermId");
 
@@ -704,7 +735,7 @@ namespace Smart.data.migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Smart.Data.Models.Term", "Term")
-                        .WithMany()
+                        .WithMany("ApplicantRatings")
                         .HasForeignKey("TermId")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -729,9 +760,13 @@ namespace Smart.data.migrations
                         .HasForeignKey("AttendanceStatusId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Smart.Data.Models.Class", "Class")
+                    b.HasOne("Smart.Data.Models.Class")
                         .WithMany("Attendances")
-                        .HasForeignKey("ClassId")
+                        .HasForeignKey("ClassId");
+
+                    b.HasOne("Smart.Data.Models.Meeting", "Meeting")
+                        .WithMany()
+                        .HasForeignKey("MeetingId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Smart.Data.Models.Student", "Student")
@@ -758,16 +793,11 @@ namespace Smart.data.migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.ClassSchedule", b =>
+            modelBuilder.Entity("Smart.Data.Models.Course", b =>
                 {
-                    b.HasOne("Smart.Data.Models.Class", "Class")
-                        .WithMany("ClassSchedules")
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Smart.Data.Models.ScheduleAvailability", "ScheduleAvailability")
-                        .WithMany("ClassSchedules")
-                        .HasForeignKey("ScheduleAvailabilityId")
+                    b.HasOne("Smart.Data.Models.School", "School")
+                        .WithMany()
+                        .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -799,6 +829,19 @@ namespace Smart.data.migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Smart.Data.Models.Meeting", b =>
+                {
+                    b.HasOne("Smart.Data.Models.Class", "Class")
+                        .WithMany("Meetings")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Smart.Data.Models.ScheduleAvailability", "ScheduleAvailability")
+                        .WithMany("Meetings")
+                        .HasForeignKey("ScheduleAvailabilityId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Smart.Data.Models.Note", b =>
                 {
                     b.HasOne("Smart.Data.Models.NoteType", "NoteType")
@@ -817,16 +860,11 @@ namespace Smart.data.migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.PublicSchoolClassSchedule", b =>
+            modelBuilder.Entity("Smart.Data.Models.ScheduleAvailability", b =>
                 {
-                    b.HasOne("Smart.Data.Models.ScheduleAvailability", "ScheduleAvailabilityd")
-                        .WithMany("PublicSchoolClassSchedules")
-                        .HasForeignKey("ScheduleAvailabilityId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Smart.Data.Models.StudentPublicSchoolClass", "StudentPublicSchoolClass")
-                        .WithMany("PublicSchoolClassSchedules")
-                        .HasForeignKey("StudentPublicSchoolClassId")
+                    b.HasOne("Smart.Data.Models.School", "School")
+                        .WithMany("ScheduleAvailabilities")
+                        .HasForeignKey("SchoolId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -855,29 +893,20 @@ namespace Smart.data.migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Smart.Data.Models.StudentClass", b =>
+            modelBuilder.Entity("Smart.Data.Models.StudentMeeting", b =>
                 {
-                    b.HasOne("Smart.Data.Models.Class", "Class")
+                    b.HasOne("Smart.Data.Models.Class")
                         .WithMany("StudentClasses")
-                        .HasForeignKey("ClassId")
+                        .HasForeignKey("ClassId");
+
+                    b.HasOne("Smart.Data.Models.Meeting", "Meeting")
+                        .WithMany("StudentMeetings")
+                        .HasForeignKey("MeetingId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Smart.Data.Models.Student", "Student")
-                        .WithMany("StudentClasses")
+                        .WithMany("StudentMeetings")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Smart.Data.Models.StudentPublicSchoolClass", b =>
-                {
-                    b.HasOne("Smart.Data.Models.Student", "Student")
-                        .WithMany("StudentPublicSchoolClasss")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Smart.Data.Models.Term", "Term")
-                        .WithMany("StudentPublicSchoolClasses")
-                        .HasForeignKey("TermId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

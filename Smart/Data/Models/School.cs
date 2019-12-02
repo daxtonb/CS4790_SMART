@@ -7,18 +7,13 @@ using System.Threading.Tasks;
 
 namespace Smart.Data.Models
 {
-    [Table(nameof(Course))]
-    public class Course
+    [Table(nameof(School))]
+    public class School
     {
-        public int CourseId { get; set; }
         public int SchoolId { get; set; }
-        [Required]
         [MaxLength(128)]
         public string Name { get; set; }
-        [Display(Name = "Is Core Requirement")]
-        public bool IsCoreRequirement { get; set; }
 
-        public virtual School School { get; set; }
-        public virtual ICollection<Class> Classes { get; set; }
+        public virtual ICollection<ScheduleAvailability> ScheduleAvailabilities { get; set; }
     }
 }

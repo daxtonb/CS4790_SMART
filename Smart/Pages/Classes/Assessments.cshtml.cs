@@ -29,14 +29,14 @@ namespace Smart.Pages.Classes
                 .Include(c => c.Assessments).ThenInclude(a => a.StudentAssessments)
                 .Include(c => c.Course)
                 .Include(c => c.Term)
-                .Include(c => c.ClassSchedules).ThenInclude(c => c.ScheduleAvailability)
+                .Include(c => c.Meetings).ThenInclude(c => c.ScheduleAvailability)
                 .FirstOrDefaultAsync(c => c.ClassId == classId);
 
             Assessments = @class.Assessments.OrderBy(a => a.Deadline);
 
             // For layout
-            ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.TimeOfYear} {@class.Term.StartDate.Year}";
-            ViewData["ClassSubtitle"] = ClassSchedule.GetScheduleString(@class.ClassSchedules.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
+            ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.Name}";
+            ViewData["ClassSubtitle"] = Meeting.GetScheduleString(@class.Meetings.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
             ViewData["ClassId"] = @class.ClassId;
         }
 
@@ -93,9 +93,9 @@ namespace Smart.Pages.Classes
 
         public async Task<IActionResult> OnGetSubmissions(int classId, int assessmentId)
         {
-            var students = await _context.StudentClasses
+            var students = await _context.StudentMeetings
                 .Include(s => s.Student)
-                .Where(s => s.ClassId == classId)
+                .Where(s => s.MeetingId == classId)
                 .Select(s => s.Student)
                 .ToListAsync();
 

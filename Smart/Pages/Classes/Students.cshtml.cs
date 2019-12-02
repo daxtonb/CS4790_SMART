@@ -24,29 +24,29 @@ namespace Smart.Pages.Classes
         public async Task OnGetAsync(int classId)
         {
             var @class = await _context.Classes
-                .Include(c => c.StudentClasses).ThenInclude(c => c.Student).ThenInclude(c => c.StudentAssessments)
-                .Include(c => c.Assessments)
+                .Include(c => c.Assessments).ThenInclude(a => a.StudentAssessments)
                 .Include(c => c.Attendances)
                 .Include(c => c.Course)
                 .Include(c => c.Term)
-                .Include(c => c.ClassSchedules).ThenInclude(c => c.ScheduleAvailability)
+                .Include(c => c.Meetings).ThenInclude(m => m.ScheduleAvailability)
+                .Include(c => c.Meetings).ThenInclude(m => m.StudentMeetings)
                 .FirstOrDefaultAsync(c => c.ClassId == classId);
 
             double? assessmentPointsPossible = @class.Assessments.Count > 0 ? @class.Assessments.Sum(a => a.PointsPossible) : (int?)null;
             double? attendanceDays = @class.Attendances.Count > 0 ? @class.Attendances.Select(a => a.Date.Date).Distinct().Count() : (int?)null;
 
-            Students = @class.StudentClasses.Select(s => new StudentViewModel
+            Students = @class.Meetings.SelectMany(m => m.StudentMeetings.Select(s => s.Student)).Distinct().Select(s => new StudentViewModel
             {
                 StudentId = s.StudentId,
-                Name = $"{s.Student.LastName}, {s.Student.FirstName}",
-                GradeAverage = GetRoundedPercent(s.Student.StudentAssessments?.Where(k => k.Assessment != null).Sum(a => a.PointsAwarded), assessmentPointsPossible),
-                AttendanceAverage = GetRoundedPercent(s.Student.Attendances?.Where(k => k.ClassId == classId).Count(a => a.AttendanceStatusId != AttendanceStatusEnum.Absent), attendanceDays)
+                Name = $"{s.LastName}, {s.FirstName}",
+                GradeAverage = GetRoundedPercent(s.StudentAssessments?.Where(k => k.Assessment != null).Sum(a => a.PointsAwarded), assessmentPointsPossible),
+                AttendanceAverage = GetRoundedPercent(s.Attendances?.Where(k => k.Meeting.ClassId == classId).Count(a => a.AttendanceStatusId != AttendanceStatusEnum.Absent), attendanceDays)
             });
 
             // For layout
             ViewData["ClassId"] = @class.ClassId;
-            ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.TimeOfYear} {@class.Term.StartDate.Year}";
-            ViewData["ClassSubtitle"] = ClassSchedule.GetScheduleString(@class.ClassSchedules.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
+            ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.Name}";
+            ViewData["ClassSubtitle"] = Meeting.GetScheduleString(@class.Meetings.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
         }
 
         private double? GetRoundedPercent(double? value, double? total)

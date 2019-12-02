@@ -20,6 +20,8 @@ namespace Smart.Data.Models
         [Column(TypeName = "date")]
         [DataType(DataType.Date)]
         public DateTime Deadline { get; set; }
+        [Range(0,100)]
+        public double Weight { get; set; }
 
         public virtual Class Class { get; set; }
         public virtual ICollection<StudentAssessment> StudentAssessments { get; set; }

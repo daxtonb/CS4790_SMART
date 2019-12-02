@@ -18,7 +18,7 @@ namespace Smart.Data.Models
         [Required, MaxLength(32) ,Display(Name = "Last Name")]
         public string LastName { get; set; }
 
-        [Required, DataType(DataType.Date), Display(Name = "Date of Birth")]
+        [DataType(DataType.Date), Display(Name = "Date of Birth")]
         public DateTime? DateOfBirth { get; set; }
 
         [MaxLength(128)]
@@ -57,8 +57,7 @@ namespace Smart.Data.Models
         public virtual StudentStatus StudentStatus { get; set; }
 
         public virtual ICollection<ApplicantRating> ApplicantRatings { get; set; }
-        public virtual ICollection<StudentClass> StudentClasses { get; set; }
-        public virtual ICollection<StudentPublicSchoolClass> StudentPublicSchoolClasss { get; set; }
+        public virtual ICollection<StudentMeeting> StudentMeetings { get; set; }
         public virtual ICollection<Attendance> Attendances { get; set; }
         public virtual ICollection<Note> Notes { get; set; }
         public virtual ICollection<StudentAssessment> StudentAssessments { get; set; }

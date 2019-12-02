@@ -26,33 +26,29 @@ namespace Smart.Pages.Classes
         [BindProperty]
         public IEnumerable<ScheduleAvailability> ScheduleAvailabilities { get; set; }
         public int? SelectedCourseId { get; set; }
-        public TimeOfYear TimeOfYear { get; set; }
-        public int Year { get; set; }
 
-        public async Task OnGetAsync(TimeOfYear? timeOfYear, int? year, int? courseId)
+        public async Task OnGetAsync(int? termId, int? courseId)
         {
-            TimeOfYear = timeOfYear ?? Term.GetTimeOfYear(DateTime.Now);
-            Year = year ?? DateTime.Now.Year;
             SelectedCourseId = courseId;
 
             Courses = await _context.Courses
-                .Include(c => c.Classes).ThenInclude(c => c.StudentClasses)
                 .Include(c => c.Classes).ThenInclude(c => c.InstructorUser)
                 .Include(c => c.Classes).ThenInclude(c => c.Term)
-                .Include(c => c.Classes).ThenInclude(c => c.ClassSchedules).ThenInclude(c => c.ScheduleAvailability)
+                .Include(c => c.Classes).ThenInclude(c => c.Meetings).ThenInclude(c => c.ScheduleAvailability)
+                .Include(c => c.Classes).ThenInclude(c => c.Meetings).ThenInclude(c => c.StudentMeetings)
                 .OrderBy(c => c.Name)
                 .Select(c => new CourseViewModel()
                 {
                     Course = c,
                     Classes = c.Classes
-                        .Where(l => l.Term.TimeOfYear == TimeOfYear && l.Term.StartDate.Year == Year)
+                        .Where(l => termId.HasValue ? l.TermId == termId.Value : l.Term.StartDate >= DateTime.Today && l.Term.EndDate <= DateTime.Today)
                         .Select(l => new CourseClassViewModel()
                         {
                             ClassId = l.ClassId,
                             CourseId = c.CourseId,
                             Capacity = l.Capacity,
-                            EnrolledStudentCount = l.StudentClasses.Count,
-                            Schedule = ClassSchedule.GetScheduleString(l.ClassSchedules.OrderBy(s => s.ScheduleAvailability.DayOfWeek)),
+                            EnrolledStudentCount = l.Meetings.SelectMany(m => m.StudentMeetings.Select(s => s.StudentId)).Distinct().Count(),
+                            Schedule = Meeting.GetScheduleString(l.Meetings.OrderBy(s => s.ScheduleAvailability.DayOfWeek)),
                             InstructorName = l.InstructorUser != null ? l.InstructorUser.LastName + ", " + l.InstructorUser.FirstName : "",
                         })
                 }).ToListAsync();
@@ -87,14 +83,14 @@ namespace Smart.Pages.Classes
             };
         }
 
-        public async Task<IActionResult> OnGetClassFormAsync(int classId, int courseId, TimeOfYear timeOfYear, int year)
+        public async Task<IActionResult> OnGetClassFormAsync(int classId, int courseId, int termId)
         {
             Class @class;
 
             if (classId > 0)
             {
                 @class = await _context.Classes
-                    .Include(c => c.ClassSchedules).ThenInclude(c => c.ScheduleAvailability)
+                    .Include(c => c.Meetings).ThenInclude(c => c.ScheduleAvailability)
                     .Include(c => c.Term)
                     .FirstOrDefaultAsync(c => c.ClassId == classId);
 
@@ -106,7 +102,7 @@ namespace Smart.Pages.Classes
             else
             {
                 @class = new Class() { CourseId = courseId };
-                @class.Term = new Term() { TimeOfYear = timeOfYear, StartDate = Term.GetStartDate(timeOfYear, year), EndDate = Term.GetEndDate(timeOfYear, year) }; ;
+                @class.TermId = termId;
             }
 
             // Instructors
@@ -129,7 +125,7 @@ namespace Smart.Pages.Classes
         public async Task<IActionResult> OnGetStudentsListAsync(int classId)
         {
             var @class = await _context.Classes
-                .Include(c => c.StudentClasses).ThenInclude(c => c.Student)
+                .Include(c => c.Meetings).ThenInclude(m => m.StudentMeetings).ThenInclude(c => c.Student)
                 .FirstOrDefaultAsync(c => c.ClassId == classId);
 
             if (@class == null)
@@ -138,8 +134,9 @@ namespace Smart.Pages.Classes
             }
 
             ViewData["classCapacity"] = @class.Capacity;
-            var students = @class.StudentClasses
-                .Select(c => c.Student)
+            var students = @class.Meetings
+                .SelectMany(c => c.StudentMeetings.Select(m => m.Student))
+                .Distinct()
                 .OrderBy(s => s.LastName)
                 .ThenBy(s => s.FirstName);
 
@@ -150,7 +147,7 @@ namespace Smart.Pages.Classes
             };
         }
 
-        public async Task<IActionResult> OnPostSaveCourseAsync(Course model, TimeOfYear timeOfYear, int year)
+        public async Task<IActionResult> OnPostSaveCourseAsync(Course model, int termId)
         {
             if (!ModelState.IsValid)
             {
@@ -175,7 +172,7 @@ namespace Smart.Pages.Classes
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToPage(new { timeOfYear = (int)timeOfYear, year, courseId = model.CourseId });
+            return RedirectToPage(new { termId, courseId = model.CourseId });
         }
 
         public async Task<IActionResult> OnPostSaveClassAsync(Class model)
@@ -186,7 +183,7 @@ namespace Smart.Pages.Classes
             }
 
             var @class = await _context.Classes
-                .Include(c => c.ClassSchedules).ThenInclude(c => c.ScheduleAvailability)
+                .Include(c => c.Meetings).ThenInclude(c => c.ScheduleAvailability)
                 .Include(c => c.Term)
                 .FirstOrDefaultAsync(c => c.ClassId == model.ClassId && c.CourseId == c.CourseId);
 
@@ -206,21 +203,16 @@ namespace Smart.Pages.Classes
             await _context.SaveChangesAsync();
 
             // This maybe isn't the best way to handle updating class schedules, but for now it's just easier to delete them all and re-create them
-            if (@class.ClassSchedules != null && @class.ClassSchedules.Any())
+            if (@class.Meetings != null && @class.Meetings.Any())
             {
-                _context.Classeschedules.RemoveRange(@class.ClassSchedules);
-                _context.ScheduleAvailabilities.RemoveRange(@class.ClassSchedules.Select(c => c.ScheduleAvailability));
+                _context.Meetings.RemoveRange(@class.Meetings);
+                _context.ScheduleAvailabilities.RemoveRange(@class.Meetings.Select(c => c.ScheduleAvailability));
                 await _context.SaveChangesAsync();
             }
 
-            @class.ClassSchedules = ScheduleAvailabilities.Select(s => new ClassSchedule { ScheduleAvailability = s }).ToList();
+            @class.Meetings = ScheduleAvailabilities.Select(s => new Meeting { ScheduleAvailability = s }).ToList();
             await _context.SaveChangesAsync();
-            return RedirectToPage(new { timeOfYear = (int)@class.Term.TimeOfYear, year = @class.Term.StartDate.Year, courseId = @class.CourseId });
-        }
-
-        public bool TermHasNotStartedYet()
-        {
-            return Term.GetStartDate(TimeOfYear, Year) > DateTime.Now;
+            return RedirectToPage(new { @class.TermId, courseId = @class.CourseId });
         }
     }
 
