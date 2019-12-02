@@ -76,17 +76,18 @@ namespace Smart.Pages.Classes
                 reader.ReadLine();   // Skip column headers
                 while (reader.Peek() >= 0)
                 {
+                    // FORMAT: <StudentId>,<StudentName>,<CourseName>,<Date>,Missed,<TimeIn>
                     string[] columns = reader.ReadLine().Split(',');
                     int studentId = int.Parse(columns[0]);
-                    string courseName = columns[1];
-                    DateTime date = Convert.ToDateTime(columns[2]).Date;
+                    string courseName = columns[2];
+                    DateTime date = Convert.ToDateTime(columns[3]).Date;
                     TimeSpan? timeIn = null;
                     
                     // CONDITION: A valid time was provided
-                    if (columns[3].IndexOf(':') > 0)
+                    if (columns[5] != "Missed")
                     {
-                        int[] timeParts = columns[3].Split(':').Select(x => int.Parse(x)).ToArray();
-                        timeIn = new TimeSpan(timeParts[0], timeParts[1], timeParts[2]);
+                        int[] timeParts = columns[5].Split(':').Select(x => int.Parse(x)).ToArray();
+                        timeIn = new TimeSpan(timeParts[0], timeParts[1], 0);
                     }
 
                     // CONDITION: We have not previously looked up this class in the database
