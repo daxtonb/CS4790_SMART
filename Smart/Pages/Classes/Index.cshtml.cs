@@ -207,7 +207,7 @@ namespace Smart.Pages.Classes
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToPage(new { termId, courseId = model.CourseId });
+            return RedirectToPage(new { termId, courseId = model.CourseId, schoolId = model.SchoolId });
         }
 
         public async Task<IActionResult> OnPostSaveClassAsync(Class model)
@@ -246,7 +246,7 @@ namespace Smart.Pages.Classes
 
             @class.Meetings = Meetings.ToList();
             await _context.SaveChangesAsync();
-            return RedirectToPage(new { @class.TermId, courseId = @class.CourseId });
+            return RedirectToPage(new { termId = @class.TermId, courseId = @class.CourseId, schoolId = (await _context.Courses.FirstAsync(c => c.CourseId == model.CourseId)).SchoolId });
         }
     }
 

@@ -29,7 +29,7 @@ namespace Smart.Pages.Classes
                 .Include(c => c.Course)
                 .Include(c => c.Term)
                 .Include(c => c.Meetings).ThenInclude(m => m.ScheduleAvailability)
-                .Include(c => c.Meetings).ThenInclude(m => m.StudentMeetings)
+                .Include(c => c.Meetings).ThenInclude(m => m.StudentMeetings).ThenInclude(s => s.Student)
                 .FirstOrDefaultAsync(c => c.ClassId == classId);
 
             double? assessmentPointsPossible = @class.Assessments.Count > 0 ? @class.Assessments.Sum(a => a.PointsPossible) : (int?)null;
