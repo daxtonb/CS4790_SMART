@@ -6,40 +6,47 @@
     Layout = "~/Pages/Classes/_Layout.cshtml";
 }
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th role="columnheader">Name</th>
-            <th role="columnheader">Grade</th>
-            <th role="columnheader">Attendance</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var student in Model.Students)
-        {
+@if (Model.Students != null && Model.Students.Any())
+{
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td><a asp-page="/Students/Details" asp-route-id="@student.StudentId" style="color:#7989ff">@student.Name</a></td>
-                <td>
-                    @if (student.GradeAverage.HasValue)
-                    {
-                        <a href="#" data-toggle="modal" data-target="#details-modal" onclick="getStudentSubmissions(@student.StudentId)" style="color:#7989ff">@student.GradeAverage.Value%</a>
-                    }
-                    else
-                    {
-                        <text>N/A</text>
-                    }
-                </td>
-                <td>
-                    @if (student.AttendanceAverage.HasValue)
-                    {
-                        <a>@student.AttendanceAverage.Value%</a>
-                    }
-                    else
-                    {
-                        <text>N/A</text>
-                    }
-                </td>
+                <th role="columnheader">Name</th>
+                <th role="columnheader">Grade</th>
+                <th role="columnheader">Attendance</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var student in Model.Students)
+            {
+                <tr>
+                    <td><a asp-page="/Students/Details" asp-route-id="@student.StudentId" style="color:#7989ff">@student.Name</a></td>
+                    <td>
+                        @if (student.GradeAverage.HasValue)
+                        {
+                            <a href="#" data-toggle="modal" data-target="#details-modal" onclick="getStudentSubmissions(@student.StudentId)" style="color:#7989ff">@student.GradeAverage.Value%</a>
+                        }
+                        else
+                        {
+                            <text>N/A</text>
+                        }
+                    </td>
+                    <td>
+                        @if (student.AttendanceAverage.HasValue)
+                        {
+                            <a>@student.AttendanceAverage.Value%</a>
+                        }
+                        else
+                        {
+                            <text>N/A</text>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-primary">No students are enrolled for this class</div>
+}

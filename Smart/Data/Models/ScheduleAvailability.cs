@@ -55,5 +55,10 @@ namespace Smart.Data.Models
             }
             return dayOfWeek.ToString().Substring(0, 2);
         }
+
+        public override string ToString()
+        {
+            return $"{DayOfWeek} {StartTime.ToString12HourTime()}-{EndTime.ToString12HourTime()}";
+        }
     }
 }

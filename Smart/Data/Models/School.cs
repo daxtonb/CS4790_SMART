@@ -15,5 +15,6 @@ namespace Smart.Data.Models
         public string Name { get; set; }
 
         public virtual ICollection<ScheduleAvailability> ScheduleAvailabilities { get; set; }
+        public virtual ICollection<Course> Courses { get; set; }
     }
 }

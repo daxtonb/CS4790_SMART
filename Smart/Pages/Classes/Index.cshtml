@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Pages/Shared/_Layout.cshtml";
-    bool termHasNotStartedYet = Model.Terms.First(t => t.TermId == Model.SelectedTermId).StartDate > DateTime.Today;
+    bool termHasNotStartedYet = Model.SelectedTerm.StartDate > DateTime.Today;
 }
  
 <div id="main-section" class="container carousel-item active">
@@ -15,12 +15,12 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
     <div class="col-3">
         <div class="align-content-center">
-            <select asp-for="SchoolId" asp-items="Model.Schools.Select(t => new SelectListItem { Value = t.SchoolId.ToString(), Text = t.Name })" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/' + this.value + '/@(Model.SelectedTermId)@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
+            <select asp-for="SchoolId" asp-items="Model.Schools.Select(t => new SelectListItem { Value = t.SchoolId.ToString(), Text = t.Name })" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/' + this.value + '/@(Model.SelectedTerm.TermId)@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
         </div>
     </div>
     <div class="col-3">
         <div class="align-content-center">
-            <select asp-for="SelectedTermId" asp-items="Model.Terms.Select(t => new SelectListItem { Value = t.TermId.ToString(), Text = t.Name })" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/@(Model.SelectedTermId)/' + this.value + '@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
+            <select asp-for="SelectedTerm.TermId" asp-items="Model.Terms.Select(t => new SelectListItem { Value = t.TermId.ToString(), Text = t.Name })" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/@(Model.SchoolId)/' + this.value + '@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
         </div>
     </div>
 </nav>
@@ -52,7 +52,7 @@
                         <div class="card-body">
                             @if (termHasNotStartedYet)
                             {
-                                <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTermId)"><i class="fa fa-plus"></i> Class</button>
+                                <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTerm.TermId)"><i class="fa fa-plus"></i> Class</button>
                             }
                             <div id="course-@course.Course.CourseId-classes">
                                 @if (course.Classes != null && course.Classes.Any())
@@ -81,7 +81,7 @@
                                                             @if (termHasNotStartedYet)
                                                             {
 
-                                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTermId, @item.ClassId)">
+                                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTerm.TermId, @item.ClassId)">
                                                                     <i class="fas fa-edit"></i>
                                                                 </button>
                                                             }
@@ -92,7 +92,7 @@
                                                             @if (termHasNotStartedYet)
                                                             {
 
-                                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTermId, @item.ClassId)">
+                                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTerm.TermId, @item.ClassId)">
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
                                                             }
@@ -105,7 +105,7 @@
                                 }
                                 else
                                 {
-                                    <div class="alert alert-primary">No @(course.Course.Name) classes @(termHasNotStartedYet ? "have been created yet" : $"were created") for @Model..</div>
+                                    <div class="alert alert-primary">No @(course.Course.Name) classes @(termHasNotStartedYet ? "have been created yet" : $"were created") for @Model.SelectedTerm.Name</div>
                                 }
                             </div>
                         </div>
@@ -121,20 +121,20 @@
 </div>
 
 
-@*@section Scripts
+@section Scripts
 {
     <script>
         const classBaseUrl = '/Classes?handler=';
 
         function getCourseForm(courseId) {
             const getHandler = classBaseUrl + 'CourseForm' + (courseId ? '&courseId=' + courseId : '');
-            const postHandler = classBaseUrl + 'SaveCourse&timeOfYear=@(Model.TimeOfYear)&year=@(Model.Year)'
+            const postHandler = classBaseUrl + 'SaveCourse&schoolId=@(Model.SchoolId)&termId=@(Model.SelectedTerm.TermId)'
             const modalTitle = `${courseId ? 'Edit' : 'Create'} Course`;
             getForm(modalTitle, getHandler, postHandler);
         }
 
-        function getClassForm(courseId, timeOfYear, year, classId) {
-            const getHandler = classBaseUrl + `ClassForm&courseId=${courseId}&timeOfYear=${timeOfYear}&year=${year}` + (classId ? '&classId=' + classId : '');
+        function getClassForm(courseId, termId, classId) {
+            const getHandler = classBaseUrl + `ClassForm&courseId=${courseId}&termId=${termId}` + (classId ? '&classId=' + classId : '');
             const postHandler = classBaseUrl + 'SaveClass';
             const modalTitle = `${classId ? 'Edit' : 'Create'} Class`;
             getForm(modalTitle, getHandler, postHandler);
@@ -146,4 +146,4 @@
             getForm(modalTitle, getHandler);
         }     
     </script>
-}*@
+}

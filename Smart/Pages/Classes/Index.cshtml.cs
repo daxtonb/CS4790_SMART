@@ -24,11 +24,11 @@ namespace Smart.Pages.Classes
 
         public IEnumerable<CourseViewModel> Courses { get; set; }
         [BindProperty]
-        public IEnumerable<ScheduleAvailability> ScheduleAvailabilities { get; set; }
+        public IEnumerable<Meeting> Meetings { get; set; }
         public IEnumerable<Term> Terms { get; set; }
         public IEnumerable<School> Schools { get; set; }
         public int? SelectedCourseId { get; set; }
-        public int SelectedTermId { get; set; }
+        public Term SelectedTerm { get; set; }
         public int SchoolId { get; set; }
 
         public async Task OnGetAsync(int? schoolId, int? termId, int? courseId)
@@ -36,7 +36,7 @@ namespace Smart.Pages.Classes
             SelectedCourseId = courseId;
 
             // Schools
-            Schools = await _context.Schools.ToListAsync();
+            Schools = await _context.Schools.Include(c => c.Courses).ToListAsync();
             if (schoolId == null)
             {
                 SchoolId = Schools.First().SchoolId;
@@ -50,35 +50,39 @@ namespace Smart.Pages.Classes
             Terms = await _context.Terms.ToListAsync();
             if (termId == null)
             {
-                SelectedTermId = Terms.FirstOrDefault(t => t.StartDate >= DateTime.Today && DateTime.Today <= t.EndDate)?.TermId ?? Terms.First().TermId;
+                SelectedTerm = Terms.FirstOrDefault(t => t.StartDate <= DateTime.Today && t.EndDate >= DateTime.Today) ?? Terms.First();
             }
             else
             {
-                SelectedTermId = termId.Value;
+                SelectedTerm = Terms.FirstOrDefault(t => t.TermId == termId) ?? Terms.First();
             }
 
             // Classes
             var classes = await _context.Classes
-                .Include(c => c.Course)
                 .Include(c => c.Meetings).ThenInclude(m => m.StudentMeetings)
                 .Include(c => c.Meetings).ThenInclude(m => m.ScheduleAvailability)
-                .Where(c => c.TermId == SelectedTermId && c.Course.SchoolId == SchoolId).ToListAsync();
+                .Include(c => c.InstructorUser)
+                .Where(c => c.TermId == SelectedTerm.TermId && c.Course.SchoolId == SchoolId).ToListAsync();
 
             // Courses
-            Courses = classes.Select(c => c.Course).Distinct().OrderBy(c => c.Name).Select(c => new CourseViewModel
-            {
-                Course = c,
-                Classes = c.Classes.Select(l => new CourseClassViewModel
+            Courses = classes.Select(c => c.Course)
+                .Concat(Schools.SelectMany(s => s.Courses))
+                .Distinct()
+                .OrderBy(c => c.Name)
+                .Select(c => new CourseViewModel
                 {
-                    ClassId = l.ClassId,
-                    CourseId = c.CourseId,
-                    Capacity = l.Capacity,
-                    EnrolledStudentCount = l.Meetings.SelectMany(m => m.StudentMeetings.Select(s => s.StudentId)).Distinct().Count(),
-                    Schedule = ScheduleAvailability.GetScheduleString(l.Meetings.Select(m => m.ScheduleAvailability).OrderBy(s => s.DayOfWeek)),
-                    InstructorName = l.InstructorUser != null ? l.InstructorUser.LastName + ", " + l.InstructorUser.FirstName : "",
-                })
-            });
-            
+                    Course = c,
+                    Classes = c.Classes?.Select(l => new CourseClassViewModel
+                    {
+                        ClassId = l.ClassId,
+                        CourseId = c.CourseId,
+                        Capacity = l.Capacity,
+                        EnrolledStudentCount = l.Meetings.SelectMany(m => m.StudentMeetings.Select(s => s.StudentId)).Distinct().Count(),
+                        Schedule = ScheduleAvailability.GetScheduleString(l.Meetings.Select(m => m.ScheduleAvailability).OrderBy(s => s.DayOfWeek)),
+                        InstructorName = l.InstructorUser != null ? l.InstructorUser.LastName + ", " + l.InstructorUser.FirstName : "",
+                    })
+                });
+
             if (SelectedCourseId == null && Courses.Any())
             {
                 SelectedCourseId = Courses.First().Course.CourseId;
@@ -116,6 +120,7 @@ namespace Smart.Pages.Classes
             if (classId > 0)
             {
                 @class = await _context.Classes
+                    .Include(c => c.Course)
                     .Include(c => c.Meetings).ThenInclude(c => c.ScheduleAvailability)
                     .Include(c => c.Term)
                     .FirstOrDefaultAsync(c => c.ClassId == classId);
@@ -127,8 +132,9 @@ namespace Smart.Pages.Classes
             }
             else
             {
-                @class = new Class() { CourseId = courseId };
-                @class.TermId = termId;
+                @class = new Class() { CourseId = courseId, TermId = termId };
+                @class.Term = await _context.Terms.FirstAsync(c => c.TermId == termId);
+                @class.Course = await _context.Courses.FirstAsync(c => c.CourseId == courseId);
             }
 
             // Instructors
@@ -140,6 +146,9 @@ namespace Smart.Pages.Classes
                     Value = u.UserId.ToString(),
                     Text = u.User.LastName + ", " + u.User.FirstName
                 }).ToListAsync();
+
+            // School Schedule Availabilities
+            ViewData["scheduleAvailabilities"] = await _context.ScheduleAvailabilities.Where(s => s.SchoolId == @class.Course.SchoolId).ToListAsync();
 
             return new PartialViewResult()
             {
@@ -232,11 +241,10 @@ namespace Smart.Pages.Classes
             if (@class.Meetings != null && @class.Meetings.Any())
             {
                 _context.Meetings.RemoveRange(@class.Meetings);
-                _context.ScheduleAvailabilities.RemoveRange(@class.Meetings.Select(c => c.ScheduleAvailability));
                 await _context.SaveChangesAsync();
             }
 
-            @class.Meetings = ScheduleAvailabilities.Select(s => new Meeting { ScheduleAvailability = s }).ToList();
+            @class.Meetings = Meetings.ToList();
             await _context.SaveChangesAsync();
             return RedirectToPage(new { @class.TermId, courseId = @class.CourseId });
         }
