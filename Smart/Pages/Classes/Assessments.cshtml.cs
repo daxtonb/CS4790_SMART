@@ -27,6 +27,7 @@ namespace Smart.Pages.Classes
         {
             var @class = await _context.Classes
                 .Include(c => c.Assessments).ThenInclude(a => a.StudentAssessments)
+                .Include(c => c.Assessments).ThenInclude(a => a.AssessmentType)
                 .Include(c => c.Course)
                 .Include(c => c.Term)
                 .Include(c => c.Meetings).ThenInclude(c => c.ScheduleAvailability)
@@ -34,9 +35,6 @@ namespace Smart.Pages.Classes
 
             Assessments = @class.Assessments.OrderBy(a => a.Deadline);
 
-            // For layout
-            ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.Name}";
-            ViewData["ClassSubtitle"] = ScheduleAvailability.GetScheduleString(@class.Meetings.Select(s => s.ScheduleAvailability).OrderBy(c => c.DayOfWeek));
             ViewData["ClassId"] = @class.ClassId;
         }
 
@@ -47,7 +45,6 @@ namespace Smart.Pages.Classes
             if (assessmentId.HasValue)
             {
                 assessment = await _context.Assessments.FirstOrDefaultAsync(a => a.AssessmentId == assessmentId.Value);
-
                 if (assessment == null)
                 {
                     return NotFound();
@@ -58,6 +55,7 @@ namespace Smart.Pages.Classes
                 assessment = new Assessment() { ClassId = classId, Deadline = DateTime.Today.AddDays(1) };
             }
 
+            ViewData["assessmentTypes"] = await _context.AssessmentTypes.ToListAsync();
 
             return new PartialViewResult()
             {
@@ -93,10 +91,11 @@ namespace Smart.Pages.Classes
 
         public async Task<IActionResult> OnGetSubmissions(int classId, int assessmentId)
         {
-            var students = await _context.StudentMeetings
-                .Include(s => s.Student)
-                .Where(s => s.MeetingId == classId)
-                .Select(s => s.Student)
+            var students = await _context.Meetings
+                .Include(s => s.StudentMeetings).ThenInclude(m => m.Student).ThenInclude(m => m.StudentAssessments)
+                .Where(s => s.ClassId == classId)
+                .SelectMany(s => s.StudentMeetings.Select(m => m.Student))
+                .Distinct()
                 .ToListAsync();
 
             var assessment = await _context.Assessments

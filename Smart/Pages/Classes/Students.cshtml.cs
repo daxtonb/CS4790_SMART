@@ -42,11 +42,8 @@ namespace Smart.Pages.Classes
                 GradeAverage = GetRoundedPercent(s.StudentAssessments?.Where(k => k.Assessment != null).Sum(a => a.PointsAwarded), assessmentPointsPossible),
                 AttendanceAverage = 0
             });
-
             // For layout
             ViewData["ClassId"] = @class.ClassId;
-            ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.Name}";
-            ViewData["ClassSubtitle"] = ScheduleAvailability.GetScheduleString(@class.Meetings.Select(m => m.ScheduleAvailability).OrderBy(c => c.DayOfWeek));
         }
 
         private double? GetRoundedPercent(double? value, double? total)

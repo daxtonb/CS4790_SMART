@@ -10,6 +10,7 @@
     <thead>
         <tr>
             <th role="columnheader">Title</th>
+            <th role="columnheader">Type</th>
             <th role="columnheader">Description</th>
             <th role="columnheader">Deadline</th>
             <th role="columnheader">Points</th>
@@ -21,6 +22,7 @@
         {
             <tr class="parent">
                 <td>@item.Title</td>
+                <td>@item.AssessmentType.Name</td>
                 <td>@item.Description</td>
                 <td>@item.Deadline.ToString("M/d/yyyy")</td>
                 <td>@item.PointsPossible</td>

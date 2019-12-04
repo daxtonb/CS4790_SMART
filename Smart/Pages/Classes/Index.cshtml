@@ -5,25 +5,25 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
     bool termHasNotStartedYet = Model.SelectedTerm.StartDate > DateTime.Today;
 }
- 
-<div id="main-section" class="container carousel-item active">
+
+<div id="main-section">
 
     @if (termHasNotStartedYet)
     {
         <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getCourseForm()"><i class="fa fa-plus"></i> Course</button>
     }
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
-    <div class="col-3">
-        <div class="align-content-center">
-            <select asp-for="SchoolId" asp-items="Model.Schools.Select(t => new SelectListItem { Value = t.SchoolId.ToString(), Text = t.Name })" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/' + this.value + '/@(Model.SelectedTerm.TermId)@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+        <div class="col-3">
+            <div class="align-content-center">
+                <select asp-for="SchoolId" asp-items="Model.Schools.Select(t => new SelectListItem { Value = t.SchoolId.ToString(), Text = t.Name })" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/' + this.value + '/@(Model.SelectedTerm.TermId)@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
+            </div>
         </div>
-    </div>
-    <div class="col-3">
-        <div class="align-content-center">
-            <select asp-for="SelectedTerm.TermId" asp-items="Model.Terms.Select(t => new SelectListItem { Value = t.TermId.ToString(), Text = t.Name })" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/@(Model.SchoolId)/' + this.value + '@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
+        <div class="col-3">
+            <div class="align-content-center">
+                <select asp-for="SelectedTerm.TermId" asp-items="Model.Terms.Select(t => new SelectListItem { Value = t.TermId.ToString(), Text = t.Name })" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/@(Model.SchoolId)/' + this.value + '@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
     @if (Model.Courses != null && Model.Courses.Any())
     {
@@ -38,11 +38,11 @@
                         <h4 class="mb-0" style="display:inline-block">
                             @course.Course.Name
                         </h4>
-                        <div class="btn-group btn-group-sm float-right show-on-parent-hover" role="group">
-                            <a class="btn btn-primary text-white" data-toggle="modal" data-target="#form-modal" onclick="getCourseForm(@course.Course.CourseId)">
+                        <div class="btn-group btn-group-sm float-right" role="group">
+                            <a class="btn btn-primary text-white" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTerm.TermId, @course.Class?.ClassId)">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a class="btn btn-danger text-white" data-toggle="modal" data-target="#form-modal" onclick="getCourseForm(@course.Course.CourseId)">
+                            <a class="btn btn-danger text-white" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTerm.TermId, @course.Class?.ClassId)">
                                 <i class="fas fa-trash-alt"></i>
                             </a>
                         </div>
@@ -50,64 +50,60 @@
 
                     <div id="@collapseId" class="collapse @(isSelectedCourse? "show" : "")" aria-labelledby="headingOne" data-parent="#accordionExample">
                         <div class="card-body">
-                            @if (termHasNotStartedYet)
+                            @if (termHasNotStartedYet && course.Class == null)
                             {
                                 <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTerm.TermId)"><i class="fa fa-plus"></i> Class</button>
                             }
-                            <div id="course-@course.Course.CourseId-classes">
-                                @if (course.Classes != null && course.Classes.Any())
-                                {
-                                    <table class="table table-sm table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">CRN</th>
-                                                <th scope="col">Schedule</th>
-                                                <th scope="col">Instructor</th>
-                                                <th scope="col">Students</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var item in course.Classes)
-                                            {
-                                                <tr class="parent">
-                                                    <th scope="col">@item.ClassId</th>
-                                                    <td>@item.Schedule</td>
-                                                    <td>@item.InstructorName</td>
-                                                    <td><button type="button" class="btn btn-link btn-sm" style="color:#7989ff" data-toggle="modal" data-target="#form-modal" onclick="getStudentsList(@item.ClassId)">@item.EnrolledStudentCount/@item.Capacity</button></td>
-                                                    <td>
-                                                        <div class="btn-group btn-group-sm show-on-parent-hover" role="group">
-
-                                                            @if (termHasNotStartedYet)
-                                                            {
-
-                                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTerm.TermId, @item.ClassId)">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </button>
-                                                            }
-                                                            <a class="btn btn-success text-white" href="/Classes/@item.ClassId/Students">
-                                                                <i class="fas fa-list-alt"></i>
-                                                            </a>
-
-                                                            @if (termHasNotStartedYet)
-                                                            {
-
-                                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTerm.TermId, @item.ClassId)">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                            }
+                        <div id="course-@course.Course.CourseId-classes">
+                            @if (course.Class != null)
+                            {
+                                <table class="table table-sm">
+                                    <thead></thead>
+                                    <tbody>
+                                        <tr>
+                                            <th style="width: 200px;" role="rowheader">Instructor</th>
+                                            <td>@course.Class.InstructorName</td>
+                                        </tr>
+                                        <tr>
+                                            <th role="rowheader">Enrollments</th>
+                                            <td>@course.Class.EnrolledStudentCount/@course.Class.Capacity</td>
+                                        </tr>
+                                        <tr>
+                                            <th role="rowheader">Passing Grade Threshold</th>
+                                            <td>@course.Class.PassingGradeThreshold%</td>
+                                        </tr>
+                                        <tr>
+                                            <th role="rowheader">Meetings</th>
+                                            <td>
+                                                @foreach (var meetingNumber in course.Class.MeetingsByNumber)
+                                                {
+                                                    <div class="row mb-2">
+                                                        <div class="col-1 justify-content-center align-self-center text-right" style="font-weight:800;width:1.5em">
+                                                            @meetingNumber.Key
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                }
-                                else
-                                {
-                                    <div class="alert alert-primary">No @(course.Course.Name) classes @(termHasNotStartedYet ? "have been created yet" : $"were created") for @Model.SelectedTerm.Name</div>
-                                }
-                            </div>
+                                                        <div class="col-11" style="margin-top:auto;margin-bottom:auto">
+                                                            <ul class="m-0 p-1" style="list-style:none">
+                                                                @foreach (var meeting in meetingNumber.ToList())
+                                                                {
+                                                                    <li>@meeting.ScheduleAvailability.DayOfWeek @meeting.ScheduleAvailability.StartTime.ToString12HourTime()-@meeting.ScheduleAvailability.EndTime.ToString12HourTime()</li>
+                                                                }
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <iframe src="/Classes/@course.Class.ClassId/Students" style="width:100%;height:60vh;border:none">
+
+                                </iframe>
+                            }
+                            else
+                            {
+                                <div class="alert alert-primary">No @(course.Course.Name) class @(termHasNotStartedYet ? "has been created yet" : $"was created") for @Model.SelectedTerm.Name</div>
+                            }
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -144,6 +140,6 @@
             const getHandler = classBaseUrl + `StudentsList&classId=${classId}`;
             const modalTitle = 'Roster';
             getForm(modalTitle, getHandler);
-        }     
+        }
     </script>
 }

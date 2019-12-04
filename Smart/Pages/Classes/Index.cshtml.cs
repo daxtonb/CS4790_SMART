@@ -23,8 +23,6 @@ namespace Smart.Pages.Classes
         }
 
         public IEnumerable<CourseViewModel> Courses { get; set; }
-        [BindProperty]
-        public IEnumerable<Meeting> Meetings { get; set; }
         public IEnumerable<Term> Terms { get; set; }
         public IEnumerable<School> Schools { get; set; }
         public int? SelectedCourseId { get; set; }
@@ -72,7 +70,7 @@ namespace Smart.Pages.Classes
                 .Select(c => new CourseViewModel
                 {
                     Course = c,
-                    Classes = c.Classes?.Select(l => new CourseClassViewModel
+                    Class = c.Classes?.Select(l => new CourseClassViewModel
                     {
                         ClassId = l.ClassId,
                         CourseId = c.CourseId,
@@ -80,7 +78,9 @@ namespace Smart.Pages.Classes
                         EnrolledStudentCount = l.Meetings.SelectMany(m => m.StudentMeetings.Select(s => s.StudentId)).Distinct().Count(),
                         Schedule = ScheduleAvailability.GetScheduleString(l.Meetings.Select(m => m.ScheduleAvailability).OrderBy(s => s.DayOfWeek)),
                         InstructorName = l.InstructorUser != null ? l.InstructorUser.LastName + ", " + l.InstructorUser.FirstName : "",
-                    })
+                        MeetingsByNumber = l.Meetings.GroupBy(m => m.MeetingOrderNum).OrderBy(m => m.Key),
+                        PassingGradeThreshold = l.PassingGradeThreshold
+                    }).FirstOrDefault()
                 });
 
             if (SelectedCourseId == null && Courses.Any())
@@ -221,36 +221,18 @@ namespace Smart.Pages.Classes
                 return BadRequest();
             }
 
-            var @class = await _context.Classes
-                .Include(c => c.Meetings).ThenInclude(c => c.ScheduleAvailability)
-                .Include(c => c.Term)
-                .FirstOrDefaultAsync(c => c.ClassId == model.ClassId && c.CourseId == c.CourseId);
-
-            // CONDITION: This is a new class
-            if (@class == null)
+            // CONDITION: This class already exists
+            if (await _context.Classes.AnyAsync(c => c.ClassId == model.ClassId))
             {
-                @class = model;
-                _context.Classes.Add(@class);
+                _context.Classes.Update(model);
             }
             else
             {
-                // Update the existing class
-                @class.InstructorUserId = model.InstructorUserId;
-                @class.Capacity = model.Capacity;
+                _context.Classes.Add(model);
             }
 
             await _context.SaveChangesAsync();
-
-            // This maybe isn't the best way to handle updating class schedules, but for now it's just easier to delete them all and re-create them
-            if (@class.Meetings != null && @class.Meetings.Any())
-            {
-                _context.Meetings.RemoveRange(@class.Meetings);
-                await _context.SaveChangesAsync();
-            }
-
-            @class.Meetings = Meetings.ToList();
-            await _context.SaveChangesAsync();
-            return RedirectToPage(new { termId = @class.TermId, courseId = @class.CourseId, schoolId = (await _context.Courses.FirstAsync(c => c.CourseId == model.CourseId)).SchoolId });
+            return RedirectToPage(new { termId = model.TermId, courseId = model.CourseId, schoolId = (await _context.Courses.FirstAsync(c => c.CourseId == model.CourseId)).SchoolId });
         }
     }
 
@@ -262,11 +244,14 @@ namespace Smart.Pages.Classes
         public string InstructorName { get; set; }
         public int EnrolledStudentCount { get; set; }
         public int Capacity { get; set; }
+        public double PassingGradeThreshold { get; set; }
+        public IEnumerable<IGrouping<int, Meeting>> MeetingsByNumber { get; set; }
     }
+
 
     public class CourseViewModel
     {
         public Course Course { get; set; }
-        public IEnumerable<CourseClassViewModel> Classes { get; set; }
+        public CourseClassViewModel Class { get; set; }
     }
 }
