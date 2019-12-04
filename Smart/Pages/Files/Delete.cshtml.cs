@@ -13,6 +13,7 @@ namespace Smart.Pages.Files
     public class DeleteModel : PageModel
     {
         private readonly Smart.Data.ApplicationDbContext _context;
+        public int studentIdentification;
 
         public DeleteModel(Smart.Data.ApplicationDbContext context)
         {
@@ -22,8 +23,9 @@ namespace Smart.Pages.Files
         [BindProperty]
         public File File { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int? id, int studentId)
         {
+            studentIdentification = studentId;
             if (id == null)
             {
                 return NotFound();
@@ -40,7 +42,7 @@ namespace Smart.Pages.Files
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int? id, int studentId)
         {
             if (id == null)
             {
@@ -48,14 +50,13 @@ namespace Smart.Pages.Files
             }
 
             File = await _context.Files.FindAsync(id);
-
             if (File != null)
             {
                 _context.Files.Remove(File);
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("./Index", new { studentId });
         }
     }
 }

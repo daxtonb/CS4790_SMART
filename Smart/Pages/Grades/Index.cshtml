@@ -31,6 +31,15 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment.Class)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment.PointsPossible)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.StudentAssessment[0].PointsAwarded)
             </th>
             <th>
@@ -38,12 +47,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.StudentAssessment[0].SubmissionDateTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment.Class)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.StudentAssessment[0].File)
@@ -56,6 +59,15 @@
         {
         <tr>
             <td>
+                @Html.DisplayFor(modelItem => item.Assessment.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Assessment.Class.Course.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Assessment.PointsPossible)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.PointsAwarded)
             </td>
             <td>
@@ -63,12 +75,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.SubmissionDateTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Assessment.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Assessment.Class.Course.Name)
             </td>
             <td>
                 <span>

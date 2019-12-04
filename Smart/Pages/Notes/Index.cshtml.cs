@@ -27,7 +27,12 @@ namespace Smart.Pages.Notes
 
         public async Task OnGet(int studentId)
         {
-            Note = _context.Notes.Where(n => n.Studentid == studentId).ToList();
+            Note = _context.Notes
+                .Include(n=>n.NoteType)
+                .Where(n => n.Studentid == studentId)
+                .OrderBy(n => n.CreateDate).ToList();
+            
+            
             studentIdentifies = studentId;
 
             Student = _context.Students.Where(i => i.StudentId == studentId).ToList();
