@@ -64,7 +64,7 @@ namespace Smart.Pages.Classes
 
             // Courses
             Courses = classes.Select(c => c.Course)
-                .Concat(Schools.SelectMany(s => s.Courses))
+                .Concat(_context.Courses.Where(c => c.SchoolId == SchoolId))
                 .Distinct()
                 .OrderBy(c => c.Name)
                 .Select(c => new CourseViewModel
