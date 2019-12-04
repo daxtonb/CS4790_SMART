@@ -14,9 +14,7 @@
     <thead>
         <tr>
             <th role="columnheader" >Date</th>
-            <th role="columnheader">On Time</th>
-            <th role="columnheader">Late</th>
-            <th role="columnheader">Absent</th>
+            <th role="columnheader">Attended</th>
         </tr>
     </thead>
     <tbody>
@@ -24,9 +22,7 @@
         {
             <tr>
                 <td><a data-toggle="modal" data-target="#details-modal" onclick="getAttendanceList('@item.Date.ToString("yyyy-MM-dd")')">@item.Date.ToString("d MMMM")</a></td>
-                <td>@item.OnTimeCount</td>
-                <td>@item.LateCount</td>
-                <td>@item.AbsentCount</td>
+                <td>@item.Count</td>
             </tr>
 
         }

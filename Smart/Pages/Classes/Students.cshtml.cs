@@ -29,7 +29,7 @@ namespace Smart.Pages.Classes
                 .Include(c => c.Course)
                 .Include(c => c.Term)
                 .Include(c => c.Meetings).ThenInclude(m => m.ScheduleAvailability)
-                .Include(c => c.Meetings).ThenInclude(m => m.StudentMeetings)
+                .Include(c => c.Meetings).ThenInclude(m => m.StudentMeetings).ThenInclude(s => s.Student)
                 .FirstOrDefaultAsync(c => c.ClassId == classId);
 
             double? assessmentPointsPossible = @class.Assessments.Count > 0 ? @class.Assessments.Sum(a => a.PointsPossible) : (int?)null;
@@ -40,13 +40,13 @@ namespace Smart.Pages.Classes
                 StudentId = s.StudentId,
                 Name = $"{s.LastName}, {s.FirstName}",
                 GradeAverage = GetRoundedPercent(s.StudentAssessments?.Where(k => k.Assessment != null).Sum(a => a.PointsAwarded), assessmentPointsPossible),
-                AttendanceAverage = GetRoundedPercent(s.Attendances?.Where(k => k.Meeting.ClassId == classId).Count(a => a.AttendanceStatusId != AttendanceStatusEnum.Absent), attendanceDays)
+                AttendanceAverage = 0
             });
 
             // For layout
             ViewData["ClassId"] = @class.ClassId;
             ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.Name}";
-            ViewData["ClassSubtitle"] = Meeting.GetScheduleString(@class.Meetings.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
+            ViewData["ClassSubtitle"] = ScheduleAvailability.GetScheduleString(@class.Meetings.Select(m => m.ScheduleAvailability).OrderBy(c => c.DayOfWeek));
         }
 
         private double? GetRoundedPercent(double? value, double? total)

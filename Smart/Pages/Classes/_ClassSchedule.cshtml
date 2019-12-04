@@ -1,41 +1,26 @@
-﻿@model List<ScheduleAvailability>
+﻿@model List<Meeting>
+@{
+    var scheduleAvailabilities = (IEnumerable<ScheduleAvailability>)ViewData["scheduleAvailabilities"];
+    var selectList = scheduleAvailabilities.Select(s => new SelectListItem { Value = s.ScheduleAvailabilityId.ToString(), Text = s.ToString() });
+}
 <div id="schedule-wrapper" class="p-1">
-
-    @for (int i = 0; i < Model.Count; i++)
+    @for(int i = 0; i < Model.Count; i++)
     {
-        <div class="row border border-primary pl-1 pr-1 class-schedule">
-            <div class="col-6">
-                <div class="form-group">
-                    <label>Day of Week</label>
-                    @foreach (var day in Enum.GetValues(typeof(DayOfWeek)))
-                    {
-                        <div class="form-check">
-                            <input class="form-check-input" @(Model[i].DayOfWeek == (DayOfWeek)day ? "checked" : "") type="radio" name="ScheduleAvailabilities[@i].DayOfWeek" value="@((int)day)">
-                            <label class="form-check-label" for="exampleRadios1">
-                                @(((DayOfWeek)day).ToString())
-                            </label>
-                        </div>
-                    }
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label asp-for="@Model[i].StartTime"></label>
-                            <input asp-for="@Model[i].StartTime" name="ScheduleAvailabilities[@i].StartTime" class="form-control" required />
-                            <span asp-validation-for="@Model[i].StartTime" class="text-warning"></span>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="form-group">
-                            <label asp-for="@Model[i].EndTime"></label>
-                            <input asp-for="@Model[i].EndTime" name="ScheduleAvailabilities[@i].EndTime" class="form-control" required />
-                            <span asp-validation-for="@Model[i].EndTime" class="text-warning"></span>
-                        </div>
-                    </div>
-                </div>
+    <div class="row border border-primary pl-1 pr-1 class-schedule">
+        <div class="col-3">
+            <div class="form-group">
+                <label asp-for="@Model[i].MeetingOrderNum">Meeting #</label>
+                <input asp-for="@Model[i].MeetingOrderNum" name="Meetings[@i].MeetingOrderNum" class="form-control" />
+                <span class="text-warning" asp-validation-for="@Model[i].MeetingOrderNum"></span>
             </div>
         </div>
+        <div class="col-9">
+            <div class="form-group">
+                <label asp-for="@Model[i].ScheduleAvailabilityId">Schedule Availability</label>
+                <select asp-for="@Model[i].ScheduleAvailabilityId" asp-items="selectList" name="Meetings[@i].ScheduleAvailabilityId" class="form-control" required></select>
+                <span class="text-warning" asp-validation-for="@Model[i].ScheduleAvailabilityId"></span>
+            </div>
+        </div>
+    </div>
     }
 </div>

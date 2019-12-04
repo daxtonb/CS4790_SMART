@@ -36,7 +36,7 @@ namespace Smart.Pages.Classes
 
             // For layout
             ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.Name}";
-            ViewData["ClassSubtitle"] = Meeting.GetScheduleString(@class.Meetings.OrderBy(c => c.ScheduleAvailability.DayOfWeek));
+            ViewData["ClassSubtitle"] = ScheduleAvailability.GetScheduleString(@class.Meetings.Select(s => s.ScheduleAvailability).OrderBy(c => c.DayOfWeek));
             ViewData["ClassId"] = @class.ClassId;
         }
 

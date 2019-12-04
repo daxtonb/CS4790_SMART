@@ -1,18 +1,15 @@
-﻿@*@model Class
+﻿@model Class
 @{
     var instructors = (IEnumerable<SelectListItem>)ViewData["instructors"];
 }
     <div class="container">
         <input type="hidden" asp-for="ClassId" />
         <input type="hidden" asp-for="CourseId" />
-        <input type="hidden" asp-for="Term.TermId" />
-        <input type="hidden" asp-for="Term.TimeOfYear" />
-        <input type="hidden" asp-for="Term.StartDate" />
-        <input type="hidden" asp-for="Term.EndDate" />
+        <input type="hidden" asp-for="TermId" />
 
         <div class="form-group">
             <label for="term">Term</label>
-            <input class="form-control" name="term" value="@(Model.Term.ToString())" readonly />
+            <input class="form-control" name="term" value="@(Model.Term.Name)" readonly />
         </div>
 
         <div class="form-group">
@@ -26,25 +23,26 @@
             <span asp-validation-for="Capacity" class="text-warning"></span>
         </div>
 
-        <h4>Schedule</h4>
-        @if (Model.ClassSchedules != null && Model.ClassSchedules.Any())
+        <h4>Meetings</h4>
+        @if (Model.Meetings != null && Model.Meetings.Any())
         {
-            <partial name="_ClassSchedule" , model="Model.ClassSchedules.Select(c => c.ScheduleAvailability).ToList()" />
+            <partial name="_ClassSchedule" , model="Model.Meetings.ToList()" />
         }
         else
         {
-            <partial name="_ClassSchedule" , model="new List<ScheduleAvailability>() { new ScheduleAvailability() }" />
+            <partial name="_ClassSchedule" , model="new List<Meeting>() { new Meeting() { MeetingOrderNum = 1 } }" />
         }
-        <a class="btn btn-primary text-white m-3" onclick="addSchedule()"><i class="fa fa-plus"></i> Day</a>
+        <a class="btn btn-primary text-white m-3" onclick="addSchedule()"><i class="fa fa-plus"></i> Meeting</a>
 
     </div>
 <script>
     function addSchedule() {
-        const scheduleWrapper = document.getElementById('schedule-wrapper');    // Get wrapper
-        const scheduleElement = scheduleWrapper.lastElementChild;               // Take the last schedule element
-        const newScheduleElement = scheduleElement.cloneNode(true);             // Clone the schedule element
-        const inputs = newScheduleElement.getElementsByTagName('INPUT');        // Grab the inputs in the new schedule element
-        const regex = /\[([0-9]+)\]/;                                           // Finds the index value (format: ScheduleAvailabilities[<index>].<PropertyName>)
+        const scheduleWrapper = document.getElementById('schedule-wrapper');            // Get wrapper
+        const scheduleElement = scheduleWrapper.lastElementChild;                       // Take the last schedule element
+        const newScheduleElement = scheduleElement.cloneNode(true);                     // Clone the schedule element
+        let inputs = Array.from(newScheduleElement.getElementsByTagName('INPUT'));    // Grab the inputs in the new schedule element
+        inputs = inputs.concat(Array.from(newScheduleElement.getElementsByTagName('SELECT')));   // Add the select input
+        const regex = /\[([0-9]+)\]/;                                                   // Finds the index value (format: ScheduleAvailabilities[<index>].<PropertyName>)
 
         // Loop over inputs and update the index value in their name attributes
         for (const input of inputs) {
@@ -58,4 +56,4 @@
         // Referesh form validator
         $.validator.unobtrusive.parse('form');
     }
-</script>*@
+</script>

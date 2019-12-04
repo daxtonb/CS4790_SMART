@@ -1,21 +1,9 @@
-﻿@*@page "{termId:int?}/{courseId:int?}"
+﻿@page "{schoolId:int?}/{termId:int?}/{courseId:int?}"
 @model Smart.Pages.Classes.IndexModel
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Pages/Shared/_Layout.cshtml";
-    bool termHasNotStartedYet = Model.TermHasNotStartedYet();
-    var nextTermRouteData = new Dictionary<string, string>()
-{
-        { "courseId", Model.SelectedCourseId.ToString() },
-        { "timeOfYear", Model.TimeOfYear == TimeOfYear.Fall ? ((int)TimeOfYear.Spring).ToString() : ( (int)Model.TimeOfYear + 1).ToString() },
-        { "year", Model.TimeOfYear == TimeOfYear.Fall ? ((int)Model.Year + 1).ToString() : ((int)Model.Year).ToString() }
-    };
-    var previousTermRouteData = new Dictionary<string, string>()
-{
-        { "courseId", Model.SelectedCourseId.ToString() },
-        { "timeOfYear", Model.TimeOfYear == TimeOfYear.Spring ? ((int)TimeOfYear.Fall).ToString() : ((int)Model.TimeOfYear - 1).ToString() },
-        { "year", Model.TimeOfYear == TimeOfYear.Spring ? ((int)Model.Year - 1 ).ToString() : ((int)Model.Year).ToString() }
-    };
+    bool termHasNotStartedYet = Model.SelectedTerm.StartDate > DateTime.Today;
 }
  
 <div id="main-section" class="container carousel-item active">
@@ -24,28 +12,18 @@
     {
         <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getCourseForm()"><i class="fa fa-plus"></i> Course</button>
     }
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
-        <div>
-            <a asp-all-route-data="previousTermRouteData" type="button" class="btn btn-secondary">
-                <i class="fa fa-chevron-left"></i>
-            </a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+    <div class="col-3">
+        <div class="align-content-center">
+            <select asp-for="SchoolId" asp-items="Model.Schools.Select(t => new SelectListItem { Value = t.SchoolId.ToString(), Text = t.Name })" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/' + this.value + '/@(Model.SelectedTerm.TermId)@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
         </div>
-        <div class="col-3">
-            <div class="align-content-center">
-                <select asp-for="TimeOfYear" asp-items="Html.GetEnumSelectList<TimeOfYear>()" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/' + this.value + '/@(Model.Year)@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
-            </div>
+    </div>
+    <div class="col-3">
+        <div class="align-content-center">
+            <select asp-for="SelectedTerm.TermId" asp-items="Model.Terms.Select(t => new SelectListItem { Value = t.TermId.ToString(), Text = t.Name })" style="background:#fff" class="form-control" onchange="window.location.replace('/Classes/@(Model.SchoolId)/' + this.value + '@(Model.SelectedCourseId.HasValue ? $"/{Model.SelectedCourseId.Value}" : "")');"></select>
         </div>
-        <div class="col-3">
-            <div class="align-content-center">
-                <input asp-for="Year" class="form-control" style="background:#fff" onchange="window.location.replace('/Classes/@((int)Model.TimeOfYear)/' + this.value@(Model.SelectedCourseId.HasValue ? $"+'/{Model.SelectedCourseId.Value}'" : ""))" />
-            </div>
-        </div>
-        <div>
-            <a asp-all-route-data="nextTermRouteData" type="button" class="btn btn-secondary">
-                <i class="fa fa-chevron-right"></i>
-            </a>
-        </div>
-    </nav>
+    </div>
+</nav>
 
     @if (Model.Courses != null && Model.Courses.Any())
     {
@@ -74,7 +52,7 @@
                         <div class="card-body">
                             @if (termHasNotStartedYet)
                             {
-                                <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year)"><i class="fa fa-plus"></i> Class</button>
+                                <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTerm.TermId)"><i class="fa fa-plus"></i> Class</button>
                             }
                             <div id="course-@course.Course.CourseId-classes">
                                 @if (course.Classes != null && course.Classes.Any())
@@ -103,7 +81,7 @@
                                                             @if (termHasNotStartedYet)
                                                             {
 
-                                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
+                                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTerm.TermId, @item.ClassId)">
                                                                     <i class="fas fa-edit"></i>
                                                                 </button>
                                                             }
@@ -114,7 +92,7 @@
                                                             @if (termHasNotStartedYet)
                                                             {
 
-                                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, '@Model.TimeOfYear', @Model.Year, @item.ClassId)">
+                                                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#form-modal" onclick="getClassForm(@course.Course.CourseId, @Model.SelectedTerm.TermId, @item.ClassId)">
                                                                     <i class="fas fa-trash-alt"></i>
                                                                 </button>
                                                             }
@@ -127,7 +105,7 @@
                                 }
                                 else
                                 {
-                                    <div class="alert alert-primary">No @(course.Course.Name) classes @(termHasNotStartedYet ? "have been created yet" : $"were created") for @Model.TimeOfYear @(Model.Year).</div>
+                                    <div class="alert alert-primary">No @(course.Course.Name) classes @(termHasNotStartedYet ? "have been created yet" : $"were created") for @Model.SelectedTerm.Name</div>
                                 }
                             </div>
                         </div>
@@ -150,13 +128,13 @@
 
         function getCourseForm(courseId) {
             const getHandler = classBaseUrl + 'CourseForm' + (courseId ? '&courseId=' + courseId : '');
-            const postHandler = classBaseUrl + 'SaveCourse&timeOfYear=@(Model.TimeOfYear)&year=@(Model.Year)'
+            const postHandler = classBaseUrl + 'SaveCourse&schoolId=@(Model.SchoolId)&termId=@(Model.SelectedTerm.TermId)'
             const modalTitle = `${courseId ? 'Edit' : 'Create'} Course`;
             getForm(modalTitle, getHandler, postHandler);
         }
 
-        function getClassForm(courseId, timeOfYear, year, classId) {
-            const getHandler = classBaseUrl + `ClassForm&courseId=${courseId}&timeOfYear=${timeOfYear}&year=${year}` + (classId ? '&classId=' + classId : '');
+        function getClassForm(courseId, termId, classId) {
+            const getHandler = classBaseUrl + `ClassForm&courseId=${courseId}&termId=${termId}` + (classId ? '&classId=' + classId : '');
             const postHandler = classBaseUrl + 'SaveClass';
             const modalTitle = `${classId ? 'Edit' : 'Create'} Class`;
             getForm(modalTitle, getHandler, postHandler);
@@ -168,4 +146,4 @@
             getForm(modalTitle, getHandler);
         }     
     </script>
-}*@
+}

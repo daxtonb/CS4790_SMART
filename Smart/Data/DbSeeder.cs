@@ -91,20 +91,6 @@ namespace Smart.Data
                 _context.SaveChanges();
             }
 
-            // Attendance Statuses
-            if (!_context.AttendanceStatuses.Any())
-            {
-                var attendanceStatuses = new AttendanceStatus[]
-                {
-                    new AttendanceStatus { AttendanceStatusId = AttendanceStatusEnum.OnTime, Description = AttendanceStatusEnum.OnTime.GetDisplayName() },
-                    new AttendanceStatus { AttendanceStatusId = AttendanceStatusEnum.Late, Description =   AttendanceStatusEnum.Late.GetDisplayName() },
-                    new AttendanceStatus { AttendanceStatusId = AttendanceStatusEnum.Absent, Description = AttendanceStatusEnum.Absent.GetDisplayName() },
-                };
-
-                _context.AttendanceStatuses.AddRange(attendanceStatuses);
-                _context.SaveChanges();
-            }
-
             // Assessment Types
             if (!_context.AssessmentTypes.Any())
             {
