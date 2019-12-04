@@ -15,5 +15,7 @@ namespace Smart.Data.Models
         public string Name { get; set; }
         [Required, MaxLength(256)]
         public string Description { get; set; }
+
+        public virtual ICollection<Assessment> Assessments { get; set; }
     }
 }

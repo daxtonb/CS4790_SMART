@@ -11,6 +11,8 @@ namespace Smart.Data.Models
     public class Assessment
     {
         public int AssessmentId { get; set; }
+        public int AssessmentTypeId { get; set; }
+
         public int ClassId { get; set; }
         [Required]
         [MaxLength(128)]
@@ -24,6 +26,7 @@ namespace Smart.Data.Models
         public double Weight { get; set; }
 
         public virtual Class Class { get; set; }
+        public virtual AssessmentType AssessmentType { get; set; }
         public virtual ICollection<StudentAssessment> StudentAssessments { get; set; }
     }
 }
