@@ -14,11 +14,11 @@
         <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="File.StudentId" class="control-label"></label>
+                <label class="control-label">Student</label>
                 <select asp-for="File.StudentId" class="form-control" asp-items="ViewBag.StudentId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="File.FileTypeId" class="control-label"></label>
+                <label class="control-label">File Type</label>
                 <select asp-for="File.FileTypeId" class="form-control" asp-items="ViewBag.FileTypeId"></select>
             </div>
 
@@ -29,12 +29,6 @@
                 <div class="col-5">
                     <input type="file" id="filedocument" name="files" multiple class="form-control" />
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="File.FileName" class="control-label"></label>
-                <input asp-for="File.FileName" class="form-control" />
-                <span asp-validation-for="File.FileName" class="text-danger"></span>
             </div>
             <div class="row">
                 <div class="col-6">

@@ -19,6 +19,8 @@ namespace Smart.Pages.Files
             _context = context;
         }
 
+        public IList<FileType> FileType { get; set; }
+
         public IList<File> File { get;set; }
         public IList<Student> Student { get; set; }
 
@@ -30,6 +32,7 @@ namespace Smart.Pages.Files
             studentIdentifies = studentId;
 
             File =  _context.Files
+                .Include(f => f.FileType)
                 .Where(f => f.StudentId == studentId).ToList();
 
             Student = _context.Students.Where(i => i.StudentId == studentId).ToList();

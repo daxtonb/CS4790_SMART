@@ -13,7 +13,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a class="nav-link" asp-page="../Students/Index" asp-route-studentId="@Model.Student.StudentId">Student</a>
+                    <a class="nav-link" asp-page="../Students/Details" asp-route-id="@Model.Student.StudentId">Student</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" asp-page="../Grades/Index" asp-route-studentId="@Model.Student.StudentId">Grades</a>
@@ -31,95 +31,72 @@
         </div>
     </nav>
 
-<div>
-    <dl class="row">
-
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.FirstName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.FirstName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.LastName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.LastName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.DateOfBirth)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.DateOfBirth)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.Address)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.Address)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.Village)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.Village)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.LocationLattitude)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.LocationLattitude)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.LocationLongitude)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.LocationLongitude)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.PublicSchoolLevel)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.PublicSchoolLevel)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.EnglishLevel)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.EnglishLevel)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.ItLevel)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.ItLevel)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.GuardianName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.GuardianName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.Phone)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.Phone)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.Photo)
-        </dt>
-        <dd class="col-sm-10">
-            <img src="@imagePath" height="60%" width="40%" />
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Student.StudentStatus)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Student.StudentStatus.Description)
-        </dd>
-    </dl>
-</div>
+    <form>
+        <br />
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <img src="@imagePath" height="60%" width="40%" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label><strong>First Name</strong></label>
+                <label>@Html.DisplayFor(model => model.Student.FirstName)</label>
+            </div>
+            <div class="form-group col-md-6">
+                <label><strong>Last Name</strong></label>
+                <label>@Html.DisplayFor(model => model.Student.LastName)</label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label><strong>Address</strong></label>
+                <label>@Html.DisplayFor(model => model.Student.Address)</label>
+            </div>
+            <div class="form-group col-md-6">
+                <label><strong>Village</strong></label>
+                <label>@Html.DisplayFor(model => model.Student.Village)</label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label><strong>Lattitude</strong></label>
+                <label>@Html.DisplayFor(model => model.Student.LocationLattitude)</label>
+            </div>
+            <div class="form-group col-md-6">
+                <label><strong>Longitude</strong></label>
+                <label>@Html.DisplayFor(model => model.Student.LocationLongitude)</label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label><strong>@Html.DisplayNameFor(model => model.Student.PublicSchoolLevel)</strong></label>
+                <label>@Html.DisplayFor(model => model.Student.PublicSchoolLevel)</label>
+            </div>
+            <div class="form-group col-md-4">
+                <label><strong>@Html.DisplayNameFor(model => model.Student.EnglishLevel)</strong></label>
+                <label>@Html.DisplayFor(model => model.Student.EnglishLevel)</label>
+            </div>
+            <div class="form-group col-md-4">
+                <label><strong>@Html.DisplayNameFor(model => model.Student.ItLevel)</strong></label>
+                <label>@Html.DisplayFor(model => model.Student.ItLevel)</label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label><strong>@Html.DisplayNameFor(model => model.Student.Phone)</strong></label>
+                <label>@Html.DisplayFor(model => model.Student.Phone)</label>
+            </div>
+            <div class="form-group col-md-4">
+                <label><strong>@Html.DisplayNameFor(model => model.Student.StudentStatus)</strong></label>
+                <label>@Html.DisplayNameFor(model => model.Student.StudentStatus)</label>
+            </div>
+            <div class="form-group col-md-4">
+                <label><strong>@Html.DisplayNameFor(model => model.Student.GuardianName)</strong></label>
+                <label>@Html.DisplayFor(model => model.Student.GuardianName)</label>
+            </div>
+        </div>
+    </form>
 <div class="form-group row ">
     <div class="col-2">
         <partial name="_DetailsButtons" />

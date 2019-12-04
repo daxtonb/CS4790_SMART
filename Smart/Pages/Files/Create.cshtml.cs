@@ -49,7 +49,7 @@ namespace Smart.Pages.Files
                             pic = ms.ToArray();
                         }
                     }
-                    File.FileTypeId = FileTypeEnum.Other;
+             //       File.FileTypeId = FileTypeEnum.Other;
                 
                     File.FileName = files[0].FileName.Substring(files[0].FileName.LastIndexOf('\\')+1);
                     File.ByteData = pic;
