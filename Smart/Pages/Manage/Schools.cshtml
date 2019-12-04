@@ -1,0 +1,114 @@
+﻿@page "{schoolId:int?}/{selectedDayOfWeek:int?}"
+@model Smart.Pages.Manage.SchoolsModel
+@{
+    ViewData["Title"] = "Schools";
+    var daysOfWeek = Enum.GetValues(typeof(DayOfWeek)) as IEnumerable<DayOfWeek>;
+}
+<button class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getSchoolForm()"><i class="fa fa-plus"></i> School</button>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <h2 class="text-white">Schools</h2>
+</nav>
+<div class="accordion" id="accordionExample">
+    @foreach (var item in Model.Schools)
+    {
+        string collapseId = $"collapse-school-{item.School.SchoolId}";
+        bool isSelectedSchool = Model.SelectedSchoolId == item.School.SchoolId;
+
+        <div class="card">
+            <div class="card-header parent" data-toggle="collapse" data-target="#@collapseId" aria-expanded="@(isSelectedSchool ? "true": "false")" aria-controls="@collapseId" style="cursor:pointer">
+                <h4 class="mb-0" style="display:inline-block">
+                    @item.School.Name
+                </h4>
+                <div class="btn-group btn-group-sm float-right show-on-parent-hover" role="group">
+                    <a class="btn btn-primary text-white" data-toggle="modal" data-target="#form-modal" onclick="getSchoolForm(@item.School.SchoolId)">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="btn btn-danger text-white" data-toggle="modal" data-target="#form-modal" onclick="getSchoolForm(@item.School.SchoolId)">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div id="@collapseId" class="collapse @(isSelectedSchool? "show" : "")" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                    <a class="btn btn-primary mb-3" href="/Classes/@item.School.SchoolId">Courses</a>
+                    <h2>Schedule Availabilities</h2>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        @foreach (var dayOfWeek in daysOfWeek)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(dayOfWeek == Model.SelectedDayOfWeek ? "active" : "")" id="@dayOfWeek-tab" data-toggle="tab" href="#@dayOfWeek" role="tab" aria-controls="@dayOfWeek" aria-selected="true">@dayOfWeek</a>
+                            </li>
+                        }
+                    </ul>
+                    <div class="tab-content p-4" id="myTabContent">
+                        @foreach (var dayOfWeek in daysOfWeek)
+                        {
+                        <div class="tab-pane fade @(dayOfWeek == Model.SelectedDayOfWeek ? "show active" : "")" id="@dayOfWeek" role="tabpanel" aria-labelledby="@dayOfWeek-tab">
+                            <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getScheduleAvailabilityForm(@item.School.SchoolId, '@dayOfWeek')"><i class="fa fa-plus"></i> Schedule Availability</button>
+
+
+                            @if (item.ScheduleAvailabilitiesByDay.TryGetValue(dayOfWeek, out List<ScheduleAvailability> scheduleAvailabilities))
+                            {
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th role="columnheader">Start Time</th>
+                                            <th role="columnheader">End Time</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var availability in scheduleAvailabilities)
+                                        {
+                                            <tr class="parent">
+                                                <td>@availability.StartTime.ToString12HourTime()</td>
+                                                <td>@availability.EndTime.ToString12HourTime()</td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm float-right show-on-parent-hover" role="group">
+                                                        <a class="btn btn-primary text-white" data-toggle="modal" data-target="#form-modal" onclick="getScheduleAvailabilityForm(@item.School.SchoolId, '@dayOfWeek', @availability.ScheduleAvailabilityId)">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <a class="btn btn-danger text-white" data-toggle="modal" data-target="#form-modal" onclick="getScheduleAvailabilityForm(@item.School.SchoolId, '@dayOfWeek', @availability.ScheduleAvailabilityId)">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="alert alert-primary">No schedule availabilities have been created for this day</div>
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts
+{
+    <script>
+        const schoolBaseUrl = '/Manage/Schools?handler=';
+
+        function getSchoolForm(schoolId) {
+            const getHandler = schoolBaseUrl + 'SchoolForm' + (schoolId ? '&schoolId=' + schoolId : '');
+            const postHandler = schoolBaseUrl + 'SaveSchool';
+            const modalTitle = `${schoolId ? 'Edit' : 'Create'} School`;
+            getForm(modalTitle, getHandler, postHandler);
+        }
+
+        function getScheduleAvailabilityForm(schoolId, dayOfWeek, scheduleAvailabilityId) {
+            const getHandler = schoolBaseUrl + `ScheduleAvailabilityForm&schoolId=${schoolId}&dayOfWeek=${dayOfWeek}${(scheduleAvailabilityId ? '&scheduleAvailabilityId=' + scheduleAvailabilityId : '')}`;
+            const postHandler = schoolBaseUrl + 'SaveScheduleAvailability';
+            const modalTitle = `${scheduleAvailabilityId ? 'Edit' : 'Create'} Schedule Availability`;
+            getForm(modalTitle, getHandler, postHandler);
+        }
+    </script>
+}

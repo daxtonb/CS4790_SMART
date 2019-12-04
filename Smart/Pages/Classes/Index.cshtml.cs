@@ -148,7 +148,11 @@ namespace Smart.Pages.Classes
                 }).ToListAsync();
 
             // School Schedule Availabilities
-            ViewData["scheduleAvailabilities"] = await _context.ScheduleAvailabilities.Where(s => s.SchoolId == @class.Course.SchoolId).ToListAsync();
+            ViewData["scheduleAvailabilities"] = await _context.ScheduleAvailabilities
+                .Where(s => s.SchoolId == @class.Course.SchoolId)
+                .OrderBy(s => s.DayOfWeek)
+                .ThenBy(s => s.StartTime)
+                .ToListAsync();
 
             return new PartialViewResult()
             {

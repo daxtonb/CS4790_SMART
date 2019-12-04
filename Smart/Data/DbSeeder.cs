@@ -59,6 +59,13 @@ namespace Smart.Data
                 var sponsor = new User() { FirstName = "Test", LastName = "sponsor", Email = "sponsor@email.com", UserName = "sponsor@email.com" };
                 _userManager.CreateAsync(sponsor, password).Wait();
                 _userManager.AddToRoleAsync(sponsor, RoleEnum.Sponsor.GetDisplayName()).Wait();
+
+                // Default all users to active
+                foreach (var u in _context.Users.ToList())
+                {
+                    u.IsActive = true;
+                }
+                _context.SaveChanges();
             }
 
             // Add schools
