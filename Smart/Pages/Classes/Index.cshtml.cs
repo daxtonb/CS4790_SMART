@@ -89,30 +89,6 @@ namespace Smart.Pages.Classes
             }
         }
 
-        public async Task<IActionResult> OnGetCourseFormAsync(int courseId)
-        {
-            Course course;
-
-            if (courseId > 0)
-            {
-                course = await _context.Courses.FirstOrDefaultAsync(c => c.CourseId == courseId);
-                if (course == null)
-                {
-                    return NotFound();
-                }
-            }
-            else
-            {
-                course = new Course();
-            }
-
-            return new PartialViewResult()
-            {
-                ViewName = "_CourseForm",
-                ViewData = new ViewDataDictionary<Course>(ViewData, course)
-            };
-        }
-
         public async Task<IActionResult> OnGetClassFormAsync(int classId, int courseId, int termId)
         {
             Class @class;
@@ -184,34 +160,6 @@ namespace Smart.Pages.Classes
                 ViewName = "_StudentsList",
                 ViewData = new ViewDataDictionary<IEnumerable<Student>>(ViewData, students)
             };
-        }
-
-        public async Task<IActionResult> OnPostSaveCourseAsync(Course model, int termId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            // CONDITION: This is a new course. Add to database.
-            if (model.CourseId == 0)
-            {
-                _context.Courses.Add(model);
-            }
-            else
-            {
-                var course = await _context.Courses.FirstOrDefaultAsync(c => c.CourseId == model.CourseId);
-                if (course == null)
-                {
-                    return NotFound();
-                }
-
-                course.Name = model.Name;
-                course.IsCoreRequirement = model.IsCoreRequirement;
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToPage(new { termId, courseId = model.CourseId, schoolId = model.SchoolId });
         }
 
         public async Task<IActionResult> OnPostSaveClassAsync(Class model)

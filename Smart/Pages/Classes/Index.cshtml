@@ -122,13 +122,6 @@
     <script>
         const classBaseUrl = '/Classes?handler=';
 
-        function getCourseForm(courseId) {
-            const getHandler = classBaseUrl + 'CourseForm' + (courseId ? '&courseId=' + courseId : '');
-            const postHandler = classBaseUrl + 'SaveCourse&schoolId=@(Model.SchoolId)&termId=@(Model.SelectedTerm.TermId)'
-            const modalTitle = `${courseId ? 'Edit' : 'Create'} Course`;
-            getForm(modalTitle, getHandler, postHandler);
-        }
-
         function getClassForm(courseId, termId, classId) {
             const getHandler = classBaseUrl + `ClassForm&courseId=${courseId}&termId=${termId}` + (classId ? '&classId=' + classId : '');
             const postHandler = classBaseUrl + 'SaveClass';
