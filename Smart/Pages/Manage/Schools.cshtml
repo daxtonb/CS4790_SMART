@@ -33,18 +33,18 @@
                 <div class="card-body">
                     <a class="btn btn-primary mb-3" href="/Classes/@item.School.SchoolId">Courses</a>
                     <h2>Schedule Availabilities</h2>
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <ul class="nav nav-tabs" id="schedule-availabilities-@item.School.SchoolId" role="tablist">
                         @foreach (var dayOfWeek in daysOfWeek)
                         {
                             <li class="nav-item">
-                                <a class="nav-link @(dayOfWeek == Model.SelectedDayOfWeek ? "active" : "")" id="@dayOfWeek-tab" data-toggle="tab" href="#@dayOfWeek" role="tab" aria-controls="@dayOfWeek" aria-selected="true">@dayOfWeek</a>
+                                <a class="nav-link @(dayOfWeek == Model.SelectedDayOfWeek ? "active" : "")" id="@dayOfWeek@item.School.SchoolId-tab" data-toggle="tab" href="#@dayOfWeek@item.School.SchoolId" role="tab" aria-controls="@dayOfWeek@item.School.SchoolId" aria-selected="true">@dayOfWeek</a>
                             </li>
                         }
                     </ul>
-                    <div class="tab-content p-4" id="myTabContent">
+                    <div class="tab-content p-4" id="schedule-availabilities-@item.School.SchoolId-content">
                         @foreach (var dayOfWeek in daysOfWeek)
                         {
-                        <div class="tab-pane fade @(dayOfWeek == Model.SelectedDayOfWeek ? "show active" : "")" id="@dayOfWeek" role="tabpanel" aria-labelledby="@dayOfWeek-tab">
+                        <div class="tab-pane fade @(dayOfWeek == Model.SelectedDayOfWeek ? "show active" : "")" id="@dayOfWeek@item.School.SchoolId" role="tabpanel" aria-labelledby="@dayOfWeek@item.School.SchoolId-tab">
                             <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#form-modal" onclick="getScheduleAvailabilityForm(@item.School.SchoolId, '@dayOfWeek')"><i class="fa fa-plus"></i> Schedule Availability</button>
 
 
