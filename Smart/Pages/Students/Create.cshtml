@@ -50,17 +50,31 @@
             </div>
             <div class="form-group">
                 <label asp-for="Student.PublicSchoolLevel" class="control-label"></label>
-                <input asp-for="Student.PublicSchoolLevel" class="form-control" />
+                <select asp-for="Student.PublicSchoolLevel" class="form-control">
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
                 <span asp-validation-for="Student.PublicSchoolLevel" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Student.EnglishLevel" class="control-label"></label>
-                <input asp-for="Student.EnglishLevel" class="form-control" />
+                <select asp-for="Student.EnglishLevel" class="form-control">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
                 <span asp-validation-for="Student.EnglishLevel" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Student.ItLevel" class="control-label"></label>
-                <input asp-for="Student.ItLevel" class="form-control" />
+                <select asp-for="Student.ItLevel" class="form-control">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
                 <span asp-validation-for="Student.ItLevel" class="text-danger"></span>
             </div>
             <div class="form-group">

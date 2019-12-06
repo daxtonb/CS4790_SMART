@@ -10,14 +10,14 @@
 <h4>File</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div class="col-4">
                 <label class="control-label">Student</label>
                 <select asp-for="File.StudentId" class="form-control" asp-items="ViewBag.StudentId"></select>
             </div>
-            <div class="form-group">
+            <div class="col-4">
                 <label class="control-label">File Type</label>
                 <select asp-for="File.FileTypeId" class="form-control" asp-items="ViewBag.FileTypeId"></select>
             </div>
@@ -26,7 +26,7 @@
                 <div class="col-2">
                     <label asp-for="File.ByteData" class="col-form-label"></label>
                 </div>
-                <div class="col-5">
+                <div class="col-xl-12">
                     <input type="file" id="filedocument" name="files" multiple class="form-control" />
                 </div>
             </div>

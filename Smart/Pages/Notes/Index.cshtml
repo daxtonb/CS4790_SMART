@@ -5,29 +5,29 @@
     ViewData["Title"] = "Index";
 }
 
-    <h1>@Model.Student[0].FirstName @Model.Student[0].LastName</h1>
+<h1>@Model.Student[0].FirstName @Model.Student[0].LastName</h1>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" asp-page="../Students/Details" asp-route-id="@Model.Student[0].StudentId">Student</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-page="../Grades/Index" asp-route-studentId="@Model.Student[0].StudentId">Grades</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-page="../Files/Index" asp-route-studentId="@Model.Student[0].StudentId">Files</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-page="../Scheduling/Index" asp-route-studentId="@Model.Student[0].StudentId">Schedule</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" asp-page="../Notes/Index" asp-route-studentId="@Model.Student[0].StudentId">Notes<span class="sr-only">(current)</span></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" asp-page="../Students/Details" asp-route-id="@Model.Student[0].StudentId">Student</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="../Grades/Index" asp-route-studentId="@Model.Student[0].StudentId">Grades</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="../Files/Index" asp-route-studentId="@Model.Student[0].StudentId">Files</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-page="../Scheduling/Index" asp-route-studentId="@Model.Student[0].StudentId">Schedule</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" asp-page="../Notes/Index" asp-route-studentId="@Model.Student[0].StudentId">Notes<span class="sr-only">(current)</span></a>
+            </li>
+        </ul>
+    </div>
+</nav>
 <table class="table">
     <thead>
         <tr>
@@ -35,7 +35,10 @@
                 @Html.DisplayNameFor(model => model.Note[0].Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Note[0].NoteType)
+                Note Type
+            </th>
+            <th>
+                Date Created
             </th>
 
             <th></th>
@@ -45,21 +48,33 @@
         @foreach (var item in Model.Note)
         {
 
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NoteType.Description)
-            </td>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NoteType.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate)
+                </td>
 
-            <td>
-                <a asp-page="./Edit" class="btn btn-primary text-white" asp-route-id="@item.NoteId" asp-route-studentId="@Model.studentIdentifies"><i class="fas fa-edit"></i></a>
-                <a asp-page="./Details" class="btn btn-success text-white" asp-route-id="@item.NoteId" asp-route-studentId="@Model.studentIdentifies"><i class="fas fa-list-alt"></i></a>
-                <a asp-page="./Delete" class="btn btn-danger text-white" asp-route-id="@item.NoteId" asp-route-studentId="@Model.studentIdentifies"><i class="fas fa-trash-alt"></i></a>
-            </td>
-        </tr>
+                <td>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Instructor") || User.IsInRole("Social Worker") || User.IsInRole("Sponsor"))
+                    {
+                        <a asp-page="./Edit" class="btn btn-primary text-white" asp-route-id="@item.NoteId" asp-route-studentId="@Model.studentIdentifies"><i class="fas fa-edit"></i></a>
+                    }
+                    <a asp-page="./Details" class="btn btn-success text-white" asp-route-id="@item.NoteId" asp-route-studentId="@Model.studentIdentifies"><i class="fas fa-list-alt"></i></a>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Instructor") || User.IsInRole("Social Worker") || User.IsInRole("Sponsor"))
+                    {
+                        <a asp-page="./Delete" class="btn btn-danger text-white" asp-route-id="@item.NoteId" asp-route-studentId="@Model.studentIdentifies"><i class="fas fa-trash-alt"></i></a>
+                    }
+                </td>
+            </tr>
         }
     </tbody>
 </table>
-<a asp-page="Create" asp-route-studentId="@Model.studentIdentifies" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Add Note </a>
+@if (User.IsInRole("Admin") || User.IsInRole("Instructor") || User.IsInRole("Social Worker") || User.IsInRole("Sponsor"))
+{
+    <a asp-page="Create" asp-route-studentId="@Model.studentIdentifies" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Add Note </a>
+}

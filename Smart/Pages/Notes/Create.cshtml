@@ -1,5 +1,7 @@
-﻿@page
+﻿@page 
+
 @model Smart.Pages.Notes.CreateModel
+
 
 @{
     ViewData["Title"] = "Create";
@@ -23,7 +25,7 @@
             </div>
             <div class="form-group">
                 <label class="control-label">Note Type</label>
-                <select asp-for="Note.NoteType.Description" class="form-control" asp-items="ViewBag.NoteTypeId"></select>
+                <select asp-for="Note.NoteTypeId" class="form-control" asp-items="ViewBag.NoteTypeId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Note.Title" class="control-label"></label>

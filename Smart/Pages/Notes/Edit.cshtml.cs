@@ -48,8 +48,10 @@ namespace Smart.Pages.Notes
             {
                 return NotFound();
             }
-           ViewData["NoteTypeId"] = new SelectList(_context.NoteTypes, "NoteTypeId", "NoteTypeId");
-           ViewData["Studentid"] = new SelectList(_context.Students.Where(n => n.StudentId == studentId).ToList(), "StudentId", "FirstName");
+
+        
+            ViewData["NoteTypeId"] = new SelectList(_context.NoteTypes.ToList(), "NoteTypeId", "Description");
+            ViewData["Studentid"] = new SelectList(_context.Students.Where(n => n.StudentId == studentId).ToList(), "StudentId", "FirstName");
            ViewData["UserId"] = new SelectList(_context.Users.Where(n => n.Id == user.Id).ToList(), "Id", "Email");
             return Page();
         }

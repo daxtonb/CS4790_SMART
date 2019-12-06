@@ -28,10 +28,10 @@ namespace Smart.Pages.Grades
         public IList<File> File { get; set; }
         public async Task OnGetAsync(int studentId)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var idu = user.Id;
+        //    var user = await _userManager.GetUserAsync(User);
+           // var idu = user.Id;
 
-            Class = _context.Classes.Where(n => n.InstructorUserId == idu).ToList();
+           // Class = _context.Classes.Where(n => n.InstructorUserId == idu).ToList();
 
 
             StudentAssessment = await _context.StudentAssessments
@@ -39,7 +39,7 @@ namespace Smart.Pages.Grades
                 .Include(s => s.Assessment.Class)
                 .Include(s => s.Assessment.Class.Course)
                 .Include(s=> s.File)
-                .Where(s => s.Assessment.Class.InstructorUserId == idu && s.StudentId == studentId)
+                .Where(s => s.StudentId == studentId)
                 .ToListAsync();
 
             Student = _context.Students.Where(i => i.StudentId == studentId).ToList();

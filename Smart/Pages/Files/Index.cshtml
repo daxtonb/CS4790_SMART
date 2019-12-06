@@ -45,24 +45,29 @@
     <tbody>
         @foreach (var item in Model.File)
         {
-        <tr>
+            <tr>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.FileName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FileType.Description)
-            </td>
-            <td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FileName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FileType.Description)
+                </td>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-page="./Delete" class="btn btn-danger text-white" asp-route-id="@item.FileId" asp-route-studentId="@Model.studentIdentifies"><i class="fas fa-trash-alt"></i></a>
+                    }
+                    <span>
+                        <a asp-controller="File" asp-action="Download" class="btn btn-info text-white" asp-route-fileId="@item.FileId" style="color:#7989ff">Download</a>
 
-                <a asp-page="./Delete" class="btn btn-danger text-white" asp-route-id="@item.FileId" asp-route-studentId="@Model.studentIdentifies"><i class="fas fa-trash-alt"></i></a>
-                <span>
-                    <a asp-controller="File" asp-action="Download" class="btn btn-info text-white" asp-route-fileId="@item.FileId" style="color:#7989ff">Download</a>
-
-                </span>
-            </td>
-        </tr>
+                    </span>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
-<a asp-page="Create" asp-route-studentId="@Model.studentIdentifies" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Add New File </a>
+@if (User.IsInRole("Admin"))
+{
+    <a asp-page="Create" asp-route-studentId="@Model.studentIdentifies" class="btn btn-info"><i class="fas fa-plus"></i> &nbsp;  Add New File </a>
+}
