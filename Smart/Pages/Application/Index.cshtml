@@ -125,9 +125,13 @@
             @*Button Group*@
             <td style="width:150px">
                 <div class="btn-group" role="group">
-                    <a class="btn btn-warning text-white" asp-page="Rating" asp-route-Id="@item.StudentId">
-                        <i class="fas fa-star"></i>
-                    </a>
+
+                    @if (!User.IsInRole("Admin"))
+                    {
+                        <a class="btn btn-warning text-white" asp-page="Rating" asp-route-Id="@item.StudentId">
+                            <i class="fas fa-star"></i>
+                        </a>
+                    }
 
                     @if (User.IsInRole("Admin"))
                     {
