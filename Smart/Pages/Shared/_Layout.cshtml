@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{ 
+    bool isIframe = (bool?)ViewData["isIframe"] != null && (bool?)ViewData["isIframe"] == true;
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -11,70 +14,77 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-page="/Index">Smart</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <partial name="_LoginPartial" />
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Index">Home</a>
-                        </li>
-                        @*Manage Pages Dropdown Menu*@
-                        <li class="nav-item dropdown text-white-50">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarManageDropDownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Manage</a>
-                            <div class="dropdown-menu" aria-labelledby="navbarManageDropDownMenuLink" id="#navbarManageDropDownMenuLink">
-                                <a class="nav-link text-dark" asp-page="/Manage/Users">Users</a>
-                            </div>
-                        </li>
-
-                        @*Application Pages Dropdown Menu*@
-                        <li class="nav-item dropdown text-white-50">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarApplicationDropDownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Application</a>
-                            <div class="dropdown-menu" aria-labelledby="navvarApplicationDropDownMenuLink" id="#navbarApplicationDropDownMenuLink">
-                                <a class="nav-link text-dark" asp-page="/Application/Index">Applicants</a>
-                                <a class="nav-link text-dark" asp-page="/RatingCriterium/Index">Rating Criterium</a>
-                            </div>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Students/Index">Students</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Classes/Index">Classes</a>
-                        </li>
-                        @if (User.IsInRole("Admin"))
-                        {
+    @if (!isIframe)
+    {
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container">
+                    <a class="navbar-brand" asp-page="/Index">Smart</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                        <partial name="_LoginPartial" />
+                        <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
-                                <a asp-page="Events/EventsView" class="nav-link text-dark">Events</a>
+                                <a class="nav-link text-dark" asp-page="/Index">Home</a>
                             </li>
-                            <li class="nav-item">
-                                <a asp-page="Events/ErrorsView" class="nav-link text-dark">Errors</a>
+                            @*Manage Pages Dropdown Menu*@
+                            <li class="nav-item dropdown text-white-50">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarManageDropDownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Manage</a>
+                                <div class="dropdown-menu" aria-labelledby="navbarManageDropDownMenuLink" id="#navbarManageDropDownMenuLink">
+                                    <a class="nav-link text-dark" asp-page="/Manage/Users">Users</a>
+                                    <a class="nav-link text-dark" asp-page="/Manage/Schools">Schools</a>
+                                </div>
                             </li>
 
-                        }
-                    </ul>
+                            @*Application Pages Dropdown Menu*@
+                            <li class="nav-item dropdown text-white-50">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarApplicationDropDownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Application</a>
+                                <div class="dropdown-menu" aria-labelledby="navvarApplicationDropDownMenuLink" id="#navbarApplicationDropDownMenuLink">
+                                    <a class="nav-link text-dark" asp-page="/Application/Index">Applicants</a>
+                                    <a class="nav-link text-dark" asp-page="/RatingCriterium/Index">Rating Criterium</a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Students/Index">Students</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Classes/Index">Classes</a>
+                            </li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a asp-page="Events/EventsView" class="nav-link text-dark">Events</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-page="Events/ErrorsView" class="nav-link text-dark">Errors</a>
+                                </li>
+
+                            }
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
+            </nav>
+        </header>
+    }
+    <div class="@(isIframe ? "" : "container")">
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2019 - Smart - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    @if (!isIframe)
+    {
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2019 - Smart - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>
+    }
 
     <!-- Form Modal -->
     <div class="modal fade" id="form-modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">

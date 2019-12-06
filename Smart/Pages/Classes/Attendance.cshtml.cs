@@ -59,8 +59,6 @@ namespace Smart.Pages.Classes
                 Count = a.Count()
             }).OrderByDescending(a => a.Date);
 
-            ViewData["ClassTitle"] = $"{@class.Course.Name} - {@class.Term.Name}";
-            ViewData["ClassSubtitle"] = ScheduleAvailability.GetScheduleString(@class.Meetings.Select(m => m.ScheduleAvailability).OrderBy(c => c.DayOfWeek));
             ViewData["ClassId"] = @class.ClassId;
         }
 

@@ -9,6 +9,7 @@
     <div class="row border border-primary pl-1 pr-1 class-schedule">
         <div class="col-3">
             <div class="form-group">
+                <input type="hidden" asp-for="@Model[i].MeetingId" name="Meetings[@i].MeetingId" />
                 <label asp-for="@Model[i].MeetingOrderNum">Meeting #</label>
                 <input asp-for="@Model[i].MeetingOrderNum" name="Meetings[@i].MeetingOrderNum" class="form-control" />
                 <span class="text-warning" asp-validation-for="@Model[i].MeetingOrderNum"></span>

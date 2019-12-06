@@ -22,6 +22,11 @@
             <input asp-for="Capacity" class="form-control" />
             <span asp-validation-for="Capacity" class="text-warning"></span>
         </div>
+        <div class="form-group">
+            <label asp-for="PassingGradeThreshold"></label>
+            <input asp-for="PassingGradeThreshold" class="form-control" />
+            <span asp-validation-for="PassingGradeThreshold" class="text-warning"></span>
+        </div>
 
         <h4>Meetings</h4>
         @if (Model.Meetings != null && Model.Meetings.Any())
@@ -43,6 +48,9 @@
         let inputs = Array.from(newScheduleElement.getElementsByTagName('INPUT'));    // Grab the inputs in the new schedule element
         inputs = inputs.concat(Array.from(newScheduleElement.getElementsByTagName('SELECT')));   // Add the select input
         const regex = /\[([0-9]+)\]/;                                                   // Finds the index value (format: ScheduleAvailabilities[<index>].<PropertyName>)
+
+        // Give MeetingId a default value
+        inputs[0].value = 0;
 
         // Loop over inputs and update the index value in their name attributes
         for (const input of inputs) {

@@ -1,0 +1,17 @@
+﻿@model ScheduleAvailability
+
+<div class="container">
+    <input type="hidden" asp-for="ScheduleAvailabilityId" />
+    <input type="hidden" asp-for="DayOfWeek" />
+    <input type="hidden" asp-for="SchoolId" />
+    <div class="form-group">
+        <label asp-for="StartTime"></label>
+        <input asp-for="StartTime" class="form-control" required />
+        <span asp-validation-for="StartTime" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="EndTime"></label>
+        <input asp-for="EndTime" class="form-control" required />
+        <span asp-validation-for="EndTime" class="text-danger"></span>
+    </div>
+</div>

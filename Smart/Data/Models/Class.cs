@@ -19,6 +19,7 @@ namespace Smart.Data.Models
         [Range(1,255)]
         public byte Capacity { get; set; }
         [Range(0,100)]
+        [Display(Name = "Passing Grade Threshold")]
         public double PassingGradeThreshold { get; set; }
 
         public virtual Course Course { get; set; }

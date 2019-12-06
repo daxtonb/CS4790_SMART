@@ -1,11 +1,9 @@
 ﻿@{
+    ViewData["isIframe"] = (bool?)true;
     Layout = "~/Pages/Shared/_Layout.cshtml";
     string url = Context.Request.Path.ToString();
 }
-<div class="card">
-    <div class="card-body">
-        <h2 class="card-title">@ViewData["ClassTitle"]</h2>
-        <h5 class="card-subtitle mb-4 text-muted">@ViewData["ClassSubtitle"]</h5>
+
         <div class="row border-top pt-3">
             <div class="col-3 border-right">
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -20,8 +18,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
 <script>
     const assessmentBaseUrl = '/Classes/@ViewData["classId"]/Assessments?handler=';
