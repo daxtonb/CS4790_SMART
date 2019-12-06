@@ -26,13 +26,20 @@
 
     <form method="post">
         <div class="col-4">
+
             @foreach (var item in Model.RatingCirterium)
             {
                 <div class="font-weight-bold" style="margin-bottom: 5px">
                     @item.Title :
-                    <input type="text" name="inputValues" class="control-label" />
+
+                </div>
+
+                <div>
+                    <input type="text" name="inputValues" class="control-label" style="width:25px" />
                     / @item.MaxScore
                 </div>
+
+                <br />
             }
 
             @*Comments Box*@
