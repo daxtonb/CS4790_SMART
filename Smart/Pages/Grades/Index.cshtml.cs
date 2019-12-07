@@ -36,6 +36,7 @@ namespace Smart.Pages.Grades
 
             StudentAssessment = await _context.StudentAssessments
                 .Include(s => s.Assessment)
+                .Include(s => s.Assessment.AssessmentType)
                 .Include(s => s.Assessment.Class)
                 .Include(s => s.Assessment.Class.Course)
                 .Include(s=> s.File)

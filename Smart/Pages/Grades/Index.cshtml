@@ -37,10 +37,13 @@
                 @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment.Class)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment.PointsPossible)
+                @Html.DisplayNameFor(model => model.StudentAssessment[0].Assessment.AssessmentType)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StudentAssessment[0].PointsAwarded)
+                Score
+            </th>
+            <th>
+                Out of
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.StudentAssessment[0].Comments)
@@ -65,10 +68,13 @@
                 @Html.DisplayFor(modelItem => item.Assessment.Class.Course.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Assessment.PointsPossible)
+                @Html.DisplayFor(modelItem => item.Assessment.AssessmentType.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PointsAwarded)
+                @Html.DisplayFor(modelItem => item.PointsAwarded)                
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Assessment.PointsPossible)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Comments)

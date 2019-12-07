@@ -45,11 +45,25 @@
     <tbody>
         @foreach (var item in Model.File)
         {
-            <tr>
+        <tr>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.FileName)
-                </td>
+                @if (((string)item.FileName).Contains("\\"))
+                {
+                    
+                    var i = ((string)item.FileName).LastIndexOf("\\");
+                    var name = ((string)item.FileName).Substring(i+1);
+                  //  name = "Hello";
+                    <td>
+                        @name
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FileName)
+                    </td>    
+                }
+
                 <td>
                     @Html.DisplayFor(modelItem => item.FileType.Description)
                 </td>
