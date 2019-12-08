@@ -21,7 +21,7 @@ namespace MyApp.Namespace
         
         public async Task OnGetAsync()
         {
-            MyEvents = await _db.Events.ToListAsync();
+            MyEvents = await _db.Events.OrderByDescending(i => i.DateTime).ToListAsync();
         }
     }
 }
