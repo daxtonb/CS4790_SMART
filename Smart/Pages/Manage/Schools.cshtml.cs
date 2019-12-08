@@ -33,8 +33,8 @@ namespace Smart.Pages.Manage
             {
                 School = s,
                 ScheduleAvailabilitiesByDay = s.ScheduleAvailabilities
-                                                .GroupBy(s => s.DayOfWeek)
-                                                .ToDictionary(s => s.Key, s => s.OrderBy(a => a.StartTime).ToList())
+                                                .GroupBy(i => i.DayOfWeek)
+                                                .ToDictionary(j => j.Key, w => w.OrderBy(a => a.StartTime).ToList())
             }).ToList();
 
             SelectedSchoolId = schoolId ?? schools.First().SchoolId;
