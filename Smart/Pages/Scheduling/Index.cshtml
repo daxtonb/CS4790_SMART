@@ -58,18 +58,28 @@
                 {
                     @foreach(var meeting in @Model.StudentMeetings.Where(i => i.Meeting.Class.Course.School.Name.Contains("No Poor Among Us")))
                     {
-                        <tr>
-                            <td colspan="3">@meeting.Meeting.Class.Course.Name</td>
-                            <td colspan="3">@meeting.Meeting.Class.InstructorUser.FirstName @meeting.Meeting.Class.InstructorUser.LastName</td>
-                            <td colspan="3">@meeting.Meeting.ScheduleAvailability.DayOfWeek: @meeting.Meeting.ScheduleAvailability.StartTime - @meeting.Meeting.ScheduleAvailability.EndTime</td>
-                            <td colspan="3" class="text-right">
-                                <form method="post">
-                                    <button type="submit" class="btn btn-danger fas fa-trash-alt" asp-route-meetingId="@meeting.MeetingId" asp-route-studentId="@Model.MyStudent.StudentId" asp-route-delete="1" >
-                                    </button>
-                                </form>
-                                
-                            </td>
-                        </tr>
+                <tr>
+                    <td colspan="3">@meeting.Meeting.Class.Course.Name</td>
+                    <td colspan="3">@meeting.Meeting.Class.InstructorUser.FirstName @meeting.Meeting.Class.InstructorUser.LastName</td>
+                    <td colspan="3">@meeting.Meeting.ScheduleAvailability.DayOfWeek: @meeting.Meeting.ScheduleAvailability.StartTime - @meeting.Meeting.ScheduleAvailability.EndTime</td>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Instructor"))
+                    {
+                        <td colspan="3" class="text-right">
+                            <form method="post">
+                                <button type="submit" class="btn btn-danger fas fa-trash-alt" asp-route-meetingId="@meeting.MeetingId" asp-route-studentId="@Model.MyStudent.StudentId" asp-route-delete="1">
+                                </button>
+                            </form>
+
+                        </td>
+                    }
+                    else
+                    {
+                        <td colspan="3" class="text-right">
+                            Contact Admin/Instructor To Remove From Course
+                        </td>
+                    }
+
+                </tr>
                     }
                 }
                 else
@@ -116,16 +126,26 @@
                     {
                     @foreach(var meeting in Model.Meetings.Where(i => i.Class.Course.SchoolId == 1))
                     {
-                        <tr>
-                            <td colspan="3">@meeting.Class.Course.Name</td>
-                            <td colspan="3">@meeting.Class.InstructorUser.FirstName @meeting.Class.InstructorUser.LastName</td>
-                            <td colspan="3">@meeting.ScheduleAvailability.DayOfWeek: @meeting.ScheduleAvailability.StartTime - @meeting.ScheduleAvailability.EndTime</td>
-                            <td colspan="3" class="text-right"> 
+                    <tr>
+                        <td colspan="3">@meeting.Class.Course.Name</td>
+                        <td colspan="3">@meeting.Class.InstructorUser.FirstName @meeting.Class.InstructorUser.LastName</td>
+                        <td colspan="3">@meeting.ScheduleAvailability.DayOfWeek: @meeting.ScheduleAvailability.StartTime - @meeting.ScheduleAvailability.EndTime</td>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Instructor"))
+                        {
+                            <td colspan="3" class="text-right">
                                 <form method="post">
                                     <button type="submit" asp-page="Index" asp-route-meetingId="@meeting.MeetingId" asp-route-studentId="@Model.MyStudent.StudentId" class="btn btn-primary fas fa-plus"> Register</button>
                                 </form>
                             </td>
-                        </tr>
+                        }
+                        else
+                        {
+                            <td colspan="3" class="text-right">
+                                Only Admin/Instructor Can Register
+                            </td>
+                        }
+
+                    </tr>
                     }
                     }
                     else{
@@ -196,18 +216,28 @@
                 {
                     @foreach(var meeting in @Model.StudentMeetings.Where(i => (!i.Meeting.Class.Course.School.Name.Contains("No Poor Among Us"))))
                     {
-                        <tr>
-                            <td colspan="3">@meeting.Meeting.Class.Course.Name</td>
-                            <td colspan="3">@meeting.Meeting.Class.InstructorUser.FirstName @meeting.Meeting.Class.InstructorUser.LastName</td>
-                            <td colspan="3">@meeting.Meeting.ScheduleAvailability.DayOfWeek: @meeting.Meeting.ScheduleAvailability.StartTime - @meeting.Meeting.ScheduleAvailability.EndTime</td>
-                            <td colspan="3" class="text-right">
-                                <form method="post">
-                                    <button type="submit" class="btn btn-danger fas fa-trash-alt" asp-route-meetingId="@meeting.MeetingId" asp-route-studentId="@Model.MyStudent.StudentId" asp-route-delete="1" >
-                                    </button>
-                                </form>
-                                
-                            </td>
-                        </tr>
+            <tr>
+                <td colspan="3">@meeting.Meeting.Class.Course.Name</td>
+                <td colspan="3">@meeting.Meeting.Class.InstructorUser.FirstName @meeting.Meeting.Class.InstructorUser.LastName</td>
+                <td colspan="3">@meeting.Meeting.ScheduleAvailability.DayOfWeek: @meeting.Meeting.ScheduleAvailability.StartTime - @meeting.Meeting.ScheduleAvailability.EndTime</td>
+                @if (User.IsInRole("Admin") || User.IsInRole("Instructor"))
+                {
+                    <td colspan="3" class="text-right">
+                        <form method="post">
+                            <button type="submit" class="btn btn-danger fas fa-trash-alt" asp-route-meetingId="@meeting.MeetingId" asp-route-studentId="@Model.MyStudent.StudentId" asp-route-delete="1">
+                            </button>
+                        </form>
+
+                    </td>
+                }
+                else
+                {
+                    <td colspan="3" class="text-right">
+                        Contact Admin/Instructor To Remove From Course
+                    </td>
+                }
+
+            </tr>
                     }
                 }
                 else
@@ -254,16 +284,26 @@
                     {
                         @foreach(var meeting in Model.Meetings.Where(i => i.Class.Course.SchoolId != 1))
                     {
-                        <tr>
-                            <td colspan="3">@meeting.Class.Course.Name</td>
-                            <td colspan="3">@meeting.Class.InstructorUser.FirstName @meeting.Class.InstructorUser.LastName</td>
-                            <td colspan="3">@meeting.ScheduleAvailability.DayOfWeek: @meeting.ScheduleAvailability.StartTime - @meeting.ScheduleAvailability.EndTime</td>
-                            <td colspan="3" class="text-right"> 
+                    <tr>
+                        <td colspan="3">@meeting.Class.Course.Name</td>
+                        <td colspan="3">@meeting.Class.InstructorUser.FirstName @meeting.Class.InstructorUser.LastName</td>
+                        <td colspan="3">@meeting.ScheduleAvailability.DayOfWeek: @meeting.ScheduleAvailability.StartTime - @meeting.ScheduleAvailability.EndTime</td>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Instructor"))
+                        {
+                            <td colspan="3" class="text-right">
                                 <form method="post">
                                     <button type="submit" class="btn btn-primary fas fa-plus"> Register</button>
                                 </form>
                             </td>
-                        </tr>
+                        }
+                        else
+                        {
+                            <td colspan="3" class="text-right">
+                                Only Admin/Instructor can Register
+                            </td>
+                        }
+
+                    </tr>
                     }
                     }
                     else{

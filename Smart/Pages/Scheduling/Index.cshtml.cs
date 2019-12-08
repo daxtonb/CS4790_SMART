@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Smart.Pages.Scheduling
 {
-    [Authorize(Roles = "Admin,Instructor")]
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _db;
@@ -29,7 +28,6 @@ namespace Smart.Pages.Scheduling
             _db = dbContext;
         }
 
-        [HttpGet]
         public async Task OnGetAsync(int studentId)
         {
             MyStudent = await _db.Students.FindAsync(studentId);
@@ -75,7 +73,6 @@ namespace Smart.Pages.Scheduling
             }
         }
         
-        [HttpPost]
         public async Task<IActionResult> OnPostAsync(int meetingId, int studentId, int? delete)
         {
             Console.WriteLine("Posting Request Method: " + Request.Method);
