@@ -19,9 +19,12 @@
             <li class="nav-item">
                 <a class="nav-link" asp-page="../Files/Index" asp-route-studentId="@Model.Student[0].StudentId">Files</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" asp-page="../Scheduling/Index" asp-route-studentId="@Model.Student[0].StudentId">Schedule</a>
-            </li>
+            @if (User.IsInRole("Admin") || User.IsInRole("Instructor") || User.IsInRole("Social Worker") || User.IsInRole("Sponsor"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link" asp-page="../Scheduling/Index" asp-route-studentId="@Model.Student[0].StudentId">Schedule</a>
+                </li>
+            }
             <li class="nav-item active">
                 <a class="nav-link" asp-page="../Notes/Index" asp-route-studentId="@Model.Student[0].StudentId">Notes<span class="sr-only">(current)</span></a>
             </li>
