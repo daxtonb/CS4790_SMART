@@ -20,10 +20,17 @@
     <tbody>
         @foreach (var item in Model.Attendances)
         {
-            <tr>
-                <td><a data-toggle="modal" data-target="#details-modal" onclick="getAttendanceList('@item.Date.ToString("yyyy-MM-dd")')">@item.Date.ToString("d MMMM")</a></td>
-                <td>@item.Count</td>
-            </tr>
+        <tr class="parent">
+            <td><a data-toggle="modal" data-target="#details-modal" onclick="getAttendanceList('@item.Date.ToString("yyyy-MM-dd")')">@item.Date.ToString("d MMMM")</a></td>
+            <td>@item.Count</td>
+
+            <td>
+                <div class="btn-group-sm  show-on-parent-hover">
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#details-modal"  onclick="getAttendanceList(DateTime)"><i class="fas fa-th-list"></i></button>
+                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#form-modal" ><i class="fa fa-edit"></i></button>
+                </div>
+            </td>
+        </tr>
 
         }
     </tbody>
