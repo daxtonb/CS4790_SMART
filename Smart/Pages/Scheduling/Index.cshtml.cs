@@ -58,17 +58,17 @@ namespace Smart.Pages.Scheduling
                                                             .Include(i => i.StudentMeetings)
                                                             .Where(i => i.Class.TermId == TermId)
                                                             .ToListAsync();
-                StudentMeetings = await _db.StudentMeetings
-                                                .Include(i => i.Meeting)
-                                                .ThenInclude(i => i.Class)
-                                                .ThenInclude(i => i.Course)
-                                                .ThenInclude(i => i.School)
-                                                .ThenInclude(i => i.ScheduleAvailabilities)
-                                                .Include(i => i.Meeting)
-                                                .ThenInclude(i => i.Class)
-                                                .ThenInclude(i => i.InstructorUser)
-                                                .Where(i => i.StudentId == studentId && i.Meeting.Class.TermId == TermId)
-                                                .ToListAsync();
+            StudentMeetings = await _db.StudentMeetings
+                                            .Include(i => i.Meeting)
+                                            .ThenInclude(i => i.Class)
+                                            .ThenInclude(i => i.Course)
+                                            .ThenInclude(i => i.School)
+                                            .ThenInclude(i => i.ScheduleAvailabilities)
+                                            .Include(i => i.Meeting)
+                                            .ThenInclude(i => i.Class)
+                                            .ThenInclude(i => i.InstructorUser)
+                                            .Where(i => i.StudentId == studentId && i.Meeting.Class.TermId == TermId)
+                                            .ToListAsync();
 
             foreach(var meeting in StudentMeetings)
             {
