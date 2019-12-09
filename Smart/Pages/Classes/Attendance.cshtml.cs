@@ -95,7 +95,7 @@ namespace Smart.Pages.Classes
                         @class = await _context.Classes
                         .Include(c => c.Course)
                         .Include(c => c.Term).
-                        FirstOrDefaultAsync(c => c.Course.Name.Equals(courseName, StringComparison.OrdinalIgnoreCase) && c.Term.StartDate >= date && c.Term.EndDate <= date);
+                        FirstOrDefaultAsync(c => c.Course.Name.Equals(courseName, StringComparison.OrdinalIgnoreCase) && c.Term.StartDate <= date && c.Term.EndDate >= date);
                     }
 
                     // CONDITION: Class and student exist
