@@ -50,7 +50,7 @@ namespace Smart.Pages.Application
 
             foreach(var item in termList)
             {
-                terms.Add(new SelectListItem { Text = Term.GetTimeOfYear(item.StartDate.Date) + " (" + item.StartDate.Date.ToShortDateString() + " - " + item.EndDate.ToShortDateString() + ")", Value = item.TermId.ToString()});
+                terms.Add(new SelectListItem { Text = item.StartDate.Date.Year + " (" + item.StartDate.Date.ToShortDateString() + " - " + item.EndDate.ToShortDateString() + ")", Value = item.TermId.ToString()});
             }
 
             ViewData["terms"] = terms;
