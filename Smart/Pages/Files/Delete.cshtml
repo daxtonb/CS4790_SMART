@@ -41,6 +41,6 @@
     <form method="post">
         <input type="hidden" asp-for="File.FileId" />
         <input type="submit" value="Delete" class="btn btn-danger" asp-route-id="@Model.File.FileId" asp-route-studentId="@Model.studentIdentification"/> |
-        <a asp-page="./Index">Back to List</a>
+        <a asp-page="./Index" asp-route-id="@Model.File.FileId" asp-route-studentId="@Model.studentIdentification">Back to List</a>
     </form>
 </div>
