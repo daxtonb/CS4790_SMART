@@ -66,19 +66,19 @@ namespace Smart.Pages.Application
                 studentIQ = studentIQ.Where(a => a.FirstName.Contains(searchString) || a.LastName.Contains(searchString));
             }
 
-            //studentIQ = sortOrder switch //create sorting options
-            //{
-            //    "last_name_desc" => studentIQ.OrderByDescending(s => s.LastName),
-            //    "first_name_desc" => studentIQ.OrderByDescending(s => s.FirstName),
-            //    "FirstName" => studentIQ.OrderBy(s => s.FirstName),
-            //    "public_school_level_desc" => studentIQ.OrderByDescending(s => s.PublicSchoolLevel),
-            //    "PublicSchoolLevel" => studentIQ.OrderBy(s => s.PublicSchoolLevel),
-            //    "status_desc" => studentIQ.OrderByDescending(s => s.StudentStatus),
-            //    "Status" => studentIQ.OrderBy(s => s.StudentStatus),
-            //    "score_desc" => studentIQ.OrderBy(a => a.ApplicantRatings.Sum(s => s.ScoreAssigned)),
-            //    "Score" => studentIQ.OrderByDescending(a => a.ApplicantRatings.Sum(s => s.ScoreAssigned)),
-            //    _ => studentIQ.OrderBy(s => s.LastName),
-            //};
+            studentIQ = sortOrder switch //create sorting options
+            {
+                "last_name_desc" => studentIQ.OrderByDescending(s => s.LastName),
+                "first_name_desc" => studentIQ.OrderByDescending(s => s.FirstName),
+                "FirstName" => studentIQ.OrderBy(s => s.FirstName),
+                "public_school_level_desc" => studentIQ.OrderByDescending(s => s.PublicSchoolLevel),
+                "PublicSchoolLevel" => studentIQ.OrderBy(s => s.PublicSchoolLevel),
+                "status_desc" => studentIQ.OrderByDescending(s => s.StudentStatus),
+                "Status" => studentIQ.OrderBy(s => s.StudentStatus),
+                "score_desc" => studentIQ.OrderBy(a => a.ApplicantRatings.Sum(s => s.ScoreAssigned)),
+                "Score" => studentIQ.OrderByDescending(a => a.ApplicantRatings.Sum(s => s.ScoreAssigned)),
+                _ => studentIQ.OrderBy(s => s.LastName),
+            };
 
             Student = await studentIQ.AsNoTracking().ToListAsync();
 
